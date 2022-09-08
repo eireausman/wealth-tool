@@ -1,0 +1,544 @@
+import sq from "date-fns/locale/sq";
+import { Request, Response, NextFunction } from "express";
+
+import {
+  addNewCashAccountToDB,
+  addNewInvestmentToDB,
+  addNewPropertyToDB,
+  getAllFXRatesFromDB,
+  getCashAccountDataFromDB,
+  getCurrencyDataFromDB,
+  getDebtCashAccountTotalsByCurrency,
+  getDebtPropertyTotalsByCurrency,
+  getFXRateFromDB,
+  getInvestmentDataFromDB,
+  getNetCashAccountTotalsByCurrency,
+  getNetPropertyTotalsByCurrency,
+  getPosCashAccountTotalsByCurrency,
+  getPosInvestmentTotalsByCurrency,
+  getPosPropertyTotalsByCurrency,
+  getPropertyDataFromDB,
+  updateAccountBalanceToDB,
+  updatePropValueToDB,
+} from "../modules/database_actions";
+import {
+  cashAccountAPIData,
+  investmentsAPIData,
+  propertiesAPIData,
+} from "../types/typeInterfaces";
+
+const totalsCalc = require("../modules/totalsCalcs");
+
+exports.addNewInvestment = function (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  const cashAccountData = addNewInvestmentToDB(
+    res.locals.currentUser.id,
+    req.body
+  ).then((data) => {
+    res.send(data);
+  });
+};
+
+exports.addNewCashAccount = function (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  const newPropertyData = addNewCashAccountToDB(
+    res.locals.currentUser.id,
+    req.body
+  ).then((data) => {
+    res.send(data);
+  });
+};
+
+exports.getDebtTotalValue = async function (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  if (!res.locals.currentUser) {
+    res.sendStatus(403);
+    return;
+  }
+  // investments cannot be in debt, so no query required.  Empty array provided to pass to totalsByCurr.
+  // This is a bit messy. Refactoring isn't straight forward because a list of all currencies needs providing which is a combined view.
+  // That happens downstream from here.
+  const investSummary: Array<undefined> = [];
+
+  const CashAccSummary: cashAccountAPIData =
+    await getDebtCashAccountTotalsByCurrency(res.locals.currentUser.id);
+  const propSummary = await getDebtPropertyTotalsByCurrency(
+    res.locals.currentUser.id
+  );
+
+  // if no entries exist, exit
+  if (!CashAccSummary && !propSummary) {
+    res.sendStatus(204);
+    return;
+  }
+  let CashAccSummaryArray = [];
+  if (CashAccSummary) {
+    CashAccSummaryArray = JSON.parse(
+      JSON.stringify(CashAccSummary.cash_accounts)
+    );
+  }
+  let propSummaryArray = [];
+  if (propSummary) {
+    propSummaryArray = JSON.parse(JSON.stringify(propSummary.properties));
+  }
+
+  // combine the above and get a summary by currency rather than by asset type by currency
+  const totalsByCurr = totalsCalc.calculateTotalsByCurr(
+    investSummary,
+    CashAccSummaryArray,
+    propSummaryArray
+  );
+
+  // convert to the currently selected currency in front end and return the sum of converted values
+  let convertedTotal = 0;
+  const selectedCurrency = req.query.selectedcurrency;
+  if (!selectedCurrency) {
+    res.status(400).json({ error: "Currency not specified" });
+    return;
+  }
+
+  if (typeof selectedCurrency !== "string") {
+    res.status(500).json({ error: "Invalid currency specified" });
+    return;
+  }
+  for (let item in totalsByCurr) {
+    const itemValue = totalsByCurr[item];
+    const rateQuery = await getFXRateFromDB(item, selectedCurrency);
+    const rate = rateQuery.currency_fxrate;
+    convertedTotal += itemValue * rate;
+  }
+  res.send({ convertedTotal });
+};
+
+exports.getTotalPosAssetValue = async function (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  if (!res.locals.currentUser) {
+    res.sendStatus(403);
+    return;
+  }
+
+  const investSummary = await getPosInvestmentTotalsByCurrency(
+    res.locals.currentUser.id
+  );
+  const CashAccSummary = await getPosCashAccountTotalsByCurrency(
+    res.locals.currentUser.id
+  );
+  const propSummary = await getPosPropertyTotalsByCurrency(
+    res.locals.currentUser.id
+  );
+
+  // if no entries exist, exit
+  if (!investSummary && !CashAccSummary && !propSummary) {
+    res.sendStatus(204);
+    return;
+  }
+
+  let investSummaryArray: Array<investmentsAPIData> = [];
+  if (investSummary) {
+    investSummaryArray = JSON.parse(JSON.stringify(investSummary.investments));
+  }
+  let CashAccSummaryArray: Array<cashAccountAPIData> = [];
+  if (CashAccSummary) {
+    CashAccSummaryArray = JSON.parse(
+      JSON.stringify(CashAccSummary.cash_accounts)
+    );
+  }
+  let propSummaryArray: Array<propertiesAPIData> = [];
+  if (propSummary) {
+    propSummaryArray = JSON.parse(JSON.stringify(propSummary.properties));
+  }
+
+  // combine the above and get a summary by currency rather than by asset type by currency
+  const totalsByCurr = totalsCalc.calculateTotalsByCurr(
+    investSummaryArray,
+    CashAccSummaryArray,
+    propSummaryArray
+  );
+
+  let convertedTotal = 0;
+  const selectedCurrency = req.query.selectedcurrency;
+  if (!selectedCurrency) {
+    res.status(400).json({ error: "Currency not specified" });
+    return;
+  }
+
+  if (typeof selectedCurrency !== "string") {
+    res.status(500).json({ error: "Invalid currency specified" });
+    return;
+  }
+  for (let item in totalsByCurr) {
+    const itemValue = totalsByCurr[item];
+    const rateQuery = await getFXRateFromDB(item, selectedCurrency);
+    const rate = rateQuery.currency_fxrate;
+    convertedTotal += itemValue * rate;
+  }
+
+  res.send({ convertedTotal });
+};
+
+exports.getCashAccountNetTotal = async function (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  if (!res.locals.currentUser) {
+    res.sendStatus(403);
+    return;
+  }
+  const CashAccSummary = await getNetCashAccountTotalsByCurrency(
+    res.locals.currentUser.id
+  );
+
+  if (!CashAccSummary) {
+    res.sendStatus(204);
+    return;
+  }
+
+  const CashAccSummaryArray = JSON.parse(
+    JSON.stringify(CashAccSummary.cash_accounts)
+  );
+
+  const selectedCurrency = req.query.selectedcurrency;
+  if (!selectedCurrency) {
+    res.status(400).json({ error: "Currency not specified" });
+    return;
+  }
+
+  if (typeof selectedCurrency !== "string") {
+    res.status(500).json({ error: "Invalid currency specified" });
+    return;
+  }
+  let CashAccSummaryConvertedTotal: number = 0;
+
+  for (let item in CashAccSummaryArray) {
+    const fromCurrency: string =
+      CashAccSummaryArray[item].account_currency_code;
+    const totalVal: number = parseInt(CashAccSummaryArray[item].total);
+    const rateQuery = await getFXRateFromDB(fromCurrency, selectedCurrency);
+    const rate: number = rateQuery.currency_fxrate;
+
+    CashAccSummaryConvertedTotal += totalVal * rate;
+  }
+  const returnNumber: number = CashAccSummaryConvertedTotal;
+
+  res.json(returnNumber);
+};
+
+exports.getPropertyNetTotal = async function (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  if (!res.locals.currentUser) {
+    res.sendStatus(403);
+    return;
+  }
+  const propSummary = await getNetPropertyTotalsByCurrency(
+    res.locals.currentUser.id
+  );
+
+  if (!propSummary) {
+    res.sendStatus(204);
+    return;
+  }
+  const propSummaryArray = JSON.parse(JSON.stringify(propSummary.properties));
+  console.log(propSummaryArray);
+
+  const selectedCurrency = req.query.selectedcurrency;
+  if (!selectedCurrency) {
+    res.status(400).json({ error: "Currency not specified" });
+    return;
+  }
+
+  if (typeof selectedCurrency !== "string") {
+    res.status(500).json({ error: "Invalid currency specified" });
+    return;
+  }
+  let propSummaryConvertedTotal: number = 0;
+  for (let item in propSummaryArray) {
+    const fromCurrency: string =
+      propSummaryArray[item].property_valuation_currency;
+    const totalVal: number = parseInt(propSummaryArray[item].total);
+
+    const rateQuery = await getFXRateFromDB(fromCurrency, selectedCurrency);
+    const rate: number = rateQuery.currency_fxrate;
+    propSummaryConvertedTotal += totalVal * rate;
+  }
+  const returnNumber: number = propSummaryConvertedTotal;
+
+  res.json(returnNumber);
+};
+
+exports.getInvestmentsTotal = async function (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  if (!res.locals.currentUser) {
+    res.sendStatus(403);
+    return;
+  }
+  // investments will be + or 0, and so only need to request Pos db query:
+  const investSummary = await getPosInvestmentTotalsByCurrency(
+    res.locals.currentUser.id
+  );
+
+  if (!investSummary) {
+    res.sendStatus(204);
+    return;
+  }
+
+  const investSummaryArray = JSON.parse(
+    JSON.stringify(investSummary.investments)
+  );
+
+  const selectedCurrency = req.query.selectedcurrency;
+  if (!selectedCurrency) {
+    res.status(400).json({ error: "Currency not specified" });
+    return;
+  }
+
+  if (typeof selectedCurrency !== "string") {
+    res.status(500).json({ error: "Invalid currency specified" });
+    return;
+  }
+  let investSummaryConvertedTotal: number = 0;
+  for (let item in investSummaryArray) {
+    const fromCurrency: string = investSummaryArray[item].holding_currency_code;
+    const totalVal: number = parseInt(investSummaryArray[item].total);
+    const rateQuery = await getFXRateFromDB(fromCurrency, selectedCurrency);
+    const rate: number = rateQuery.currency_fxrate;
+    investSummaryConvertedTotal += totalVal * rate;
+  }
+
+  const returnNumber = investSummaryConvertedTotal;
+
+  res.json(returnNumber);
+};
+
+exports.addNewProperty = function (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  const newPropertyData = addNewPropertyToDB(
+    res.locals.currentUser.id,
+    req.body
+  ).then((data) => {
+    res.send(data);
+  });
+};
+
+exports.getCashAccountData = async function (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  if (!res.locals.currentUser) {
+    res.sendStatus(403);
+    return;
+  }
+
+  const cashAccountData = await getCashAccountDataFromDB(
+    res.locals.currentUser.id
+  );
+  if (!cashAccountData) {
+    res.sendStatus(204);
+    return;
+  }
+
+  const cashAccountArrray = JSON.parse(
+    JSON.stringify(cashAccountData.cash_accounts)
+  );
+  // convert to the currency selected in front end
+  const selectedCurrency = req.query.selectedcurrency;
+  if (!selectedCurrency) {
+    res.status(400).json({ error: "Currency not specified" });
+    return;
+  }
+
+  if (typeof selectedCurrency !== "string") {
+    res.status(500).json({ error: "Invalid currency specified" });
+    return;
+  }
+
+  for (let i = 0; i < cashAccountArrray.length; i += 1) {
+    const baseCurr: string = cashAccountArrray[i].account_currency_code;
+    const rate = await getFXRateFromDB(baseCurr, selectedCurrency);
+    const accountBalConvertedValue: number =
+      parseInt(cashAccountArrray[i].account_balance) * rate.currency_fxrate;
+    cashAccountArrray[i].accountBalConvertedValue = accountBalConvertedValue;
+  }
+  res.send(cashAccountArrray);
+};
+
+exports.updateAccountBalance = function (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  const updateBalanceRequest = updateAccountBalanceToDB(
+    req.body.account_id,
+    req.body.balance
+  ).then((data) => {
+    res.send(data);
+  });
+};
+
+exports.updatePropValue = function (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  /// REQUIRES USER CHECK?
+  const updateBalanceRequest = updatePropValueToDB(
+    req.body.property_id,
+    req.body.property_valuation,
+    req.body.property_loan_value
+  ).then((data) => {
+    res.send(data);
+  });
+};
+
+exports.getPropertiesData = async function (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  if (!res.locals.currentUser) {
+    res.sendStatus(403);
+    return;
+  }
+
+  const selectedCurrency = req.query.selectedcurrency;
+  if (!selectedCurrency) {
+    res.status(400).json({ error: "Currency not specified" });
+    return;
+  }
+
+  if (typeof selectedCurrency !== "string") {
+    res.status(500).json({ error: "Invalid currency specified" });
+    return;
+  }
+
+  const propertyData = await getPropertyDataFromDB(res.locals.currentUser.id);
+
+  const propertyDataArray = JSON.parse(JSON.stringify(propertyData.properties));
+
+  for (let i = 0; i < propertyDataArray.length; i += 1) {
+    const prop_baseCurr: string =
+      propertyDataArray[i].property_valuation_currency;
+    const prop_rate = await getFXRateFromDB(prop_baseCurr, selectedCurrency);
+
+    const prop_totalConvertedValue: number =
+      (parseInt(propertyDataArray[i].property_valuation) -
+        parseInt(propertyDataArray[i].property_loan_value)) *
+      prop_rate.currency_fxrate;
+    propertyDataArray[i].propertyValuationInSelCurr = prop_totalConvertedValue;
+  }
+
+  res.send(propertyDataArray);
+};
+
+exports.getInvestmentsData = async function (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  if (!res.locals.currentUser) {
+    res.sendStatus(403);
+    return;
+  }
+  const selectedCurrency = req.query.selectedcurrency;
+  if (!selectedCurrency) {
+    res.status(400).json({ error: "Currency not specified" });
+    return;
+  }
+
+  if (typeof selectedCurrency !== "string") {
+    res.status(500).json({ error: "Invalid currency specified" });
+    return;
+  }
+
+  const investmentData = await getInvestmentDataFromDB(
+    res.locals.currentUser.id
+  );
+
+  if (!investmentData) {
+    res.sendStatus(204);
+    return;
+  }
+
+  const investmentsArray = JSON.parse(
+    JSON.stringify(investmentData.investments)
+  );
+
+  // convert to the currency selected in front end
+  for (let i = 0; i < investmentsArray.length; i += 1) {
+    const invest_baseCurr: string = investmentsArray[i].holding_currency_code;
+    const invest_rate = await getFXRateFromDB(
+      invest_baseCurr,
+      selectedCurrency
+    );
+
+    const investmentConvertedValue: number =
+      parseInt(investmentsArray[i].virtual_BaseCurrencyValue) *
+      invest_rate.currency_fxrate;
+    investmentsArray[i].investmentConvertedValue = investmentConvertedValue;
+  }
+  res.send(investmentsArray);
+};
+
+exports.getCurrencyData = function (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  if (!res.locals.currentUser) {
+    res.sendStatus(403);
+    return;
+  }
+  const currencyCodeData = getCurrencyDataFromDB().then((data) => {
+    res.send(data);
+  });
+};
+
+exports.getFXRate = function (req: Request, res: Response, next: NextFunction) {
+  if (!res.locals.currentUser) {
+    res.sendStatus(403);
+    return;
+  }
+  const currencyFXData = getFXRateFromDB(
+    req.body.currencyFrom,
+    req.body.currencyTo
+  ).then((data) => {
+    res.send(data);
+  });
+};
+
+exports.getallFXRates = function (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  if (!res.locals.currentUser) {
+    res.sendStatus(403);
+    return;
+  } else {
+    const currencyFXData = getAllFXRatesFromDB().then((data) => {
+      res.send(data);
+    });
+  }
+};
