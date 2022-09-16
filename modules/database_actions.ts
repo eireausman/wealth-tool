@@ -3,6 +3,7 @@ import {
   AddNewCashAccountFormData,
   AddNewInvestmentFormData,
   AddNewPropertyFormData,
+  stockCompanys,
 } from "../types/typeInterfaces";
 
 const { DateTime } = require("luxon");
@@ -24,32 +25,97 @@ const InvestmentPriceHistory = require("../models/investment_price_history")(
   sequelize
 );
 const stockMarkets = require("../models/stock_markets")(sequelize);
+const stockCompanies = require("../models/stock_companies")(sequelize);
 
 User.hasMany(CashAccount, { foreignKey: "userUsersId" });
 User.hasMany(Investments, { foreignKey: "userUsersId" });
+
 CashAccount.belongsTo(User, { foreignKey: "userUsersId" });
 Investments.belongsTo(User, { foreignKey: "userUsersId" });
-InvestmentPriceHistory.belongsTo(Investments, { foreignKey: "holding_id" });
+
 User.hasMany(Properties, { foreignKey: "userUsersId" });
+
+CurrencyCodes.hasMany(Properties, {
+  sourceKey: "currency_code",
+  foreignKey: "property_valuation_currency",
+});
+Properties.belongsTo(CurrencyCodes, {
+  foreignKey: "property_valuation_currency",
+  targetKey: "currency_code",
+});
+
+CurrencyCodes.hasMany(CashAccount, {
+  sourceKey: "currency_code",
+  foreignKey: "account_currency_code",
+});
+CashAccount.belongsTo(CurrencyCodes, {
+  foreignKey: "account_currency_code",
+  targetKey: "currency_code",
+});
+
+CurrencyCodes.hasMany(stockMarkets, {
+  sourceKey: "currency_code",
+  foreignKey: "exchange_currency_code",
+});
+stockMarkets.belongsTo(CurrencyCodes, {
+  foreignKey: "exchange_currency_code",
+  targetKey: "currency_code",
+});
+
+stockMarkets.hasMany(stockCompanies, {
+  sourceKey: "exchange_code",
+  foreignKey: "exchange_code",
+});
+stockCompanies.belongsTo(stockMarkets, {
+  targetKey: "exchange_code",
+  foreignKey: "exchange_code",
+});
 
 CashAccount.hasMany(CashAccountBalances, { foreignKey: "account_id" });
 Properties.hasMany(PropertiesHistVals, { foreignKey: "property_id" });
-Investments.hasMany(InvestmentPriceHistory, { foreignKey: "holding_id" });
+Investments.hasMany(InvestmentPriceHistory, {
+  sourceKey: "holding_market_identifier",
+  foreignKey: "holding_market_identifier",
+});
 
 CashAccountBalances.belongsTo(CashAccount, { foreignKey: "account_id" });
 PropertiesHistVals.belongsTo(Properties, { foreignKey: "property_id" });
 Properties.belongsTo(User, { foreignKey: "userUsersId" });
 
-User.sync();
-CashAccount.sync();
-CashAccountBalances.sync();
-Properties.sync();
-Currencies.sync();
-CurrencyCodes.sync();
-PropertiesHistVals.sync();
-Investments.sync();
-InvestmentPriceHistory.sync();
-stockMarkets.sync();
+const syncFunctions = async () => {
+  // need to await each to avoid mySQL locks
+  await User.sync();
+  await Currencies.sync();
+  await CurrencyCodes.sync();
+  await CashAccount.sync();
+  await CashAccountBalances.sync();
+  await Properties.sync();
+  await PropertiesHistVals.sync();
+  await Investments.sync();
+  await InvestmentPriceHistory.sync();
+  await stockMarkets.sync();
+  await stockCompanies.sync();
+};
+syncFunctions().then((data) => {
+  console.log("database sync functions all complete");
+});
+
+export async function updateStockPriceData(
+  stockTicker: string,
+  price: string,
+  date: string
+) {
+  try {
+    const [record, created] = await InvestmentPriceHistory.upsert({
+      holding_market_identifier: stockTicker,
+      holding_current_price: price,
+      price_asatdate: date,
+    });
+    return created;
+  } catch (err) {
+    console.log(err);
+  }
+}
 
 export async function addNewCashAccountToDB(
   userID: number,
@@ -93,21 +159,12 @@ export async function addNewInvestmentToDB(
       holding_institution: requestBody.institution,
       holding_market_identifier: requestBody.identifier,
       holding_currency_code: requestBody.currencyCode,
-      holding_currency_symbol: requestBody.currencySymbol,
       holding_quantity_held: requestBody.quantity,
-      holding_current_price: requestBody.currentPrice,
       holding_cost_total_value: requestBody.cost,
     });
     const saveResult = await newInvestmentEntry.save();
 
-    const holdingID = saveResult.dataValues.holding_id;
-    const today = new Date();
-    const newInvestmentPriceHistoryEntry = await InvestmentPriceHistory.create({
-      holding_id: holdingID,
-      holding_current_price: requestBody.currentPrice,
-      price_asatdate: today,
-    });
-    await newInvestmentPriceHistoryEntry.save();
+    return saveResult;
   } catch (err) {
     console.log(err);
     return err;
@@ -171,9 +228,8 @@ export async function findOneUser(
 
 export async function createUser(sent_username: string, sent_password: string) {
   const userExists = await findOneUser("users_username", sent_username);
-  console.log(userExists);
 
-  if (userExists === false) {
+  if (userExists === false || userExists.users === null) {
     try {
       const userAccount = await User.create({
         users_username: sent_username,
@@ -228,6 +284,45 @@ export async function getAllFXRatesFromDB() {
   }
 }
 
+export async function getAllHeldStocksFromDB() {
+  try {
+    const companiesQuery = await Investments.findAll({
+      attributes: [
+        sequelize.fn("DISTINCT", sequelize.col("holding_market_identifier")),
+        "holding_market_identifier",
+      ],
+      order: [["holding_market_identifier", "ASC"]],
+    });
+
+    return companiesQuery;
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+}
+
+export async function checkIfStockPriceUpdatedWithin(
+  stockTicker: string,
+  sinceDate: string
+) {
+  try {
+    const stockPriceQuery = await InvestmentPriceHistory.count({
+      where: {
+        holding_market_identifier: stockTicker,
+        price_asatdate: {
+          [Op.gt]: sinceDate,
+        },
+      },
+      order: [["holding_market_identifier", "ASC"]],
+    });
+
+    return stockPriceQuery;
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+}
+
 export async function getFXRateFromDB(from: string, to: string) {
   try {
     const currenciesQuery = await Currencies.findOne({
@@ -242,6 +337,110 @@ export async function getFXRateFromDB(from: string, to: string) {
   } catch (error) {
     console.log(error);
     return error;
+  }
+}
+
+export async function searchForStockCompanyByNameFromDB(searchString: string) {
+  try {
+    const companySearchQuery = await stockCompanies.findAll({
+      limit: 10,
+      where: {
+        company_name: {
+          [Op.like]: searchString + "%",
+        },
+      },
+      include: {
+        model: stockMarkets,
+        include: {
+          model: CurrencyCodes,
+        },
+      },
+      order: [["company_name", "ASC"]],
+    });
+
+    return companySearchQuery;
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+}
+
+export async function insertStockMarketCodesIntoDB(code: string) {
+  try {
+    const checkifExists = await stockMarkets.count({
+      where: { exchange_code: code },
+    });
+
+    if ((await checkifExists) === 0) {
+      const newMarketCode = await stockMarkets.create({
+        exchange_code: code,
+      });
+
+      await newMarketCode.save();
+      return "saved";
+    }
+  } catch (err) {
+    console.log(err);
+    return err;
+  }
+}
+
+export async function getStockMarketsFromDB() {
+  try {
+    const markets = await stockMarkets.findAll({});
+
+    return markets;
+  } catch (err) {
+    return err;
+  }
+}
+export async function wereStockCompaniesUpdatedRecently() {
+  const nDaysAgoDate = DateTime.now()
+    .minus({ days: 15 })
+    .toISODate(DateTime.DATE_MED);
+
+  try {
+    const stockCompaniesRecentlyUpdated = await stockCompanies.count({
+      where: {
+        entry_dateupdated: {
+          [Op.gt]: nDaysAgoDate,
+        },
+      },
+    });
+
+    if (stockCompaniesRecentlyUpdated > 0) return true;
+    // 0 = rates were recently updated.
+    return false;
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+}
+export async function insertStockCompaniesIntoDB(args: stockCompanys) {
+  const today: Date = new Date();
+  try {
+    const checkifExists = await stockCompanies.count({
+      where: {
+        company_name: args.companyName,
+        exchange_code: args.exchangeCode,
+      },
+    });
+
+    if ((await checkifExists) === 0) {
+      const newCompany = await stockCompanies.create({
+        company_name: args.companyName,
+        exchange_code: args.exchangeCode,
+        industry_or_category: args.industryOrCategory,
+        company_symbol: args.symbol,
+        entry_dateupdated: today,
+      });
+
+      await newCompany.save();
+      return "saved";
+    }
+  } catch (err) {
+    console.log(err);
+    return err;
   }
 }
 
@@ -388,6 +587,11 @@ export async function getInvestmentDataFromDB(reslocalsuser: string) {
         where: {
           soft_deleted: 0,
         },
+        include: {
+          model: InvestmentPriceHistory,
+          limit: 1,
+          order: [["price_asatdate", "DESC"]],
+        },
       },
     });
 
@@ -409,24 +613,25 @@ export async function getPosInvestmentTotalsByCurrency(reslocalsuser: string) {
 
         where: {
           soft_deleted: 0,
-          holding_current_price: {
-            [Op.gt]: 0,
-          },
-          holding_quantity_held: {
-            [Op.gt]: 0,
-          },
+          // holding_current_price: {
+          //   [Op.gt]: 0,
+          // },
         },
 
-        attributes: [
-          "holding_currency_code",
-
-          [
-            sequelize.literal(
-              "SUM(COALESCE(holding_current_price, 0) * COALESCE(holding_quantity_held, 0))"
-            ),
-            "total",
-          ],
-        ],
+        // attributes: [
+        //   "holding_currency_code",
+        //   // [
+        //   //   sequelize.literal(
+        //   //     "SUM(COALESCE(holding_current_price, 0) * COALESCE(holding_quantity_held, 0))"
+        //   //   ),
+        //   //   "total",
+        //   // ],
+        // ],
+        include: {
+          model: InvestmentPriceHistory,
+          limit: 1,
+          order: [["price_asatdate", "DESC"]],
+        },
       },
     });
     return await usersInvestmentData;
@@ -459,6 +664,7 @@ export async function getDebtCashAccountTotalsByCurrency(
         ],
       },
     });
+
     return await usersCashAccountData;
   } catch (err) {
     console.log(err);
@@ -521,6 +727,7 @@ export async function getPosCashAccountTotalsByCurrency(reslocalsuser: string) {
         ],
       },
     });
+
     return await usersCashAccountData;
   } catch (err) {
     console.log(err);

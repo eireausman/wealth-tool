@@ -20,7 +20,10 @@ import {
   getPropertyDataFromDB,
   updateAccountBalanceToDB,
   updatePropValueToDB,
+  searchForStockCompanyByNameFromDB,
 } from "../modules/database_actions";
+import { getCompanyPriceData } from "../modules/getCompanyPriceData";
+
 import {
   cashAccountAPIData,
   investmentsAPIData,
@@ -29,17 +32,27 @@ import {
 
 const totalsCalc = require("../modules/totalsCalcs");
 
-exports.addNewInvestment = function (
+exports.addNewInvestment = async function (
   req: Request,
   res: Response,
   next: NextFunction
 ) {
-  const cashAccountData = addNewInvestmentToDB(
-    res.locals.currentUser.id,
-    req.body
-  ).then((data) => {
-    res.send(data);
-  });
+  try {
+    const newInvestmentData = await addNewInvestmentToDB(
+      res.locals.currentUser.id,
+      req.body
+    );
+
+    const dataArray = JSON.parse(JSON.stringify(newInvestmentData));
+
+    // update the pricing data for the new stock in case it doesn't already have price history for another user:
+    await getCompanyPriceData();
+
+    // const getPrice = getPriceForNewInvestment(data);
+    res.send(dataArray);
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 exports.addNewCashAccount = function (
@@ -77,10 +90,11 @@ exports.getDebtTotalValue = async function (
 
   // if no entries exist, exit
   if (!CashAccSummary && !propSummary) {
-    res.sendStatus(204);
+    res.send({ convertedTotal: 0 });
     return;
   }
   let CashAccSummaryArray = [];
+
   if (CashAccSummary) {
     CashAccSummaryArray = JSON.parse(
       JSON.stringify(CashAccSummary.cash_accounts)
@@ -116,6 +130,7 @@ exports.getDebtTotalValue = async function (
     const rate = rateQuery.currency_fxrate;
     convertedTotal += itemValue * rate;
   }
+
   res.send({ convertedTotal });
 };
 
@@ -254,7 +269,6 @@ exports.getPropertyNetTotal = async function (
     return;
   }
   const propSummaryArray = JSON.parse(JSON.stringify(propSummary.properties));
-  console.log(propSummaryArray);
 
   const selectedCurrency = req.query.selectedcurrency;
   if (!selectedCurrency) {
@@ -281,6 +295,24 @@ exports.getPropertyNetTotal = async function (
   res.json(returnNumber);
 };
 
+exports.searchForStockCompanyByName = async function (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  const searchString = req.query.searchstring;
+
+  if (!searchString || typeof searchString !== "string") {
+    res.sendStatus(204).json("No search string criteria was provided");
+    return;
+  }
+  const searchResults = await searchForStockCompanyByNameFromDB(searchString);
+
+  const searchResultsArray = JSON.parse(JSON.stringify(searchResults));
+
+  res.send(searchResultsArray);
+};
+
 exports.getInvestmentsTotal = async function (
   req: Request,
   res: Response,
@@ -291,7 +323,8 @@ exports.getInvestmentsTotal = async function (
     return;
   }
   // investments will be + or 0, and so only need to request Pos db query:
-  const investSummary = await getPosInvestmentTotalsByCurrency(
+  // const investSummary = await getPosInvestmentTotalsByCurrency(
+  const investSummary = await getInvestmentDataFromDB(
     res.locals.currentUser.id
   );
 
@@ -317,13 +350,33 @@ exports.getInvestmentsTotal = async function (
   let investSummaryConvertedTotal: number = 0;
   for (let item in investSummaryArray) {
     const fromCurrency: string = investSummaryArray[item].holding_currency_code;
-    const totalVal: number = parseInt(investSummaryArray[item].total);
+
+    const pencePrice =
+      parseFloat(
+        investSummaryArray[item].investment_price_histories[0]
+          .holding_current_price
+      ) / 100;
+
+    const valCalc: number =
+      parseInt(investSummaryArray[item].holding_quantity_held) * pencePrice;
+
+    const totalVal = parseInt(valCalc.toString());
+    console.log(totalVal);
+
     const rateQuery = await getFXRateFromDB(fromCurrency, selectedCurrency);
     const rate: number = rateQuery.currency_fxrate;
     investSummaryConvertedTotal += totalVal * rate;
   }
 
-  const returnNumber = investSummaryConvertedTotal;
+  // for (let item in investSummaryArray) {
+  //   const fromCurrency: string = investSummaryArray[item].holding_currency_code;
+  //   const totalVal: number = parseInt(investSummaryArray[item].total);
+  //   const rateQuery = await getFXRateFromDB(fromCurrency, selectedCurrency);
+  //   const rate: number = rateQuery.currency_fxrate;
+  //   investSummaryConvertedTotal += totalVal * rate;
+  // }
+
+  const returnNumber = parseInt(investSummaryConvertedTotal.toString());
 
   res.json(returnNumber);
 };
@@ -435,6 +488,10 @@ exports.getPropertiesData = async function (
 
   const propertyData = await getPropertyDataFromDB(res.locals.currentUser.id);
 
+  if (!propertyData) {
+    res.sendStatus(204);
+    return;
+  }
   const propertyDataArray = JSON.parse(JSON.stringify(propertyData.properties));
 
   for (let i = 0; i < propertyDataArray.length; i += 1) {
@@ -493,11 +550,23 @@ exports.getInvestmentsData = async function (
       selectedCurrency
     );
 
+    console.log(investmentsArray[i]);
+
+    const pencePrice =
+      parseFloat(
+        investmentsArray[i].investment_price_histories[0].holding_current_price
+      ) / 100;
+
+    const valCalc: number =
+      investmentsArray[i].holding_quantity_held * pencePrice;
+
     const investmentConvertedValue: number =
-      parseInt(investmentsArray[i].virtual_BaseCurrencyValue) *
-      invest_rate.currency_fxrate;
-    investmentsArray[i].investmentConvertedValue = investmentConvertedValue;
+      valCalc * invest_rate.currency_fxrate;
+    investmentsArray[i].investmentConvertedValue = parseInt(
+      investmentConvertedValue.toString()
+    );
   }
+
   res.send(investmentsArray);
 };
 

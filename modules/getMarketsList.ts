@@ -1,14 +1,9 @@
 import axios from "axios";
+import { axiosOptions } from "../types/typeInterfaces";
 
-interface axiosOptions {
-  method: string;
-  url: string;
-  headers: {
-    [key: string]: string;
-  };
-}
+import { insertStockMarketCodesIntoDB } from "./database_actions";
 
-const updateStockMarkets = async () => {
+const updateStockMarketCodes = async () => {
   const APIurl: string = process.env.API_URL_MARKET_DATA!;
   const APIKey: string = process.env.API_KEY_MARKET_DATA!;
   const APIHost: string = process.env.LINK_KEY_MARKET_DATA!;
@@ -22,18 +17,19 @@ const updateStockMarkets = async () => {
     },
   };
 
-  axios
-    .request(options)
-    .then(function (response) {
-      const data = response.data;
-      // console.log(response.data);
-      data.forEach((item: string) => {
-        console.log(item);
-      });
-    })
-    .catch(function (error) {
-      console.error(error);
-    });
+  try {
+    const serverRequest = await axios.request(options);
+    const marketCodes = serverRequest.data.results;
+
+    for (let code in marketCodes) {
+      const outcome = await insertStockMarketCodesIntoDB(
+        marketCodes[code].exchangeCode
+      );
+    }
+    console.log("Stock Market Codes have been run");
+  } catch (error) {
+    console.error(error);
+  }
 };
 
-export default updateStockMarkets;
+export { updateStockMarketCodes };

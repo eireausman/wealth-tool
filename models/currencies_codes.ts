@@ -9,7 +9,6 @@ module.exports = () => {
         type: DataTypes.INTEGER,
         autoIncrement: true,
         unique: true,
-        primaryKey: true,
       },
       currency_name: {
         type: DataTypes.STRING,
@@ -24,6 +23,7 @@ module.exports = () => {
       currency_code: {
         type: DataTypes.STRING,
         allowNull: false,
+        primaryKey: true,
         validate: {
           len: {
             args: [3],

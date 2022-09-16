@@ -32,6 +32,12 @@ export interface AddNewCashAccountFormData {
   account_currency_symbol?: string;
 }
 
+export interface reducerState {
+  showSearchResultsContainer: boolean;
+  showNoResultsFoundMessage: boolean;
+  showSelectedStockInfo: boolean;
+}
+
 export interface AddNewInvestmentFormData {
   [key: string]: string | number | undefined;
   stockName?: string;
@@ -41,8 +47,8 @@ export interface AddNewInvestmentFormData {
   currentPrice?: number;
   ownerName?: string;
   institution?: string;
-  currencySymbol?: string;
   currencyCode?: string;
+  stockMarket?: string;
 }
 
 export interface AddNewPropertyFormData {
@@ -158,11 +164,9 @@ export interface totalsByCurr {
 }
 
 export interface investmentsAPIData {
-  [key: string]: string | number | undefined;
+  [key: string]: string | number | object | undefined;
   holding_cost_total_value: number;
   holding_currency_code: string;
-  holding_currency_symbol: string;
-  holding_current_price: number;
   holding_id: number;
   holding_institution: string;
   holding_market_identifier: string;
@@ -170,9 +174,13 @@ export interface investmentsAPIData {
   holding_stock_name: string;
   holding_quantity_held: number;
   userUsersId: number;
-  virtual_BaseCurrencyValue: number;
-  displayValueBaseCurrency: number;
-  displayValueConverted: number;
+  investmentConvertedValue: number;
+  investment_price_histories: Array<{
+    id: number;
+    holding_market_identifier: string;
+    holding_current_price: string;
+    price_asatdate: string;
+  }>;
 }
 
 export interface PropertiesProps {
@@ -224,6 +232,55 @@ export interface createAccountServerResponse {
 export interface LoginAttemptServerResponse {
   requestOutcome?: boolean;
   message?: string;
+}
+
+export interface axiosOptions {
+  method: string;
+  url: string;
+  params?: { [key: string]: string };
+  headers: {
+    [key: string]: string;
+  };
+}
+
+export interface companyNameSearchResults {
+  [key: string]: string | number | object;
+  id: number;
+  exchange_code: string;
+  company_symbol: string;
+  company_name: string;
+  industry_or_category: string;
+  entry_dateupdated: string;
+  stock_market: {
+    exchange_code: string;
+    exchange_currency_code: string;
+    exchange_name: string;
+    id: number;
+    currencies_code: {
+      currency_code: string;
+      currency_name: string;
+      currency_symbol: string;
+      id: number;
+    };
+  };
+}
+
+export interface InvestmentAddStockNameProps {
+  updateFormDataState: (e: React.FormEvent<EventTarget>) => void;
+  newStockNameSelectedFromSearch: (
+    selectedCompany: companyNameSearchResults
+  ) => void;
+  formData: AddNewInvestmentFormData | undefined;
+  resetCompanyFormData: () => void;
+}
+
+export interface stockCompanys {
+  [key: string]: string;
+  exchangeCode: string;
+  companyName: string;
+  industryOrCategory: string;
+  entry_dateupdated: string;
+  symbol: string;
 }
 
 export interface OptionsBoardProps {

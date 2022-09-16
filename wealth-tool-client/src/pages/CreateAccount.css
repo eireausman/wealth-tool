@@ -1,0 +1,71 @@
+.form-container {
+  display: flex;
+  flex-direction: column;
+  margin-top: 60px;
+  justify-content: center;
+  align-items: center;
+  background-color: #087fed;
+  padding: 30px;
+  border-top: 1px solid rgb(124, 121, 121);
+  border-bottom: 1px solid rgb(124, 121, 121);
+  border-width: thin;
+}
+
+.createAccountForm {
+  justify-content: center;
+  align-items: center;
+  background-color: white;
+  width: 350px;
+  padding: 20px;
+  border-radius: 10px;
+  background-color: #f0ebeb;
+  border: 1px solid #fff;
+  border-radius: 10px;
+  padding: 10px;
+}
+
+.createAccountFormInputRow {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 5px;
+  margin: 0px 0px 5px 0px;
+  font-weight: unset;
+  font-size: 0.9rem;
+}
+
+.createAccountFormInputField {
+  display: flex;
+  background: transparent;
+  padding: 4px;
+  border-radius: 7px;
+  border-width: thin;
+  border-color: rgb(75, 166, 246);
+  margin: 0px 0px 0px 0px;
+}
+
+.buttonCreateAccount {
+  margin: 0px 0px 0px 10px;
+  border-radius: 10px;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.createAccountAlertSuccess {
+  margin-top: 10px;
+  padding: 10px;
+  width: 350px;
+  font-size: 0.9rem;
+}
+
+.createAccountAlertFailure {
+  margin-top: 10px;
+  padding: 10px;
+  width: 350px;
+  font-size: 0.9rem;
+}
+
+.loginLinkText {
+  color: white;
+}

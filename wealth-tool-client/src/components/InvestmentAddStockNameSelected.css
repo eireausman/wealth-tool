@@ -1,0 +1,49 @@
+.selectedStockContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  background-color: #087fed;
+  color: white;
+  padding: 10px;
+  border-radius: 4px;
+  border: 1px solid #949494;
+  gap: 5px;
+  margin: 10px 0px 15px 0px;
+  font-weight: unset;
+  font-size: 0.8rem;
+}
+
+.selectedStockContainerTitle {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.selectedStockContainer > h3 {
+  padding: 0px;
+  margin: 0px 0px 10px 0px;
+  text-decoration: underline;
+}
+
+.selectedStockTextTitle {
+  font-weight: bold;
+  font-size: 0.8rem;
+}
+
+.selectedStockText {
+  display: flex;
+  flex-direction: row;
+  /* align-items: center; */
+  justify-content: flex-start;
+  gap: 5px;
+  margin: 0px 0px 5px 0px;
+  font-weight: unset;
+  font-size: 0.8rem;
+}
+.spyGlass {
+  font-weight: light;
+  text-decoration: underline;
+  cursor: pointer;
+}

@@ -1,0 +1,46 @@
+.calculatedBalanceValueRow {
+  font-weight: bolder;
+  margin: 2px 4px 0px 0px;
+}
+.calculatedBalanceValueRow > td {
+  padding-bottom: 5px;
+}
+
+.underNetTexts {
+  font-weight: unset;
+  margin-top: 0px;
+  font-size: 0.8rem;
+}
+
+.ownerText {
+  font-weight: unset;
+  margin-top: 2px;
+  font-size: 0.8rem;
+}
+
+.propertyName {
+  font-weight: bolder;
+  margin: 2px 4px 0px 0px;
+}
+
+.valueBaseCurrency {
+  font-weight: unset;
+  margin-top: 2px;
+  font-size: 0.8rem;
+}
+
+.valueBaseCurrency {
+  font-weight: unset;
+  margin-top: 5px;
+  font-size: 0.8rem;
+}
+
+.PropertyLeftBox {
+  cursor: pointer;
+}
+
+.valuesTable {
+  font-weight: unset;
+  margin-top: 2px;
+  font-size: 0.8rem;
+}

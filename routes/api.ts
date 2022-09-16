@@ -47,6 +47,11 @@ router.get("/getinvestmentsnettotal", dbQueryController.getInvestmentsTotal);
 
 router.get("/getinvestmentdata", dbQueryController.getInvestmentsData);
 
+router.get(
+  "/searchforcompanybyname",
+  dbQueryController.searchForStockCompanyByName
+);
+
 router.post("/updatepropertyvalue", dbQueryController.updatePropValue);
 
 module.exports = router;

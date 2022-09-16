@@ -65,30 +65,11 @@ module.exports = () => {
           },
         },
       },
-      holding_currency_symbol: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        validate: {
-          len: {
-            args: [1, 1],
-            msg: "Currency symbol value must be 1 character long.",
-          },
-        },
-      },
       holding_quantity_held: {
         type: DataTypes.INTEGER,
         allowNull: false,
       },
-      holding_current_price: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        validate: {
-          isInt: {
-            args: true,
-            msg: "Price must be a number (integer I.e. 152p or 152c).",
-          },
-        },
-      },
+
       holding_cost_total_value: {
         type: DataTypes.INTEGER,
         allowNull: false,
@@ -98,20 +79,14 @@ module.exports = () => {
         allowNull: false,
         defaultValue: false,
       },
-      virtual_BaseCurrencyValue: {
-        type: DataTypes.VIRTUAL,
-        get() {
-          return (
-            `${this.holding_quantity_held}` * `${this.holding_current_price}`
-          );
-        },
-        set(value: any) {
-          throw new Error("Do not try to set the virtual value!");
-        },
-      },
     },
 
     {
+      indexes: [
+        {
+          fields: ["holding_market_identifier"],
+        },
+      ],
       timestamps: false,
     }
   );

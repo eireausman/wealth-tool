@@ -11,7 +11,17 @@ module.exports = () => {
         unique: true,
         primaryKey: true,
       },
-      exchangeCode: {
+      exchange_name: {
+        type: DataTypes.STRING,
+        allowNull: true,
+        validate: {
+          len: {
+            args: [0 - 225],
+            msg: "Code must be shorter than 225 characters in length.",
+          },
+        },
+      },
+      exchange_code: {
         type: DataTypes.STRING,
         allowNull: false,
         validate: {
@@ -21,8 +31,24 @@ module.exports = () => {
           },
         },
       },
+      exchange_currency_code: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate: {
+          len: {
+            args: [0 - 3],
+            msg: "Code must be shorter than 3 characters in length.",
+          },
+        },
+      },
     },
     {
+      indexes: [
+        {
+          unique: true,
+          fields: ["exchange_code"],
+        },
+      ],
       timestamps: false,
     }
   );

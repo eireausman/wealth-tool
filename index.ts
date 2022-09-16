@@ -12,7 +12,7 @@ const LocalStrategy = require("passport-local").Strategy;
 import express, { Express, NextFunction, Request, Response } from "express";
 import dotenv from "dotenv";
 import { findOneUser } from "./modules/database_actions";
-import updateStockMarkets from "./modules/getMarketsList";
+
 import { userDataInterface, passportUser } from "./types/typeInterfaces";
 
 const { connectoDB, sequelize } = require("./modules/database_connect");
@@ -23,20 +23,41 @@ dotenv.config();
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
 var apiRouter = require("./routes/api");
-var fxRateUpdater = require("./modules/getFXRates");
 
-var cron = require("node-cron");
+import updateFXRates from "./modules/getFXRates";
+import { updateStockMarketCodes } from "./modules/getMarketsList";
+import { updateStockCompaniesListsByMarket } from "./modules/getCompaniesByMarket";
+import { getCompanyPriceData } from "./modules/getCompanyPriceData";
 
 const app: Express = express();
 
 const port = process.env.PORT;
 
-cron.schedule("59 * * * * *", () => {
-  // run the update FX Rates job every minute.
-  // It checks if the API should be called to protect overuse / charging of API.  Cost is a DB call each minute.
-  // follow the function to see the limiting condition.
-  fxRateUpdater();
-});
+if (process.env.API_SCHEDULEDCALLS_SWITCH === "ON") {
+  var cron = require("node-cron");
+  cron.schedule("01 * * * * *", () => {
+    // run the update FX Rates job every minute.
+    // It checks if the API should be called to protect overuse / charging of API.  Cost is a DB call each minute.
+    // follow the function to see the limiting condition.
+    updateFXRates();
+    // similarly, the below inserts new listed companies for the in-scope exchanges (those in the stock_markets table)
+    updateStockCompaniesListsByMarket();
+  });
+
+  cron.schedule("01 * * * * *", () => {
+    // run a check for any price update requirements and get prices from API if required.
+    getCompanyPriceData();
+  });
+
+  // if desired, all available global markets (API dependent) can be uploaded to the stock_markets table.  This will have an API cost impact
+  // because the companies for those markets will then be retrieved, potentially along with a price request per company.
+  // uncomment the below if this all markets are required.
+  // The stock market name is not available in the API, so for new additions, names will need adding into the table directly.
+  // cron.schedule("* * * * * 1", () => {
+  //   // run the update market codes once every week on a Monday (1)
+  //   updateStockMarketCodes();
+  // });
+}
 
 const SequelizeStore = require("connect-session-sequelize")(session.Store);
 var sqlSessionStore = new SequelizeStore({
@@ -65,6 +86,7 @@ passport.use(
         console.log("LOGIN: usename rejected");
         return done(null, false, { message: "Incorrect username" });
       }
+      console.log(userData);
 
       bcrypt.compare(
         password,

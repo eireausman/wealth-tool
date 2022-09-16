@@ -1,0 +1,64 @@
+.FXRatesTable {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  height: 200px;
+
+  background-color: #f0ebeb;
+  border-radius: 10px;
+  padding: 10px;
+}
+
+.FXRatesTableHeader {
+  font-weight: bolder;
+  width: calc(100% - 1rem);
+}
+.FXRatesTableHeader,
+.FXRatesTableDataGridRow {
+  display: grid;
+  grid-template-columns: 90px repeat(2, 90px);
+}
+
+.FXRatesTableDataContainer {
+  overflow: auto;
+}
+
+.FXRatesTableDataGridRow {
+  padding-bottom: 3px;
+  padding-top: 3px;
+  border-bottom: 1px dashed rgb(54, 52, 52);
+  font-size: 0.9rem;
+}
+
+.FXRatesTableDataGridRow:hover {
+  background-color: #cbcdd3;
+  cursor: pointer;
+}
+
+/* width */
+.FXRatesTableData::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+.FXRatesTableData::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+/* Handle */
+.FXRatesTableData::-webkit-scrollbar-thumb {
+  background: #888;
+}
+
+/* Handle on hover */
+.FXRatesTableData::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+.FXRatesTable > div.table-header {
+  font-weight: 700;
+}
+
+.FXRatesTable > div {
+  border-bottom: 1px solid black;
+}

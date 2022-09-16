@@ -1,0 +1,81 @@
+.investmentsTable {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  height: 200px;
+  width: 900px;
+  background-color: #f0ebeb;
+  border-radius: 10px;
+  padding: 10px;
+}
+
+.investmentsTableHeader {
+  font-weight: bolder;
+  width: calc(100% - 1rem);
+}
+.investmentsTableHeader,
+.investmentsTableDataGridRow {
+  display: grid;
+  grid-template-columns: 30% repeat(7, 10%);
+}
+
+.investmentsTableDataContainer {
+  overflow: auto;
+}
+
+.investmentsTableDataGridRow {
+  padding-bottom: 3px;
+  padding-top: 3px;
+  border-bottom: 1px dashed rgb(54, 52, 52);
+}
+
+.investmentsTableDataGridRow:hover {
+  background-color: #cbcdd3;
+  cursor: pointer;
+}
+
+/* width */
+.investmentsTableData::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+.investmentsTableData::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+/* Handle */
+.investmentsTableData::-webkit-scrollbar-thumb {
+  background: #888;
+}
+
+/* Handle on hover */
+.investmentsTableData::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+.investmentsTable > div.table-header {
+  font-weight: 700;
+}
+
+.investmentsTable > div {
+  border-bottom: 1px solid black;
+}
+
+.columnInWideViewOnly {
+  display: inline;
+}
+
+@media only screen and (max-width: 900px) {
+  .investmentsTable {
+    width: 350px;
+  }
+  .investmentsTableHeader,
+  .investmentsTableDataGridRow {
+    display: grid;
+    grid-template-columns: 100px repeat(3, 80px);
+  }
+  .columnInWideViewOnly {
+    display: none;
+  }
+}

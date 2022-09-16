@@ -10,10 +10,13 @@ exports.createUserAccount = function (
   res: Response,
   next: NextFunction
 ) {
+  console.log(req.body);
+
   bcrypt.hash(req.body.password, 10, (err: any, hashedPassword: string) => {
     if (err) {
       return next(err);
     }
+
     createUser(req.body.username, hashedPassword).then((data) => {
       res.send(data);
     });

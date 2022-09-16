@@ -10,18 +10,23 @@ module.exports = () => {
         primaryKey: true,
         autoIncrement: true,
       },
-      holding_id: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-      },
-
-      holding_current_price: {
-        type: DataTypes.INTEGER,
+      holding_market_identifier: {
+        type: DataTypes.STRING,
         allowNull: false,
         validate: {
-          isInt: {
-            args: true,
-            msg: "Price must be a number (integer I.e. 152p or 152c).",
+          len: {
+            args: [3, 35],
+            msg: "Market indentifier must be between 3 and 20 characters in length.",
+          },
+        },
+      },
+      holding_current_price: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate: {
+          len: {
+            args: [0, 225],
+            msg: "Market indentifier must be between 3 and 255 characters in length.",
           },
         },
       },
@@ -37,6 +42,11 @@ module.exports = () => {
       },
     },
     {
+      indexes: [
+        {
+          fields: ["holding_market_identifier"],
+        },
+      ],
       timestamps: false,
     }
   );

@@ -38,31 +38,31 @@ exports.calculateTotalsByCurr = function (
     investSummary.forEach((item) => {
       if (
         item.holding_currency_code === currencyCode &&
-        typeof item.total === "number"
+        typeof item.total === "string"
       ) {
         totalsByCurr[currencyCode] =
           parseInt(totalsByCurr[currencyCode].toString()) +
-          parseInt(item.total.toString());
+          parseInt(item.total);
       }
     });
     CashAccSummary.forEach((item) => {
       if (
         item.account_currency_code === currencyCode &&
-        typeof item.total === "number"
+        typeof item.total === "string"
       ) {
         totalsByCurr[currencyCode] =
           parseInt(totalsByCurr[currencyCode].toString()) +
-          parseInt(item.total.toString());
+          parseInt(item.total);
       }
     });
     propSummary.forEach((item) => {
       if (
         item.property_valuation_currency === currencyCode &&
-        typeof item.total === "number"
+        typeof item.total === "string"
       ) {
         totalsByCurr[currencyCode] =
           parseInt(totalsByCurr[currencyCode].toString()) +
-          parseInt(item.total.toString());
+          parseInt(item.total);
       }
     });
   });
