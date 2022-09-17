@@ -119,7 +119,7 @@ const Properties: React.FC<PropertiesProps> = ({
                 initial={{ opacity: 0, scale: 0.5 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.5 }}
-                className="viewCardRow"
+                className="viewCardRow propertiesViewCardRow"
                 key={data.property_id}
               >
                 {propertyToEdit === data.property_id ? (

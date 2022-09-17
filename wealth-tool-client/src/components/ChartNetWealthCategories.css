@@ -2,3 +2,7 @@
   padding: 10px;
   color: white;
 }
+
+.viewCardChartInner {
+  min-width: 312px;
+}

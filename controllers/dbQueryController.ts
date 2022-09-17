@@ -361,20 +361,11 @@ exports.getInvestmentsTotal = async function (
       parseInt(investSummaryArray[item].holding_quantity_held) * pencePrice;
 
     const totalVal = parseInt(valCalc.toString());
-    console.log(totalVal);
 
     const rateQuery = await getFXRateFromDB(fromCurrency, selectedCurrency);
     const rate: number = rateQuery.currency_fxrate;
     investSummaryConvertedTotal += totalVal * rate;
   }
-
-  // for (let item in investSummaryArray) {
-  //   const fromCurrency: string = investSummaryArray[item].holding_currency_code;
-  //   const totalVal: number = parseInt(investSummaryArray[item].total);
-  //   const rateQuery = await getFXRateFromDB(fromCurrency, selectedCurrency);
-  //   const rate: number = rateQuery.currency_fxrate;
-  //   investSummaryConvertedTotal += totalVal * rate;
-  // }
 
   const returnNumber = parseInt(investSummaryConvertedTotal.toString());
 
@@ -549,8 +540,6 @@ exports.getInvestmentsData = async function (
       invest_baseCurr,
       selectedCurrency
     );
-
-    console.log(investmentsArray[i]);
 
     const pencePrice =
       parseFloat(

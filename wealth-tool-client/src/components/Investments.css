@@ -68,7 +68,7 @@
 
 @media only screen and (max-width: 900px) {
   .investmentsTable {
-    width: 350px;
+    width: 320px;
   }
   .investmentsTableHeader,
   .investmentsTableDataGridRow {

@@ -110,3 +110,9 @@
 .cashAccountsTable > div {
   border-bottom: 1px solid black;
 }
+
+@media only screen and (max-width: 770px) {
+  .cashAccountsTable {
+    min-width: 322px;
+  }
+}

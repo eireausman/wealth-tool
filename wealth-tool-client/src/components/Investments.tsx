@@ -107,7 +107,7 @@ const Investments: React.FC<InvestmentsProps> = ({
               <div className="table-header columnInWideViewOnly">Held at</div>
               <div className="table-header columnInWideViewOnly">Currency</div>
               <div className="table-header">Quantity</div>
-              <div className="table-header ">Price</div>
+              <div className="table-header columnInWideViewOnly">Price</div>
               <div className="table-header columnInWideViewOnly">Cost</div>
               <div className="table-header">Value</div>
             </header>

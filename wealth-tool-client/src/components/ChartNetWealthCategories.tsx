@@ -69,12 +69,12 @@ const ChartNetWealthCategories: React.FC<ChartNetWealthCategoriesProps> = ({
   };
 
   return (
-    <div className="viewCard">
+    <section className="viewCard">
       <span className="chartTitle"> NET WEALTH BREAKDOWN</span>
       <div className="viewCardRow viewCardChartInner">
         <Pie data={data} options={options} />
       </div>
-    </div>
+    </section>
   );
 };
 

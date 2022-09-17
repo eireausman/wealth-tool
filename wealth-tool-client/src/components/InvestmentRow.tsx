@@ -65,8 +65,10 @@ const InvestmentRow: React.FC<InvestmentRowProps> = ({
           {" "}
           {data.holding_currency_code}
         </div>
-        <div>{getDisplayNumber(data.holding_quantity_held)}</div>
-        <div>
+        <div className="columnInWideViewOnly">
+          {getDisplayNumber(data.holding_quantity_held)}
+        </div>
+        <div className="columnInWideViewOnly">
           <Tippy
             content={
               <span>
@@ -94,7 +96,7 @@ const InvestmentRow: React.FC<InvestmentRowProps> = ({
           {" "}
           {data.holding_cost_total_value}
         </div>
-        <div className="columnInWideViewOnly">
+        <div>
           {selectedCurrencySymbol}{" "}
           {getDisplayNumber(data.investmentConvertedValue)}
         </div>
