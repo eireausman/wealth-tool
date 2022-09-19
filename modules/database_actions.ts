@@ -4,6 +4,7 @@ import {
   AddNewInvestmentFormData,
   AddNewPropertyFormData,
   stockCompanys,
+  investmentUpdateStockFormData,
 } from "../types/typeInterfaces";
 
 const { DateTime } = require("luxon");
@@ -550,6 +551,26 @@ export async function updateAccountBalanceToDB(
   }
 }
 
+export async function updateSingleInvestmentToDB(
+  formData: investmentUpdateStockFormData
+) {
+  const today = new Date();
+  try {
+    await Investments.update(
+      {
+        holding_institution: formData.institution,
+        holding_quantity_held: formData.quantity,
+        holding_cost_total_value: formData.cost,
+      },
+      {
+        where: { holding_id: formData.holding_id },
+      }
+    );
+  } catch (err) {
+    return err;
+  }
+}
+
 export async function getPropertyDataFromDB(reslocalsuser: string) {
   try {
     const usersPropertyDataQuery = await User.findOne({
@@ -604,7 +625,6 @@ export async function getInvestmentDataFromDB(reslocalsuser: string) {
 export async function getPosInvestmentTotalsByCurrency(reslocalsuser: string) {
   try {
     const usersInvestmentData = await User.findOne({
-      group: ["holding_currency_code"],
       where: {
         users_id: reslocalsuser,
       },
@@ -613,27 +633,20 @@ export async function getPosInvestmentTotalsByCurrency(reslocalsuser: string) {
 
         where: {
           soft_deleted: 0,
-          // holding_current_price: {
-          //   [Op.gt]: 0,
-          // },
         },
-
-        // attributes: [
-        //   "holding_currency_code",
-        //   // [
-        //   //   sequelize.literal(
-        //   //     "SUM(COALESCE(holding_current_price, 0) * COALESCE(holding_quantity_held, 0))"
-        //   //   ),
-        //   //   "total",
-        //   // ],
-        // ],
         include: {
           model: InvestmentPriceHistory,
           limit: 1,
           order: [["price_asatdate", "DESC"]],
+          where: {
+            holding_current_price: {
+              [Op.gt]: 0,
+            },
+          },
         },
       },
     });
+
     return await usersInvestmentData;
   } catch (err) {
     console.log(err);

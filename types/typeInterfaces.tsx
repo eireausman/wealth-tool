@@ -51,6 +51,14 @@ export interface AddNewInvestmentFormData {
   stockMarket?: string;
 }
 
+export interface investmentUpdateStockFormData {
+  [key: string]: string | number;
+  holding_id: number;
+  quantity: number;
+  cost: number;
+  institution: string;
+}
+
 export interface AddNewPropertyFormData {
   [key: string]: string | number | undefined;
   propName?: string;

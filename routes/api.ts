@@ -39,6 +39,11 @@ router.post(
   dbQueryController.updateAccountBalance
 );
 
+router.post(
+  "/updatesingleinvestment",
+  dbQueryController.updateSingleInvestment
+);
+
 router.get("/getcashaccountnettotal", dbQueryController.getCashAccountNetTotal);
 
 router.get("/getpropertynettotal", dbQueryController.getPropertyNetTotal);

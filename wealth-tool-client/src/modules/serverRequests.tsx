@@ -215,6 +215,29 @@ const getCompanyStockByName = async (searchString: string) => {
   }
 };
 
+const updateInvestmentData = async (
+  holding_id: number,
+  cost: number,
+  institution: string,
+  quantity: number
+) => {
+  const formData = {
+    holding_id,
+    cost,
+    institution,
+    quantity,
+  };
+  try {
+    const serverResponse = await axios.post(
+      "/api/updatesingleinvestment",
+      formData
+    );
+    return await serverResponse.data;
+  } catch (err) {
+    console.error(err);
+  }
+};
+
 const updatePropertyValue = async (
   property_id: number,
   property_valuation: number,
@@ -270,4 +293,5 @@ export {
   checkifuserloggedin,
   logUserOut,
   getCompanyStockByName,
+  updateInvestmentData,
 };

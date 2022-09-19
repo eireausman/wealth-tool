@@ -21,6 +21,7 @@ import {
   updateAccountBalanceToDB,
   updatePropValueToDB,
   searchForStockCompanyByNameFromDB,
+  updateSingleInvestmentToDB,
 } from "../modules/database_actions";
 import { getCompanyPriceData } from "../modules/getCompanyPriceData";
 
@@ -164,6 +165,18 @@ exports.getTotalPosAssetValue = async function (
   if (investSummary) {
     investSummaryArray = JSON.parse(JSON.stringify(investSummary.investments));
   }
+
+  investSummaryArray.forEach((data) => {
+    console.log(data.holding_currency_code);
+
+    const pencePrice =
+      parseFloat(data.investment_price_histories[0].holding_current_price) /
+      100;
+
+    const total = data.holding_quantity_held * pencePrice;
+    data.total = total.toString();
+  });
+
   let CashAccSummaryArray: Array<cashAccountAPIData> = [];
   if (CashAccSummary) {
     CashAccSummaryArray = JSON.parse(
@@ -439,6 +452,18 @@ exports.updateAccountBalance = function (
   ).then((data) => {
     res.send(data);
   });
+};
+
+exports.updateSingleInvestment = function (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  const updateBalanceRequest = updateSingleInvestmentToDB(req.body).then(
+    (data) => {
+      res.send(data);
+    }
+  );
 };
 
 exports.updatePropValue = function (

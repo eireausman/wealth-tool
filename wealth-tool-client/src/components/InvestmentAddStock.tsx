@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useRef, useEffect } from "react";
+import React, { Fragment, useState } from "react";
 import { motion } from "framer-motion";
 import { companyNameSearchResults } from "../../../types/typeInterfaces";
 import {
