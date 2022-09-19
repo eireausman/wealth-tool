@@ -1,0 +1,11 @@
+.narrowOptionsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.wealthSummaryNarrow {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}

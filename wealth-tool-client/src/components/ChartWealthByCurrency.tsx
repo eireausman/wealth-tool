@@ -30,7 +30,7 @@ const ChartNetWealthCategories: React.FC<ChartNetWealthCategoriesProps> = ({
   };
 
   useEffect(() => {
-    getChartDataFromDB();
+    // getChartDataFromDB();
   }, [triggerRecalculations, selectedCurrencyCode]);
 
   ChartJS.register(ArcElement, Tooltip, Legend);
@@ -40,7 +40,7 @@ const ChartNetWealthCategories: React.FC<ChartNetWealthCategoriesProps> = ({
 
     datasets: [
       {
-        label: `Proportion of Net Wealth`,
+        label: `Wealth By Currency`,
         data: constructedChartData,
         backgroundColor: [
           "rgba(255, 99, 132, 0.2)",

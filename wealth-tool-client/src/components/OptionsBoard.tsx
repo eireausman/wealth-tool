@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef, Fragment } from "react";
 import { OptionsBoardProps } from "../../../types/typeInterfaces";
 import {
   getTotalPosAssets,
@@ -6,9 +6,12 @@ import {
   logUserOut,
 } from "../modules/serverRequests";
 import "./OptionsBoard.css";
-import getDisplayNumber from "../modules/getDisplayNumber";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import useWindowSize from "../hooks/windowSize";
+import OptionsBoardNarrow from "./OptionsBoardNarrow";
+import OptionsBoardWide from "./OptionsBoardWide";
+import OptionsBoardLogoutLink from "./OptionsBoardLogoutLink";
 
 const OptionsBoard: React.FC<OptionsBoardProps> = ({
   selectedCurrencyCode: selectedCurrency,
@@ -23,6 +26,8 @@ const OptionsBoard: React.FC<OptionsBoardProps> = ({
   const [totalDebtValue, settotalDebtValue] = useState<number>(0);
   const [netWealthValue, setnetWealthValue] = useState<number>(0);
   const [totalPosAssets, settotalPosAssets] = useState<number>(0);
+  const { windowHeight, windowWidth } = useWindowSize();
+  const wideWidthLimit = useRef<number>(920);
 
   const setCurrency = (e: React.FormEvent<EventTarget>) => {
     const target = e.target as HTMLSelectElement;
@@ -74,86 +79,37 @@ const OptionsBoard: React.FC<OptionsBoardProps> = ({
   }, [selectedCurrency, triggerRecalculations]);
 
   return (
-    <div className="optionsBoard">
-      <label htmlFor="Currency">
-        Show values in:{" "}
-        <select
-          name="Currency"
-          id="Currency"
-          onChange={setCurrency}
-          value={selectedCurrency}
-          className="currencySelectElement"
-        >
-          {currencyCodesFromDB?.map((data) => (
-            <option key={data.id} value={data.currency_code}>
-              {data.currency_name}
-            </option>
-          ))}
-        </select>
-      </label>
-      <div className="wealthSummary">
-        <div className="totalAssetBox">
-          <b>Net Wealth</b>{" "}
-          <span
-            className={
-              netWealthValue < 0
-                ? "optionsBoardNegative"
-                : "optionsBoardPositive"
-            }
-          >
-            {selectedCurrencySymbol}
-            {getDisplayNumber(netWealthValue)}
-          </span>
-        </div>{" "}
-        <div className="totalAssetBox">
-          <b>Total Assets</b>{" "}
-          <span
-            className={
-              totalPosAssets < 0
-                ? "optionsBoardNegative"
-                : "optionsBoardPositive"
-            }
-          >
-            {selectedCurrencySymbol}
-            {getDisplayNumber(totalPosAssets)}
-          </span>
-        </div>
-        <div className="totalAssetBox">
-          <b>Total Debt </b>
-          <span
-            className={
-              totalDebtValue < 0
-                ? "optionsBoardNegative"
-                : "optionsBoardPositive"
-            }
-          >
-            {selectedCurrencySymbol}
-            {getDisplayNumber(totalDebtValue)}
-          </span>
-        </div>
-      </div>
-
-      {loggedInUser === undefined ? (
-        <div className="loginBox">
-          <div className="loginBoxLink">
-            <Link to="/login">Login</Link>
-          </div>
-          <div className="loginBoxLink">
-            <Link to="/createaccount">Create Account</Link>
-          </div>{" "}
-        </div>
+    <Fragment>
+      {windowWidth > wideWidthLimit.current ? (
+        <OptionsBoardWide
+          windowWidth={windowWidth}
+          wideWidthLimit={wideWidthLimit.current}
+          setCurrency={setCurrency}
+          selectedCurrency={selectedCurrency}
+          currencyCodesFromDB={currencyCodesFromDB}
+          selectedCurrencySymbol={selectedCurrencySymbol}
+          netWealthValue={netWealthValue}
+          totalPosAssets={totalPosAssets}
+          totalDebtValue={totalDebtValue}
+          performLogoutAction={performLogoutAction}
+          loggedInUser={loggedInUser}
+        />
       ) : (
-        <motion.div
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
-          className="loginBox"
-        >
-          <div className="loginBoxLink" onClick={performLogoutAction}>
-            Logout ({loggedInUser})
-          </div>
-        </motion.div>
+        <OptionsBoardNarrow
+          windowWidth={windowWidth}
+          wideWidthLimit={wideWidthLimit.current}
+          setCurrency={setCurrency}
+          selectedCurrency={selectedCurrency}
+          currencyCodesFromDB={currencyCodesFromDB}
+          selectedCurrencySymbol={selectedCurrencySymbol}
+          netWealthValue={netWealthValue}
+          totalPosAssets={totalPosAssets}
+          totalDebtValue={totalDebtValue}
+          performLogoutAction={performLogoutAction}
+          loggedInUser={loggedInUser}
+        />
       )}
-    </div>
+    </Fragment>
   );
 };
 

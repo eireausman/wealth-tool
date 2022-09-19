@@ -159,6 +159,64 @@ export interface propertiesAPIData {
   propertyValuationInSelCurr: number;
 }
 
+export interface OptionsBoardLogoutLinkProps {
+  performLogoutAction: () => Promise<void>;
+  loggedInUser: string | false;
+  windowWidth: number;
+  wideWidthLimit: number;
+}
+
+export interface OptionsBoardWideProps {
+  setCurrency: (e: React.FormEvent<EventTarget>) => void;
+  selectedCurrency: string;
+  currencyCodesFromDB: currencyCodesAPIData[] | undefined;
+  selectedCurrencySymbol: string;
+  netWealthValue: number;
+  totalPosAssets: number;
+  totalDebtValue: number;
+  windowWidth: number;
+  wideWidthLimit: number;
+  performLogoutAction: () => Promise<void>;
+  loggedInUser: string | false;
+}
+
+export interface OptionsBoardNarrowProps {
+  setCurrency: (e: React.FormEvent<EventTarget>) => void;
+  selectedCurrency: string;
+  currencyCodesFromDB: currencyCodesAPIData[] | undefined;
+  selectedCurrencySymbol: string;
+  netWealthValue: number;
+  totalPosAssets: number;
+  totalDebtValue: number;
+  windowWidth: number;
+  wideWidthLimit: number;
+  performLogoutAction: () => Promise<void>;
+  loggedInUser: string | false;
+}
+
+export interface OptionsBoardNetWealthProps {
+  netWealthValue: number;
+  selectedCurrencySymbol: string;
+}
+
+export interface OptionsBoardTotalAssetsProps {
+  selectedCurrencySymbol: string;
+  totalPosAssets: number;
+}
+
+export interface OptionsBoardTotalDebtProps {
+  totalDebtValue: number;
+  selectedCurrencySymbol: string;
+}
+
+export interface OptionsBoardCurrencySelectProps {
+  setCurrency: (e: React.FormEvent<EventTarget>) => void;
+  selectedCurrency: string;
+  currencyCodesFromDB: currencyCodesAPIData[] | undefined;
+  windowWidth: number;
+  wideWidthLimit: number;
+}
+
 export interface totalsByCurr {
   [key: string]: number;
 }
