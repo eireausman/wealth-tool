@@ -51,7 +51,6 @@
   flex-direction: column;
   overflow: hidden;
   height: 200px;
-
   background-color: #f0ebeb;
   border-radius: 10px;
   padding: 10px;
@@ -81,26 +80,6 @@
 .cashAccountsTableDataGridRow:hover {
   background-color: #cbcdd3;
   cursor: pointer;
-}
-
-/* width */
-.cashAccountsTableData::-webkit-scrollbar {
-  width: 10px;
-}
-
-/* Track */
-.cashAccountsTableData::-webkit-scrollbar-track {
-  background: #f1f1f1;
-}
-
-/* Handle */
-.cashAccountsTableData::-webkit-scrollbar-thumb {
-  background: #888;
-}
-
-/* Handle on hover */
-.cashAccountsTableData::-webkit-scrollbar-thumb:hover {
-  background: #555;
 }
 
 .cashAccountsTable > div.table-header {

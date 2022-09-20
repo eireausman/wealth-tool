@@ -106,7 +106,7 @@ const getPropertiesData = async (selectedCurrency: string) => {
     const serverResponse = await axios.get(
       `/api/getpropertiesdata?selectedcurrency=${selectedCurrency}`
     );
-    return await serverResponse.data;
+    return await serverResponse;
   } catch (err) {
     console.error(err);
   }
@@ -118,7 +118,7 @@ const getCashAccountData = async (selectedCurrency: string) => {
       `/api/getcashaccountdata?selectedcurrency=${selectedCurrency}`
     );
 
-    return await serverResponse.data;
+    return await serverResponse;
   } catch (err) {
     console.error(err);
   }
@@ -185,6 +185,45 @@ const getTotalPosAssets = async (selectedCurrency: string) => {
       `/api/gettotalposassets?selectedcurrency=${selectedCurrency}`
     );
 
+    return await serverResponse;
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+const deleteCashAccount = async (id: number) => {
+  try {
+    // post as soft delete rather than full db removal of record
+    const serverResponse = await axios.post(`/api/deletecashaccount`, {
+      account_id: id,
+    });
+
+    return await serverResponse;
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+const deleteProperty = async (id: number) => {
+  try {
+    // post as soft delete rather than full db removal of record
+    const serverResponse = await axios.post(`/api/deleteproperty`, {
+      property_id: id,
+    });
+
+    return await serverResponse.data;
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+const deleteInvestment = async (id: number) => {
+  try {
+    // post as soft delete rather than full db removal of record
+    const serverResponse = await axios.post(`/api/deleteinvestment`, {
+      holding_id: id,
+    });
+
     return await serverResponse.data;
   } catch (err) {
     console.error(err);
@@ -197,7 +236,7 @@ const getTotalDebtValue = async (selectedCurrency: string) => {
       `/api/getdebttotalvalue?selectedcurrency=${selectedCurrency}`
     );
 
-    return await serverResponse.data;
+    return await serverResponse;
   } catch (err) {
     console.error(err);
   }
@@ -265,7 +304,7 @@ const getInvestmentData = async (selectedCurrency: string) => {
       `/api/getinvestmentdata?selectedcurrency=${selectedCurrency}`
     );
 
-    return await serverResponse.data;
+    return await serverResponse;
   } catch (err) {
     console.error(err);
   }
@@ -294,4 +333,7 @@ export {
   logUserOut,
   getCompanyStockByName,
   updateInvestmentData,
+  deleteCashAccount,
+  deleteProperty,
+  deleteInvestment,
 };

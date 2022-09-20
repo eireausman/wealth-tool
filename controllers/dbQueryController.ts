@@ -22,6 +22,9 @@ import {
   updatePropValueToDB,
   searchForStockCompanyByNameFromDB,
   updateSingleInvestmentToDB,
+  deleteCashAccountFromDB,
+  deletePropertyFromDB,
+  deleteInvestmentFromDB,
 } from "../modules/database_actions";
 import { getCompanyPriceData } from "../modules/getCompanyPriceData";
 
@@ -167,8 +170,6 @@ exports.getTotalPosAssetValue = async function (
   }
 
   investSummaryArray.forEach((data) => {
-    console.log(data.holding_currency_code);
-
     const pencePrice =
       parseFloat(data.investment_price_histories[0].holding_current_price) /
       100;
@@ -439,6 +440,36 @@ exports.getCashAccountData = async function (
     cashAccountArrray[i].accountBalConvertedValue = accountBalConvertedValue;
   }
   res.send(cashAccountArrray);
+};
+
+exports.deleteCashAccount = async function (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  const deleteRequest = await deleteCashAccountFromDB(req.body.account_id);
+
+  res.send(deleteRequest);
+};
+
+exports.deleteProperty = async function (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  const deleteRequest = await deletePropertyFromDB(req.body.property_id);
+
+  res.send(deleteRequest);
+};
+
+exports.deleteInvestment = async function (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  const deleteRequest = await deleteInvestmentFromDB(req.body.holding_id);
+
+  res.send(deleteRequest);
 };
 
 exports.updateAccountBalance = function (

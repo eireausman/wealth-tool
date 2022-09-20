@@ -212,6 +212,18 @@ export interface OptionsBoardTotalAssetsProps {
   totalPosAssets: number;
 }
 
+export interface SoftDeleteButtonProps {
+  setshowSoftDelConfirm: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+export interface SoftDeleteButtonConfirmProps {
+  assetType: string;
+  assetID: number;
+  refreshBalances: () => void;
+  triggerRecalculations: number;
+  settriggerRecalculations: React.Dispatch<React.SetStateAction<number>>;
+  cancelForm: () => void;
+}
 export interface OptionsBoardTotalDebtProps {
   totalDebtValue: number;
   selectedCurrencySymbol: string;

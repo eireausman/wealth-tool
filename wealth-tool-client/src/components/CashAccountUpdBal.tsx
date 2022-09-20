@@ -3,6 +3,8 @@ import { updateCashAccountBalance } from "../modules/serverRequests";
 import { CashAccountUpdateBalProps } from "../../../types/typeInterfaces";
 import "./CashAccountUpdBal.css";
 import { motion } from "framer-motion";
+import SoftDeleteButton from "./SoftDeleteButton";
+import SoftDeleteButtonConfirm from "./SoftDeleteButtonConfirm";
 
 const CashAccountUpdBal: React.FC<CashAccountUpdateBalProps> = ({
   data,
@@ -12,6 +14,7 @@ const CashAccountUpdBal: React.FC<CashAccountUpdateBalProps> = ({
   triggerRecalculations,
 }) => {
   const [updatedBalance, setupdatedBalance] = useState<number>(0);
+  const [showSoftDelConfirm, setshowSoftDelConfirm] = useState<boolean>(false);
 
   useEffect(() => {
     newAccountBalanceInputBox.current !== null &&
@@ -28,8 +31,7 @@ const CashAccountUpdBal: React.FC<CashAccountUpdateBalProps> = ({
     setupdatedBalance(number);
   };
 
-  const cancelForm = (e: React.FormEvent<EventTarget>) => {
-    e.preventDefault();
+  const cancelForm = () => {
     setShowEditAccountForm(false);
   };
 
@@ -56,7 +58,22 @@ const CashAccountUpdBal: React.FC<CashAccountUpdateBalProps> = ({
         className="editAccountBalForm"
         onSubmit={saveNewAccountBalance}
       >
-        <span className="accountNickname">{data.account_nickname}</span>
+        <span className="accountNickname">
+          {data.account_nickname}
+          {showSoftDelConfirm === false && (
+            <SoftDeleteButton setshowSoftDelConfirm={setshowSoftDelConfirm} />
+          )}
+        </span>
+        {showSoftDelConfirm === true && (
+          <SoftDeleteButtonConfirm
+            assetType="cashAccount"
+            assetID={data.account_id}
+            refreshBalances={updatedAllAccountBalances}
+            triggerRecalculations={triggerRecalculations}
+            settriggerRecalculations={settriggerRecalculations}
+            cancelForm={cancelForm}
+          />
+        )}
         <div className="currencySymbolWrapper">
           {data.currencySymbol}
           <input

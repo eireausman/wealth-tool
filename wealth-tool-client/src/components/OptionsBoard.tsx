@@ -12,6 +12,7 @@ import useWindowSize from "../hooks/windowSize";
 import OptionsBoardNarrow from "./OptionsBoardNarrow";
 import OptionsBoardWide from "./OptionsBoardWide";
 import OptionsBoardLogoutLink from "./OptionsBoardLogoutLink";
+import { AxiosResponse } from "axios";
 
 const OptionsBoard: React.FC<OptionsBoardProps> = ({
   selectedCurrencyCode: selectedCurrency,
@@ -50,27 +51,47 @@ const OptionsBoard: React.FC<OptionsBoardProps> = ({
   };
 
   const getValueTotalPosAssets = async () => {
-    const totalPostAssetsData = await getTotalPosAssets(selectedCurrency);
+    const totalPostAssetsData: AxiosResponse<any, any> | undefined =
+      await getTotalPosAssets(selectedCurrency);
 
-    const totalPosAssetsInteger = parseInt(totalPostAssetsData.convertedTotal);
-
-    settotalPosAssets(totalPosAssetsInteger);
-    return totalPosAssetsInteger;
+    if (
+      totalPostAssetsData !== undefined &&
+      totalPostAssetsData.status === 200
+    ) {
+      const totalPosAssetsInteger = parseInt(
+        totalPostAssetsData.data.convertedTotal
+      );
+      settotalPosAssets(totalPosAssetsInteger);
+      return totalPosAssetsInteger;
+    }
   };
 
   const getValueTotalDeb = async () => {
-    const totalDebtServerData = await getTotalDebtValue(selectedCurrency);
+    const totalDebtServerData: AxiosResponse<any, any> | undefined =
+      await getTotalDebtValue(selectedCurrency);
+    if (totalDebtServerData !== undefined) {
+      const totalDebtInteger = parseInt(
+        totalDebtServerData.data.convertedTotal
+      );
 
-    const totalDebtInteger = parseInt(totalDebtServerData.convertedTotal);
-
-    settotalDebtValue(totalDebtInteger);
-    return totalDebtInteger;
+      settotalDebtValue(totalDebtInteger);
+      return totalDebtInteger;
+    }
   };
 
   const getCalculatedNetWealth = async () => {
     Promise.all([getValueTotalPosAssets(), getValueTotalDeb()]).then((data) => {
-      let calculatedNetWealth = data[0] + data[1];
-      setnetWealthValue(calculatedNetWealth);
+      if (
+        typeof data[0] === "number" &&
+        !isNaN(data[0]) &&
+        typeof data[1] === "number" &&
+        !isNaN(data[1])
+      ) {
+        let calculatedNetWealth = data[0] + data[1];
+        setnetWealthValue(calculatedNetWealth);
+      } else {
+        setnetWealthValue(0);
+      }
     });
   };
 

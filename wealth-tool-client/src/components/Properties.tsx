@@ -17,6 +17,8 @@ import {
   getPropertiesData,
   getNetPropertyTotal,
 } from "../modules/serverRequests";
+import { AxiosResponse } from "axios";
+import NoAssets from "./NoAssetsMessage";
 
 const Properties: React.FC<PropertiesProps> = ({
   selectedCurrencyCode,
@@ -26,6 +28,7 @@ const Properties: React.FC<PropertiesProps> = ({
   triggerRecalculations,
 }) => {
   const [showSpinner, setShowSpinner] = useState<boolean>(true);
+  const [showNoAccountsMessage, setshowNoAccountsMessage] = useState(false);
 
   const [propertyToEdit, setpropertyToEdit] = useState<number>();
   const [editingPropertyDetails, seteditingPropertyDetails] =
@@ -36,13 +39,24 @@ const Properties: React.FC<PropertiesProps> = ({
   const [netTotalPropValue, setnetTotalPropValue] = useState<number>(0);
 
   const refreshPropertiesValues = async () => {
-    const propData: Array<propertiesAPIData> = await getPropertiesData(
-      selectedCurrencyCode
-    );
-    setpropertyAccAPIData(propData);
+    setpropertyAccAPIData(undefined);
+    setShowSpinner(true);
+    const propData: AxiosResponse<any, any> | undefined =
+      await getPropertiesData(selectedCurrencyCode);
+    if (
+      propData !== undefined &&
+      propData.status === 200 &&
+      propData.data !== undefined
+    ) {
+      setpropertyAccAPIData(propData.data);
+      setshowNoAccountsMessage(false);
+    } else if (propData !== undefined && propData.status === 204) {
+      setshowNoAccountsMessage(true);
+    }
 
     const total = await getNetPropertyTotal(selectedCurrencyCode);
     setnetTotalPropValue(total);
+    setShowSpinner(false);
   };
 
   //reload API data if currency changes:
@@ -89,31 +103,46 @@ const Properties: React.FC<PropertiesProps> = ({
 
   return (
     <section className="viewCard">
-      <Fragment>
-        {showSpinner === true ? (
-          <CardSpinner cardTitle="Properties" />
-        ) : (
-          <Fragment>
-            <motion.div
-              initial={{ opacity: 0, scale: 0.5 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5 }}
-              className="viewCardHeaderRow"
-            >
-              <h3 className="viewCardHeading">PROPERTY</h3>
+      {showSpinner === true && <CardSpinner cardTitle="Properties" />}
+      {showNoAccountsMessage === true && (
+        <Fragment>
+          <NoAssets
+            cardTitle="Property"
+            cardText="No properties being tracked"
+            assetType="property"
+          />
+          <motion.button
+            whileTap={{ scale: 0.9 }}
+            className="buttonWhite buttonAddNewEntry"
+            onClick={showAddPropForm}
+          >
+            + Add Property
+          </motion.button>
+        </Fragment>
+      )}
+      {propertyAccAPIData !== undefined && (
+        <Fragment>
+          <motion.div
+            initial={{ opacity: 0, scale: 0.5 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5 }}
+            className="viewCardHeaderRow"
+          >
+            <h3 className="viewCardHeading">PROPERTY</h3>
 
-              <h3 className="viewCardTotal">
-                {selectedCurrencySymbol} {getDisplayNumber(netTotalPropValue)}
-                <motion.button
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                  className="buttonWhite buttonAddNewEntry"
-                  onClick={showAddPropForm}
-                >
-                  + Add Property
-                </motion.button>
-              </h3>
-            </motion.div>
+            <h3 className="viewCardTotal">
+              {selectedCurrencySymbol} {getDisplayNumber(netTotalPropValue)}
+              <motion.button
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                className="buttonWhite buttonAddNewEntry"
+                onClick={showAddPropForm}
+              >
+                + Add Property
+              </motion.button>
+            </h3>
+          </motion.div>
+          <div className="propertiesOflowContainer scrollbarstyles">
             {propertyAccAPIData?.map((data) => (
               <motion.div
                 initial={{ opacity: 0, scale: 0.5 }}
@@ -208,9 +237,10 @@ const Properties: React.FC<PropertiesProps> = ({
                 )}
               </motion.div>
             ))}
-          </Fragment>
-        )}
-      </Fragment>
+          </div>
+        </Fragment>
+      )}
+
       {showAddNewForm === true && (
         <div className="newAdditionModal" onClick={(e) => closeModal(e)}>
           <div className="newAdditionModalInner">

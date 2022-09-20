@@ -32,6 +32,12 @@ router.post("/addnewcashaccount", dbQueryController.addNewCashAccount);
 
 router.get("/gettotalposassets", dbQueryController.getTotalPosAssetValue);
 
+router.post("/deletecashaccount", dbQueryController.deleteCashAccount);
+
+router.post("/deleteproperty", dbQueryController.deleteProperty);
+
+router.post("/deleteinvestment", dbQueryController.deleteInvestment);
+
 router.get("/getdebttotalvalue", dbQueryController.getDebtTotalValue);
 
 router.post(

@@ -1,22 +1,18 @@
 import React, { useState, useEffect, Fragment } from "react";
 import { InvestmentsProps } from "../../../types/typeInterfaces";
-
 import { motion } from "framer-motion";
 import CardSpinner from "./CardSpinner";
 import "./Investments.css";
-import editIcon from "../assets/images/edit.png";
-
 import getDisplayNumber from "../modules/getDisplayNumber";
 import InvestmentAddStock from "./InvestmentAddStock";
-
+import InvestmentRow from "./InvestmentRow";
 import { investmentsAPIData } from "../../../types/typeInterfaces";
 import {
   getInvestmentData,
   getNetInvestmentTotal,
 } from "../modules/serverRequests";
-
-import InvestmentsUpdateStock from "./InvestmentsUpdateStock";
-import InvestmentRow from "./InvestmentRow";
+import NoAssets from "./NoAssetsMessage";
+import { AxiosResponse } from "axios";
 
 const Investments: React.FC<InvestmentsProps> = ({
   selectedCurrencyCode,
@@ -26,29 +22,34 @@ const Investments: React.FC<InvestmentsProps> = ({
   triggerRecalculations,
 }) => {
   const [showSpinner, setShowSpinner] = useState<boolean>(true);
-  const [stockIDToEdit, setStockIDToEdit] = useState<number>(-1);
+  const [showNoAccountsMessage, setshowNoAccountsMessage] = useState(false);
+
   const [showAddNewStockForm, setShowAddNewStockForm] =
     useState<boolean>(false);
   const [investmentAPIData, setinvestmentAPIData] =
     useState<Array<investmentsAPIData>>();
   const [investmentsTotalValue, setInvestmentsTotalValue] = useState<number>(0);
-  const [styleForHoverDiv, setStyleForHoverDiv] = useState<object>({
-    opacity: 0,
-  });
-  const [styleRowID, setstyleRowID] = useState<number>(-1);
 
   const refreshInvestmentsData = async () => {
-    const investData: Array<investmentsAPIData> = await getInvestmentData(
-      selectedCurrencyCode
-    );
-    setinvestmentAPIData(investData);
+    setinvestmentAPIData(undefined);
+    setShowSpinner(true);
+    const investData: AxiosResponse<any, any> | undefined =
+      await getInvestmentData(selectedCurrencyCode);
+
+    if (
+      investData !== undefined &&
+      investData.status === 200 &&
+      investData.data !== undefined
+    ) {
+      setinvestmentAPIData(investData.data);
+      setshowNoAccountsMessage(false);
+    } else if (investData !== undefined && investData.status === 204) {
+      setshowNoAccountsMessage(true);
+    }
 
     const total = await getNetInvestmentTotal(selectedCurrencyCode);
     setInvestmentsTotalValue(total);
-  };
-
-  const editStockID = (holding_id: number) => {
-    setStockIDToEdit(holding_id);
+    setShowSpinner(false);
   };
 
   //reload API data if currency changes:
@@ -76,9 +77,24 @@ const Investments: React.FC<InvestmentsProps> = ({
 
   return (
     <section className="viewCard">
-      {showSpinner === true ? (
-        <CardSpinner cardTitle="Investments" />
-      ) : (
+      {showSpinner === true && <CardSpinner cardTitle="Investments" />}
+      {showNoAccountsMessage === true && (
+        <Fragment>
+          <NoAssets
+            cardTitle="Investments"
+            cardText="No investments being tracked"
+            assetType="investment"
+          />
+          <motion.button
+            whileTap={{ scale: 0.9 }}
+            className="buttonWhite buttonAddNewEntry"
+            onClick={addANewStock}
+          >
+            + Add Stock
+          </motion.button>
+        </Fragment>
+      )}
+      {investmentAPIData !== undefined && (
         <Fragment>
           <motion.div
             initial={{ opacity: 0, scale: 0.5 }}
@@ -111,9 +127,10 @@ const Investments: React.FC<InvestmentsProps> = ({
               <div className="table-header columnInWideViewOnly">Cost</div>
               <div className="table-header">Value</div>
             </header>
-            <section className="investmentsTableDataContainer">
+            <section className="investmentsTableDataContainer scrollbarstyles">
               {investmentAPIData?.map((data, index) => (
                 <InvestmentRow
+                  key={data.holding_id}
                   data={data}
                   selectedCurrencySymbol={selectedCurrencySymbol}
                   refreshInvestmentsData={refreshInvestmentsData}
@@ -125,6 +142,7 @@ const Investments: React.FC<InvestmentsProps> = ({
           </section>
         </Fragment>
       )}
+
       {showAddNewStockForm === true && (
         <div className="newAdditionModal" onClick={(e) => closeModal(e)}>
           <div className="newAdditionModalInner">

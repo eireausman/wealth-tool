@@ -1,0 +1,14 @@
+.confirmContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  background-color: rgb(229, 131, 131);
+  margin: 10px 0px 10px 0px;
+  padding: 20px;
+  color: rgb(0, 0, 0);
+  border-radius: 5px;
+  border: 1px solid grey;
+  cursor: pointer;
+}

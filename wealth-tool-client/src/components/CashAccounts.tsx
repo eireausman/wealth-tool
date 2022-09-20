@@ -10,8 +10,10 @@ import {
   getCashAccountData,
   getNetCashAccountTotal,
 } from "../modules/serverRequests";
+import { AxiosResponse } from "axios";
 
 import CashAccountAccRow from "./CashAccountAccRow";
+import NoAssets from "./NoAssetsMessage";
 
 const CashAccounts: React.FC<CashAccountsProps> = ({
   selectedCurrencyCode,
@@ -22,32 +24,42 @@ const CashAccounts: React.FC<CashAccountsProps> = ({
 }) => {
   const [showSpinner, setShowSpinner] = useState<boolean>(true);
   const [showAddNewForm, setshowAddNewForm] = useState(false);
+  const [showNoAccountsMessage, setshowNoAccountsMessage] = useState(false);
   const [cashAccountNetTotal, setcashAccountNetTotal] = useState<number>(0);
 
   const [cashAccAPIData, setcashAccAPIData] =
     useState<Array<cashAccountAPIData>>();
 
   const updatedAllAccountBalances = async () => {
-    const cashAcData: Array<cashAccountAPIData> = await getCashAccountData(
-      selectedCurrencyCode
-    );
-    setcashAccAPIData(cashAcData);
+    setcashAccAPIData(undefined);
+    setShowSpinner(true);
+    const cashAccServerDataRequest: AxiosResponse<any, any> | undefined =
+      await getCashAccountData(selectedCurrencyCode);
+
+    if (
+      cashAccServerDataRequest !== undefined &&
+      cashAccServerDataRequest.status === 200 &&
+      cashAccServerDataRequest.data !== undefined
+    ) {
+      setcashAccAPIData(cashAccServerDataRequest.data);
+      setshowNoAccountsMessage(false);
+    } else if (
+      cashAccServerDataRequest !== undefined &&
+      cashAccServerDataRequest.status === 204
+    ) {
+      setshowNoAccountsMessage(true);
+    }
 
     const total = await getNetCashAccountTotal(selectedCurrencyCode);
     setcashAccountNetTotal(total);
+
+    setShowSpinner(false);
   };
 
   //reload API data if currency changes:
   useEffect(() => {
     updatedAllAccountBalances();
   }, [selectedCurrencyCode]);
-
-  // remove the loading status if cash account data populated in state
-  useEffect(() => {
-    if (cashAccAPIData && cashAccAPIData.length !== 0) {
-      setShowSpinner(false);
-    }
-  }, [cashAccAPIData]);
 
   const showAddNewCashAccForm = () => {
     setshowAddNewForm(true);
@@ -62,9 +74,24 @@ const CashAccounts: React.FC<CashAccountsProps> = ({
 
   return (
     <section className="viewCard">
-      {showSpinner === true ? (
-        <CardSpinner cardTitle="Cash Accounts" />
-      ) : (
+      {showSpinner === true && <CardSpinner cardTitle="Cash Accounts" />}
+      {showNoAccountsMessage === true && (
+        <Fragment>
+          <NoAssets
+            cardTitle="Cash Accounts"
+            cardText="No accounts being tracked"
+            assetType="cashAccount"
+          />
+          <motion.button
+            whileTap={{ scale: 0.9 }}
+            className="buttonWhite buttonAddNewEntry"
+            onClick={showAddNewCashAccForm}
+          >
+            + Add Account
+          </motion.button>
+        </Fragment>
+      )}
+      {cashAccAPIData !== undefined && (
         <Fragment>
           <motion.div
             initial={{ opacity: 0, scale: 0.5 }}
@@ -92,9 +119,10 @@ const CashAccounts: React.FC<CashAccountsProps> = ({
               <div className="table-header">Balance</div>
               <div className="table-header">Converted</div>
             </header>
-            <section className="cashAccountsTableDataContainer">
+            <section className="cashAccountsTableDataContainer scrollbarstyles">
               {cashAccAPIData?.map((data, index) => (
                 <CashAccountAccRow
+                  key={data.account_id}
                   data={data}
                   selectedCurrencySymbol={selectedCurrencySymbol}
                   updatedAllAccountBalances={updatedAllAccountBalances}
@@ -106,6 +134,7 @@ const CashAccounts: React.FC<CashAccountsProps> = ({
           </section>
         </Fragment>
       )}
+
       {showAddNewForm === true && (
         <div className="newAdditionModal" onClick={(e) => closeModal(e)}>
           <div className="newAdditionModalInner">

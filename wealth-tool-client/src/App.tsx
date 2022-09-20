@@ -71,8 +71,18 @@ function App() {
         triggerRecalculations={triggerRecalculations}
       />
       <div className="viewCardsCascade">
-        <ChartNetWealthCategories
+        <CashAccounts
           selectedCurrencyCode={selectedCurrencyCode}
+          selectedCurrencySymbol={selectedCurrencySymbol}
+          currencyCodesFromDB={currencyCodesFromDB}
+          settriggerRecalculations={settriggerRecalculations}
+          triggerRecalculations={triggerRecalculations}
+        />
+        <Properties
+          selectedCurrencyCode={selectedCurrencyCode}
+          selectedCurrencySymbol={selectedCurrencySymbol}
+          currencyCodesFromDB={currencyCodesFromDB}
+          settriggerRecalculations={settriggerRecalculations}
           triggerRecalculations={triggerRecalculations}
         />
         <Investments
@@ -82,23 +92,12 @@ function App() {
           settriggerRecalculations={settriggerRecalculations}
           triggerRecalculations={triggerRecalculations}
         />
+        <ChartNetWealthCategories
+          selectedCurrencyCode={selectedCurrencyCode}
+          triggerRecalculations={triggerRecalculations}
+        />
+
         <FXRates />
-
-        <Properties
-          selectedCurrencyCode={selectedCurrencyCode}
-          selectedCurrencySymbol={selectedCurrencySymbol}
-          currencyCodesFromDB={currencyCodesFromDB}
-          settriggerRecalculations={settriggerRecalculations}
-          triggerRecalculations={triggerRecalculations}
-        />
-
-        <CashAccounts
-          selectedCurrencyCode={selectedCurrencyCode}
-          selectedCurrencySymbol={selectedCurrencySymbol}
-          currencyCodesFromDB={currencyCodesFromDB}
-          settriggerRecalculations={settriggerRecalculations}
-          triggerRecalculations={triggerRecalculations}
-        />
       </div>
     </Fragment>
   );

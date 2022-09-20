@@ -6,6 +6,11 @@
   padding-bottom: 5px;
 }
 
+.propertiesOflowContainer {
+  overflow: auto;
+  max-height: 300px;
+}
+
 .underNetTexts {
   font-weight: unset;
   margin-top: 0px;
@@ -47,6 +52,6 @@
 
 @media only screen and (max-width: 800px) {
   .propertiesViewCardRow {
-    min-width: 313px;
+    min-width: 297px;
   }
 }

@@ -60,14 +60,12 @@ const InvestmentRow: React.FC<InvestmentRowProps> = ({
         <div className="columnInWideViewOnly">
           {data.holding_owner_name.toUpperCase()}
         </div>
-        <div> {data.holding_institution}</div>
+        <div className="columnInWideViewOnly"> {data.holding_institution}</div>
         <div className="columnInWideViewOnly">
           {" "}
           {data.holding_currency_code}
         </div>
-        <div className="columnInWideViewOnly">
-          {getDisplayNumber(data.holding_quantity_held)}
-        </div>
+        <div>{getDisplayNumber(data.holding_quantity_held)}</div>
         <div className="columnInWideViewOnly">
           <Tippy
             content={

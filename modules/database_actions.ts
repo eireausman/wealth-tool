@@ -882,6 +882,60 @@ export async function updatePropValueToDB(
   }
 }
 
+export async function deleteCashAccountFromDB(account_id: number) {
+  try {
+    const [record, created] = await CashAccount.update(
+      {
+        soft_deleted: 1,
+      },
+      {
+        where: {
+          account_id: account_id,
+        },
+      }
+    );
+    return created;
+  } catch (err) {
+    return err;
+  }
+}
+
+export async function deleteInvestmentFromDB(holding_id: number) {
+  try {
+    const [record, created] = await Investments.update(
+      {
+        soft_deleted: 1,
+      },
+      {
+        where: {
+          holding_id: holding_id,
+        },
+      }
+    );
+    return created;
+  } catch (err) {
+    return err;
+  }
+}
+
+export async function deletePropertyFromDB(property_id: number) {
+  try {
+    const [record, created] = await Properties.update(
+      {
+        soft_deleted: 1,
+      },
+      {
+        where: {
+          property_id: property_id,
+        },
+      }
+    );
+    return created;
+  } catch (err) {
+    return err;
+  }
+}
+
 export async function getCashAccountDataFromDB(reslocalsuser: string) {
   try {
     const usersCashAccounts = await User.findOne({
