@@ -11,6 +11,7 @@ import ChartNetWealthCategories from "./components/ChartNetWealthCategories";
 import Investments from "./components/Investments";
 import FXRates from "./components/FXRates";
 import { useNavigate } from "react-router-dom";
+import ViewCardCascadeTitleRow from "./components/ViewCardCascadeTitleRow";
 
 function App() {
   const [selectedCurrencyCode, setselectedCurrencyCode] =
@@ -25,28 +26,12 @@ function App() {
   const navigate = useNavigate();
   useEffect(() => {
     checkifuserloggedin().then((data) => {
-      console.log(data);
-
       if (data === false || data === undefined) {
         navigate("/login");
       }
       setloggedInUser(data); // username or undefined if not logged in
     });
   }, []);
-
-  // useEffect(() => {
-  //   const localStoreCurrencyCode = localStorage.getItem("selectedCurrencyCode");
-  //   const localStoreCurrencySymbol = localStorage.getItem(
-  //     "selectedCurrencySymbol"
-  //   );
-
-  //   if (localStoreCurrencyCode !== null) {
-  //     setselectedCurrencyCode(localStoreCurrencyCode);
-  //   }
-  //   if (localStoreCurrencySymbol !== null) {
-  //     setselectedCurrencySymbol(localStoreCurrencySymbol);
-  //   }
-  // }, []);
 
   useEffect(() => {
     if (currencyCodesFromDB === undefined) {
@@ -70,6 +55,7 @@ function App() {
         setloggedInUser={setloggedInUser}
         triggerRecalculations={triggerRecalculations}
       />
+      <ViewCardCascadeTitleRow sectionTitle="Your Assets" />
       <div className="viewCardsCascade">
         <CashAccounts
           selectedCurrencyCode={selectedCurrencyCode}
@@ -92,11 +78,17 @@ function App() {
           settriggerRecalculations={settriggerRecalculations}
           triggerRecalculations={triggerRecalculations}
         />
+      </div>
+      <ViewCardCascadeTitleRow sectionTitle="Asset Analysis" />
+
+      <div className="viewCardsCascade">
         <ChartNetWealthCategories
           selectedCurrencyCode={selectedCurrencyCode}
           triggerRecalculations={triggerRecalculations}
         />
-
+      </div>
+      <ViewCardCascadeTitleRow sectionTitle="Data" />
+      <div className="viewCardsCascade">
         <FXRates />
       </div>
     </Fragment>

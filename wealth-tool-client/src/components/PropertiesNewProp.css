@@ -1,14 +1,15 @@
 .addNewPropForm {
   display: flex;
   flex-direction: column;
-  margin: 5px 0px 0px 0px;
-  width: 100%;
   margin: 0px 10px 0px 0px;
+  gap: 5px;
+  min-width: 320px;
 }
 
 .addNewPropFormHeading {
-  font-weight: bolder;
-  margin: 10px 0px 0px 10px;
+  font-weight: bold;
+  margin: 10px 0px 15px 0px;
+  align-self: center;
 }
 
 .newPropInputRow {
@@ -17,7 +18,7 @@
   align-items: center;
   justify-content: flex-end;
   gap: 5px;
-  margin: 0px 0px 5px 0px;
+  margin: 0px 20px 5px 0px;
   font-weight: unset;
   font-size: 0.8rem;
 }
@@ -30,4 +31,11 @@
   border-width: thin;
   border-color: rgb(75, 166, 246);
   margin: 0px 0px 0px 0px;
+  width: 120px;
+}
+
+.buttonPrimary {
+  margin: 15px 0px 15px 5px;
+  border-radius: 10px;
+  width: 60px;
 }

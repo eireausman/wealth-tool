@@ -347,7 +347,7 @@ export async function searchForStockCompanyByNameFromDB(searchString: string) {
       limit: 10,
       where: {
         company_name: {
-          [Op.like]: searchString + "%",
+          [Op.like]: "%" + searchString + "%",
         },
       },
       include: {

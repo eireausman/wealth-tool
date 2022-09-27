@@ -8,6 +8,7 @@ import {
 import "./InvestmentAddStock.css";
 import { addnewinvestment } from "../modules/serverRequests";
 import InvestmentAddStockName from "./InvestmentAddStockName";
+import ModalSavingData from "./ModalSavingData";
 
 const InvestmentAddStock: React.FC<AddANewInvestmentProps> = ({
   currencyCodesFromDB,
@@ -17,6 +18,12 @@ const InvestmentAddStock: React.FC<AddANewInvestmentProps> = ({
   triggerRecalculations,
 }) => {
   const [formData, setformData] = useState<AddNewInvestmentFormData>();
+  const [showSavingMessage, setshowSavingMessage] = useState<boolean>(false);
+  const [saveProgressText, setsaveProgressText] = useState<string>(
+    "Saving property. Not long now..."
+  );
+  const [showAdditionStockInfoFields, setshowAdditionStockInfoFields] =
+    useState<boolean>(false);
 
   const cancelForm = (e: React.FormEvent<EventTarget>) => {
     e.preventDefault();
@@ -33,6 +40,7 @@ const InvestmentAddStock: React.FC<AddANewInvestmentProps> = ({
       selectedCompany.stock_market.currencies_code.currency_code;
     formDataCopy.stockMarket = selectedCompany.stock_market.exchange_name;
     setformData(formDataCopy);
+    setshowAdditionStockInfoFields(true);
   };
 
   const resetCompanyFormData = () => {
@@ -42,6 +50,7 @@ const InvestmentAddStock: React.FC<AddANewInvestmentProps> = ({
     formDataCopy.currencyCode = undefined;
     formDataCopy.stockMarket = undefined;
     setformData(formDataCopy);
+    setshowAdditionStockInfoFields(false);
   };
 
   const updateFormDataState = (e: React.FormEvent<EventTarget>) => {
@@ -57,12 +66,13 @@ const InvestmentAddStock: React.FC<AddANewInvestmentProps> = ({
   };
 
   const saveNewInvestment = (e: React.FormEvent<EventTarget>) => {
+    setshowSavingMessage(true);
     e.preventDefault();
 
     if (formData) {
       addnewinvestment(formData)
         .then((data) => {
-          console.log(data);
+          setsaveProgressText("Saved.  One sec...");
           settriggerRecalculations(triggerRecalculations + 1);
           refreshInvestmentsData();
           setShowAddNewStockForm(false);
@@ -72,8 +82,11 @@ const InvestmentAddStock: React.FC<AddANewInvestmentProps> = ({
   };
 
   return (
-    <Fragment>
-      <div className="viewCardRow">
+    <div className="viewCardRow">
+      {showSavingMessage === true && (
+        <ModalSavingData title={saveProgressText} />
+      )}
+      {showSavingMessage === false && (
         <motion.form
           initial={{ opacity: 0, scale: 0.5 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -82,80 +95,81 @@ const InvestmentAddStock: React.FC<AddANewInvestmentProps> = ({
           onSubmit={(e) => saveNewInvestment(e)}
         >
           <span className="addNewStockFormHeading">Stock detail</span>
-
           <InvestmentAddStockName
             updateFormDataState={updateFormDataState}
             newStockNameSelectedFromSearch={newStockNameSelectedFromSearch}
             formData={formData}
             resetCompanyFormData={resetCompanyFormData}
           />
-
-          <label className="newStockInputRow">
-            Quantity Held
-            <input
-              name="quantity"
-              className="newStockInputField"
-              type="number"
-              required
-              onChange={updateFormDataState}
-            />
-          </label>
-
-          <label className="newStockInputRow">
-            Total cost {formData?.currencyCode}
-            <input
-              name="cost"
-              className="newStockInputField"
-              type="number"
-              required
-              onChange={updateFormDataState}
-            />
-          </label>
-          <label className="newStockInputRow">
-            Owner Name
-            <input
-              name="ownerName"
-              className="newStockInputField"
-              type="text"
-              required
-              minLength={3}
-              maxLength={20}
-              onChange={updateFormDataState}
-            />
-          </label>
-          <label className="newStockInputRow">
-            Broker / Bank Name
-            <input
-              name="institution"
-              className="newStockInputField"
-              type="text"
-              required
-              minLength={3}
-              maxLength={35}
-              onChange={updateFormDataState}
-            />
-          </label>
-          <div className="newStockInputRow">
-            <motion.button
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.8 }}
-              className="buttonPrimary buttonCashBalSave"
-              onClick={cancelForm}
-            >
-              Cancel
-            </motion.button>
-            <motion.button
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.8 }}
-              className="buttonPrimary buttonCashBalSave"
-              type="submit"
-            >
-              Save
-            </motion.button>
-          </div>
+          {showAdditionStockInfoFields === true && (
+            <Fragment>
+              <label className="newStockInputRow">
+                Quantity Held
+                <input
+                  name="quantity"
+                  className="newStockInputField"
+                  type="number"
+                  required
+                  onChange={updateFormDataState}
+                />
+              </label>
+              <label className="newStockInputRow">
+                Total cost {formData?.currencyCode}
+                <input
+                  name="cost"
+                  className="newStockInputField"
+                  type="number"
+                  required
+                  onChange={updateFormDataState}
+                />
+              </label>
+              <label className="newStockInputRow">
+                Owner Name
+                <input
+                  name="ownerName"
+                  className="newStockInputField"
+                  type="text"
+                  required
+                  minLength={3}
+                  maxLength={20}
+                  onChange={updateFormDataState}
+                />
+              </label>
+              <label className="newStockInputRow">
+                Broker / Bank Name
+                <input
+                  name="institution"
+                  className="newStockInputField"
+                  type="text"
+                  required
+                  minLength={3}
+                  maxLength={35}
+                  onChange={updateFormDataState}
+                />
+              </label>
+              <div className="newStockInputRow">
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.8 }}
+                  className="buttonPrimary buttonCashBalSave"
+                  onClick={cancelForm}
+                >
+                  Cancel
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.8 }}
+                  className="buttonPrimary buttonCashBalSave"
+                  type="submit"
+                >
+                  Save
+                </motion.button>
+              </div>
+            </Fragment>
+          )}
         </motion.form>
-      </div>
-    </Fragment>
+      )}
+    </div>
   );
 };
 

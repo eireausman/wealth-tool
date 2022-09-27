@@ -9,6 +9,8 @@ import { ChartNetWealthCategoriesProps } from "../../../types/typeInterfaces";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Pie } from "react-chartjs-2";
 import "./ChartNetWealthCategories.css";
+import Tippy from "@tippyjs/react";
+import "tippy.js/dist/tippy.css";
 
 const ChartNetWealthCategories: React.FC<ChartNetWealthCategoriesProps> = ({
   selectedCurrencyCode,
@@ -17,7 +19,7 @@ const ChartNetWealthCategories: React.FC<ChartNetWealthCategoriesProps> = ({
   const [constructedChartData, setconstructedChartData] = useState<
     Array<number>
   >([]);
-  const noAssets = useRef<boolean>(false);
+  const noAssets = useRef<boolean>(true);
 
   const getChartDataFromDB = async () => {
     const PropertyValue = await getNetPropertyTotal(selectedCurrencyCode);
@@ -28,13 +30,13 @@ const ChartNetWealthCategories: React.FC<ChartNetWealthCategoriesProps> = ({
       CashAccountValue,
       InvestmentsValue,
     ]);
-    noAssets.current = false;
+    noAssets.current = true;
     if (
-      PropertyValue === "" &&
-      CashAccountValue === "" &&
-      InvestmentsValue === ""
+      PropertyValue !== "" ||
+      CashAccountValue !== "" ||
+      InvestmentsValue !== ""
     ) {
-      noAssets.current = true;
+      noAssets.current = false;
     }
   };
 
@@ -75,7 +77,16 @@ const ChartNetWealthCategories: React.FC<ChartNetWealthCategoriesProps> = ({
   }
   return (
     <section className="viewCard">
-      <span className="chartTitle"> NET WEALTH BREAKDOWN</span>
+      <Tippy
+        content={
+          <span>
+            Net breakdown of wealth by asset type. Click a key item to
+            add/remove it from the chart.{" "}
+          </span>
+        }
+      >
+        <span className="chartTitle"> NET WEALTH BREAKDOWN</span>
+      </Tippy>
       <div className="viewCardRow viewCardChartInner">
         <Pie data={data} options={options} />
       </div>

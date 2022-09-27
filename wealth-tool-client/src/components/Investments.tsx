@@ -31,8 +31,10 @@ const Investments: React.FC<InvestmentsProps> = ({
   const [investmentsTotalValue, setInvestmentsTotalValue] = useState<number>(0);
 
   const refreshInvestmentsData = async () => {
-    setinvestmentAPIData(undefined);
     setShowSpinner(true);
+    setshowNoAccountsMessage(false);
+    setinvestmentAPIData(undefined);
+
     const investData: AxiosResponse<any, any> | undefined =
       await getInvestmentData(selectedCurrencyCode);
 
@@ -43,26 +45,20 @@ const Investments: React.FC<InvestmentsProps> = ({
     ) {
       setinvestmentAPIData(investData.data);
       setshowNoAccountsMessage(false);
+      setShowSpinner(false);
     } else if (investData !== undefined && investData.status === 204) {
+      setShowSpinner(false);
       setshowNoAccountsMessage(true);
     }
 
     const total = await getNetInvestmentTotal(selectedCurrencyCode);
     setInvestmentsTotalValue(total);
-    setShowSpinner(false);
   };
 
   //reload API data if currency changes:
   useEffect(() => {
     refreshInvestmentsData();
   }, [selectedCurrencyCode]);
-
-  // remove the loading status if cash account data populated in state
-  useEffect(() => {
-    if (investmentAPIData && investmentAPIData.length !== 0) {
-      setShowSpinner(false);
-    }
-  }, [investmentAPIData]);
 
   const addANewStock = () => {
     setShowAddNewStockForm(true);
@@ -77,8 +73,10 @@ const Investments: React.FC<InvestmentsProps> = ({
 
   return (
     <section className="viewCard">
-      {showSpinner === true && <CardSpinner cardTitle="Investments" />}
-      {showNoAccountsMessage === true && (
+      {showSpinner === true && showNoAccountsMessage === false && (
+        <CardSpinner cardTitle="Investments" />
+      )}
+      {showSpinner === false && showNoAccountsMessage === true && (
         <Fragment>
           <NoAssets
             cardTitle="Investments"
@@ -94,54 +92,59 @@ const Investments: React.FC<InvestmentsProps> = ({
           </motion.button>
         </Fragment>
       )}
-      {investmentAPIData !== undefined && (
-        <Fragment>
-          <motion.div
-            initial={{ opacity: 0, scale: 0.5 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5 }}
-            className="viewCardHeaderRow"
-          >
-            <h3 className="viewCardHeading">INVESTMENTS</h3>
-            <h3 className="viewCardTotal">
-              {" "}
-              {selectedCurrencySymbol} {getDisplayNumber(investmentsTotalValue)}
-              <motion.button
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                className="buttonWhite buttonAddNewEntry"
-                onClick={addANewStock}
-              >
-                + Add Stock
-              </motion.button>
-            </h3>
-          </motion.div>
-          <section className="investmentsTable">
-            <header className="investmentsTableHeader">
-              <div className="table-header">Holding</div>
-              <div className="table-header columnInWideViewOnly">Owner</div>
-              <div className="table-header columnInWideViewOnly">Held at</div>
-              <div className="table-header columnInWideViewOnly">Currency</div>
-              <div className="table-header">Quantity</div>
-              <div className="table-header columnInWideViewOnly">Price</div>
-              <div className="table-header columnInWideViewOnly">Cost</div>
-              <div className="table-header">Value</div>
-            </header>
-            <section className="investmentsTableDataContainer scrollbarstyles">
-              {investmentAPIData?.map((data, index) => (
-                <InvestmentRow
-                  key={data.holding_id}
-                  data={data}
-                  selectedCurrencySymbol={selectedCurrencySymbol}
-                  refreshInvestmentsData={refreshInvestmentsData}
-                  settriggerRecalculations={settriggerRecalculations}
-                  triggerRecalculations={triggerRecalculations}
-                />
-              ))}
+      {investmentAPIData !== undefined &&
+        showSpinner === false &&
+        showNoAccountsMessage === false && (
+          <Fragment>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.5 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5 }}
+              className="viewCardHeaderRow"
+            >
+              <h3 className="viewCardHeading">INVESTMENTS</h3>
+              <h3 className="viewCardTotal">
+                {" "}
+                {selectedCurrencySymbol}{" "}
+                {getDisplayNumber(investmentsTotalValue)}
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  className="buttonWhite buttonAddNewEntry"
+                  onClick={addANewStock}
+                >
+                  + Add Stock
+                </motion.button>
+              </h3>
+            </motion.div>
+            <section className="investmentsTable">
+              <header className="investmentsTableHeader">
+                <div className="table-header">Holding</div>
+                <div className="table-header columnInWideViewOnly">Owner</div>
+                <div className="table-header columnInWideViewOnly">Held at</div>
+                <div className="table-header columnInWideViewOnly">
+                  Currency
+                </div>
+                <div className="table-header">Quantity</div>
+                <div className="table-header columnInWideViewOnly">Price</div>
+                <div className="table-header columnInWideViewOnly">Cost</div>
+                <div className="table-header">Value</div>
+              </header>
+              <section className="investmentsTableDataContainer scrollbarstyles">
+                {investmentAPIData?.map((data, index) => (
+                  <InvestmentRow
+                    key={data.holding_id}
+                    data={data}
+                    selectedCurrencySymbol={selectedCurrencySymbol}
+                    refreshInvestmentsData={refreshInvestmentsData}
+                    settriggerRecalculations={settriggerRecalculations}
+                    triggerRecalculations={triggerRecalculations}
+                  />
+                ))}
+              </section>
             </section>
-          </section>
-        </Fragment>
-      )}
+          </Fragment>
+        )}
 
       {showAddNewStockForm === true && (
         <div className="newAdditionModal" onClick={(e) => closeModal(e)}>

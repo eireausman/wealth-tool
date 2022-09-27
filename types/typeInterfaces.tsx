@@ -29,7 +29,6 @@ export interface AddNewCashAccountFormData {
   account_owner_name?: string;
   account_balance?: number;
   account_currency_code?: string;
-  account_currency_symbol?: string;
 }
 
 export interface reducerState {

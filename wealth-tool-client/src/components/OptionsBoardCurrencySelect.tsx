@@ -1,8 +1,5 @@
 import React, { Fragment } from "react";
-import {
-  currencyCodesAPIData,
-  OptionsBoardCurrencySelectProps,
-} from "../../../types/typeInterfaces";
+import { OptionsBoardCurrencySelectProps } from "../../../types/typeInterfaces";
 
 const OptionsBoardCurrencySelect: React.FC<OptionsBoardCurrencySelectProps> = ({
   setCurrency,
@@ -11,11 +8,13 @@ const OptionsBoardCurrencySelect: React.FC<OptionsBoardCurrencySelectProps> = ({
   windowWidth,
   wideWidthLimit,
 }) => {
+  if (currencyCodesFromDB === undefined) {
+    return null;
+  }
   return (
     <Fragment>
       {windowWidth > wideWidthLimit ? (
         <label htmlFor="Currency">
-          Show values in:{" "}
           <select
             name="Currency"
             id="Currency"
@@ -25,7 +24,7 @@ const OptionsBoardCurrencySelect: React.FC<OptionsBoardCurrencySelectProps> = ({
           >
             {currencyCodesFromDB?.map((data) => (
               <option key={data.id} value={data.currency_code}>
-                {data.currency_name}
+                Values in {data.currency_name}
               </option>
             ))}
           </select>
@@ -41,7 +40,7 @@ const OptionsBoardCurrencySelect: React.FC<OptionsBoardCurrencySelectProps> = ({
           >
             {currencyCodesFromDB?.map((data) => (
               <option key={data.id} value={data.currency_code}>
-                {data.currency_code}
+                Show in {data.currency_code}
               </option>
             ))}
           </select>

@@ -1,3 +1,8 @@
+.optionsBoardNarrow {
+  display: flex;
+  align-items: flex-start;
+}
+
 .narrowOptionsContainer {
   display: flex;
   flex-direction: column;

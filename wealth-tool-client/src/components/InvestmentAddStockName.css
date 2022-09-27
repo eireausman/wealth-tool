@@ -17,7 +17,9 @@
   border: 1px solid #949494;
   font-size: 0.8rem;
 }
-
+.newStockInputRowStockName {
+  margin-bottom: 35px;
+}
 .companyNameLink:hover {
   cursor: pointer;
   text-decoration: underline;

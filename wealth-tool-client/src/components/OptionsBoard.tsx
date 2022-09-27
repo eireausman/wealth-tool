@@ -6,12 +6,12 @@ import {
   logUserOut,
 } from "../modules/serverRequests";
 import "./OptionsBoard.css";
-import { Link, useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
+
 import useWindowSize from "../hooks/windowSize";
 import OptionsBoardNarrow from "./OptionsBoardNarrow";
 import OptionsBoardWide from "./OptionsBoardWide";
-import OptionsBoardLogoutLink from "./OptionsBoardLogoutLink";
+
 import { AxiosResponse } from "axios";
 
 const OptionsBoard: React.FC<OptionsBoardProps> = ({

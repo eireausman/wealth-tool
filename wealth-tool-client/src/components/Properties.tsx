@@ -19,6 +19,8 @@ import {
 } from "../modules/serverRequests";
 import { AxiosResponse } from "axios";
 import NoAssets from "./NoAssetsMessage";
+import Tippy from "@tippyjs/react";
+import "tippy.js/dist/tippy.css";
 
 const Properties: React.FC<PropertiesProps> = ({
   selectedCurrencyCode,
@@ -39,8 +41,9 @@ const Properties: React.FC<PropertiesProps> = ({
   const [netTotalPropValue, setnetTotalPropValue] = useState<number>(0);
 
   const refreshPropertiesValues = async () => {
-    setpropertyAccAPIData(undefined);
     setShowSpinner(true);
+    setshowNoAccountsMessage(false);
+    setpropertyAccAPIData(undefined);
     const propData: AxiosResponse<any, any> | undefined =
       await getPropertiesData(selectedCurrencyCode);
     if (
@@ -49,14 +52,15 @@ const Properties: React.FC<PropertiesProps> = ({
       propData.data !== undefined
     ) {
       setpropertyAccAPIData(propData.data);
+      setShowSpinner(false);
       setshowNoAccountsMessage(false);
     } else if (propData !== undefined && propData.status === 204) {
+      setShowSpinner(false);
       setshowNoAccountsMessage(true);
     }
 
     const total = await getNetPropertyTotal(selectedCurrencyCode);
     setnetTotalPropValue(total);
-    setShowSpinner(false);
   };
 
   //reload API data if currency changes:
@@ -103,8 +107,10 @@ const Properties: React.FC<PropertiesProps> = ({
 
   return (
     <section className="viewCard">
-      {showSpinner === true && <CardSpinner cardTitle="Properties" />}
-      {showNoAccountsMessage === true && (
+      {showSpinner === true && showNoAccountsMessage === false && (
+        <CardSpinner cardTitle="Properties" />
+      )}
+      {showSpinner === false && showNoAccountsMessage === true && (
         <Fragment>
           <NoAssets
             cardTitle="Property"
@@ -120,126 +126,140 @@ const Properties: React.FC<PropertiesProps> = ({
           </motion.button>
         </Fragment>
       )}
-      {propertyAccAPIData !== undefined && (
-        <Fragment>
-          <motion.div
-            initial={{ opacity: 0, scale: 0.5 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5 }}
-            className="viewCardHeaderRow"
-          >
-            <h3 className="viewCardHeading">PROPERTY</h3>
+      {propertyAccAPIData !== undefined &&
+        showSpinner === false &&
+        showNoAccountsMessage === false && (
+          <Fragment>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.5 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5 }}
+              className="viewCardHeaderRow"
+            >
+              <h3 className="viewCardHeading">PROPERTY</h3>
 
-            <h3 className="viewCardTotal">
-              {selectedCurrencySymbol} {getDisplayNumber(netTotalPropValue)}
-              <motion.button
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                className="buttonWhite buttonAddNewEntry"
-                onClick={showAddPropForm}
-              >
-                + Add Property
-              </motion.button>
-            </h3>
-          </motion.div>
-          <div className="propertiesOflowContainer scrollbarstyles">
-            {propertyAccAPIData?.map((data) => (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.5 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.5 }}
-                className="viewCardRow propertiesViewCardRow"
-                key={data.property_id}
-              >
-                {propertyToEdit === data.property_id ? (
-                  <PropertiesUpdateVal
-                    setpropertyToEdit={setpropertyToEdit}
-                    editingPropertyDetails={editingPropertyDetails}
-                    seteditingPropertyDetails={seteditingPropertyDetails}
-                    refreshPropertiesValues={refreshPropertiesValues}
-                    settriggerRecalculations={settriggerRecalculations}
-                    triggerRecalculations={triggerRecalculations}
-                  />
-                ) : (
-                  <Fragment>
-                    <div
-                      className="viewCardRowLeftBox PropertyLeftBox"
-                      onClick={() =>
-                        editThisProperty(
-                          data.property_id,
-                          data.property_nickname,
-                          data.property_valuation,
-                          data.property_loan_value,
-                          data.property_valuation_curr_symbol
-                        )
-                      }
-                    >
-                      <span className="propertyName">
-                        {data.property_nickname.toUpperCase()}
-                        <img
-                          src={editIcon}
-                          className="editValueIcon"
-                          alt="Edit Value"
-                        />
-                      </span>
-                      <span className="ownerText">
-                        Owner: {data.property_owner_name}
-                      </span>
-                      <span className="valueBaseCurrency">
-                        Currency: {data.property_valuation_currency}
-                      </span>
-                    </div>
-                    <div className="viewCardRowRightBox">
-                      <motion.table
-                        initial={{ opacity: 0, scale: 0.5 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ duration: 0.5 }}
-                        className="valuesTable"
+              <h3 className="viewCardTotal">
+                <Tippy
+                  content={
+                    <span>
+                      Net total value (valuations minus loans) in your currently
+                      selected currency.
+                    </span>
+                  }
+                >
+                  <span>
+                    {selectedCurrencySymbol}{" "}
+                    {getDisplayNumber(netTotalPropValue)}
+                  </span>
+                </Tippy>
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  className="buttonWhite buttonAddNewEntry"
+                  onClick={showAddPropForm}
+                >
+                  + Add Property
+                </motion.button>
+              </h3>
+            </motion.div>
+            <div className="propertiesOflowContainer scrollbarstyles">
+              {propertyAccAPIData?.map((data) => (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.5 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.5 }}
+                  className="viewCardRow propertiesViewCardRow"
+                  key={data.property_id}
+                >
+                  {propertyToEdit === data.property_id ? (
+                    <PropertiesUpdateVal
+                      setpropertyToEdit={setpropertyToEdit}
+                      editingPropertyDetails={editingPropertyDetails}
+                      seteditingPropertyDetails={seteditingPropertyDetails}
+                      refreshPropertiesValues={refreshPropertiesValues}
+                      settriggerRecalculations={settriggerRecalculations}
+                      triggerRecalculations={triggerRecalculations}
+                    />
+                  ) : (
+                    <Fragment>
+                      <div
+                        className="viewCardRowLeftBox PropertyLeftBox"
+                        onClick={() =>
+                          editThisProperty(
+                            data.property_id,
+                            data.property_nickname,
+                            data.property_valuation,
+                            data.property_loan_value,
+                            data.property_valuation_curr_symbol
+                          )
+                        }
                       >
-                        <tbody>
-                          <tr className="calculatedBalanceValueRow">
-                            <td>Net {selectedCurrencyCode}: </td>
-                            <td>
-                              {selectedCurrencySymbol}{" "}
-                              {getDisplayNumber(
-                                data.propertyValuationInSelCurr
-                              )}
-                            </td>
-                          </tr>
-                          <tr>
-                            <td>Valuation: </td>
-                            <td>
-                              {data.property_valuation_curr_symbol}{" "}
-                              {getDisplayNumber(data.property_valuation)}
-                            </td>
-                          </tr>
-                          <tr>
-                            <td>Loan: </td>
-                            <td>
-                              {data.property_valuation_curr_symbol}{" "}
-                              {getDisplayNumber(data.property_loan_value)}
-                            </td>
-                          </tr>
-                          <tr>
-                            <td>Net Val: </td>
-                            <td>
-                              {data.property_valuation_curr_symbol}{" "}
-                              {getDisplayNumber(
-                                data.property_valuation -
-                                  data.property_loan_value
-                              )}
-                            </td>
-                          </tr>
-                        </tbody>
-                      </motion.table>
-                    </div>
-                  </Fragment>
-                )}
-              </motion.div>
-            ))}
-          </div>
-        </Fragment>
-      )}
+                        <span className="propertyName">
+                          {data.property_nickname.toUpperCase()}
+                          <img
+                            src={editIcon}
+                            className="editValueIcon"
+                            alt="Edit Value"
+                          />
+                        </span>
+                        <span className="ownerText">
+                          Owner: {data.property_owner_name}
+                        </span>
+                        <span className="valueBaseCurrency">
+                          Currency: {data.property_valuation_currency}
+                        </span>
+                      </div>
+                      <div className="viewCardRowRightBox">
+                        <motion.table
+                          initial={{ opacity: 0, scale: 0.5 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          transition={{ duration: 0.5 }}
+                          className="valuesTable"
+                        >
+                          <tbody>
+                            <tr className="calculatedBalanceValueRow">
+                              <td>Net {selectedCurrencyCode}: </td>
+                              <td>
+                                {selectedCurrencySymbol}{" "}
+                                {getDisplayNumber(
+                                  data.propertyValuationInSelCurr
+                                )}
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>Valuation: </td>
+                              <td>
+                                {data.property_valuation_curr_symbol}{" "}
+                                {getDisplayNumber(data.property_valuation)}
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>Loan: </td>
+                              <td>
+                                {data.property_valuation_curr_symbol}{" "}
+                                {getDisplayNumber(data.property_loan_value)}
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>Net Val: </td>
+                              <td>
+                                {data.property_valuation_curr_symbol}{" "}
+                                {getDisplayNumber(
+                                  data.property_valuation -
+                                    data.property_loan_value
+                                )}
+                              </td>
+                            </tr>
+                          </tbody>
+                        </motion.table>
+                      </div>
+                    </Fragment>
+                  )}
+                </motion.div>
+              ))}
+            </div>
+          </Fragment>
+        )}
 
       {showAddNewForm === true && (
         <div className="newAdditionModal" onClick={(e) => closeModal(e)}>

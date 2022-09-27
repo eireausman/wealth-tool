@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React from "react";
 import OptionsBoardCurrencySelect from "./OptionsBoardCurrencySelect";
 import { OptionsBoardNarrowProps } from "../../../types/typeInterfaces";
 import OptionsBoardNetWealth from "./OptionsBoardNetWealth";
@@ -22,7 +22,7 @@ const OptionsBoardNarrow: React.FC<OptionsBoardNarrowProps> = ({
   performLogoutAction,
 }) => {
   return (
-    <div className="optionsBoard">
+    <div className="optionsBoard optionsBoardNarrow">
       <div className="wealthSummaryNarrow">
         <OptionsBoardNetWealth
           netWealthValue={netWealthValue}
@@ -35,6 +35,13 @@ const OptionsBoardNarrow: React.FC<OptionsBoardNarrowProps> = ({
         <OptionsBoardTotalDebt
           totalDebtValue={totalDebtValue}
           selectedCurrencySymbol={selectedCurrencySymbol}
+        />
+        <OptionsBoardCurrencySelect
+          setCurrency={setCurrency}
+          selectedCurrency={selectedCurrency}
+          currencyCodesFromDB={currencyCodesFromDB}
+          windowWidth={windowWidth}
+          wideWidthLimit={wideWidthLimit}
         />
       </div>
       <div className="narrowOptionsContainer">
@@ -55,13 +62,6 @@ const OptionsBoardNarrow: React.FC<OptionsBoardNarrowProps> = ({
             loggedInUser={loggedInUser}
           />
         )}
-        <OptionsBoardCurrencySelect
-          setCurrency={setCurrency}
-          selectedCurrency={selectedCurrency}
-          currencyCodesFromDB={currencyCodesFromDB}
-          windowWidth={windowWidth}
-          wideWidthLimit={wideWidthLimit}
-        />
       </div>
     </div>
   );

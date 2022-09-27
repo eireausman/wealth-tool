@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { Fragment, useState } from "react";
 import { motion } from "framer-motion";
 import {
   InvestmentsUpdateStockProps,
   investmentUpdateStockFormData,
 } from "../../../types/typeInterfaces";
 import { updateInvestmentData } from "../modules/serverRequests";
+import "./InvestmentsUpdateStock.css";
+import ModalSavingData from "./ModalSavingData";
 
 const InvestmentsUpdateStock: React.FC<InvestmentsUpdateStockProps> = ({
   data,
@@ -19,6 +21,10 @@ const InvestmentsUpdateStock: React.FC<InvestmentsUpdateStockProps> = ({
     cost: data.holding_cost_total_value,
     institution: data.holding_institution,
   });
+  const [showSavingMessage, setshowSavingMessage] = useState<boolean>(false);
+  const [saveProgressText, setsaveProgressText] = useState<string>(
+    "Saving data. Not long now..."
+  );
 
   const updateFormDataState = (e: React.FormEvent<EventTarget>) => {
     const formDataCopy: investmentUpdateStockFormData = { ...formData };
@@ -39,7 +45,7 @@ const InvestmentsUpdateStock: React.FC<InvestmentsUpdateStockProps> = ({
 
   const saveInvestmentEdits = async (e: React.FormEvent<EventTarget>) => {
     e.preventDefault();
-
+    setshowSavingMessage(true);
     try {
       await updateInvestmentData(
         formData.holding_id,
@@ -47,7 +53,7 @@ const InvestmentsUpdateStock: React.FC<InvestmentsUpdateStockProps> = ({
         formData.institution,
         formData.quantity
       );
-
+      setsaveProgressText("Saved.  One sec...");
       settriggerRecalculations(triggerRecalculations + 1);
       refreshInvestmentsData();
       setshowEditStockForm(false);
@@ -57,67 +63,78 @@ const InvestmentsUpdateStock: React.FC<InvestmentsUpdateStockProps> = ({
   };
   return (
     <div className="viewCardRow">
-      <motion.form
-        initial={{ opacity: 0, scale: 0.5 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.5 }}
-        className="addNewStockForm"
-        onSubmit={(e) => saveInvestmentEdits(e)}
-      >
-        <label className="newStockInputRow">
-          Quantity Held
-          <input
-            name="quantity"
-            className="newStockInputField"
-            type="number"
-            required
-            onChange={updateFormDataState}
-            value={formData.quantity}
-          />
-        </label>
-        <label className="newStockInputRow">
-          Total cost {data.holding_currency_code}{" "}
-          <input
-            name="cost"
-            className="newStockInputField"
-            type="number"
-            required
-            value={formData.cost}
-            onChange={updateFormDataState}
-          />
-        </label>
-        <label className="newStockInputRow">
-          Broker / Bank Name
-          <input
-            name="institution"
-            className="newStockInputField"
-            type="text"
-            required
-            minLength={3}
-            maxLength={35}
-            value={formData.institution}
-            onChange={updateFormDataState}
-          />
-        </label>
-        <div className="newStockInputRow">
-          <motion.button
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.8 }}
-            className="buttonPrimary buttonCashBalSave"
-            onClick={cancelForm}
+      {showSavingMessage === true && (
+        <ModalSavingData title={saveProgressText} />
+      )}
+      {showSavingMessage === false && (
+        <Fragment>
+          <p className="stockName">
+            {data?.holding_stock_name} ({data.holding_market_identifier})
+          </p>
+
+          <motion.form
+            initial={{ opacity: 0, scale: 0.5 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5 }}
+            className="addNewStockForm"
+            onSubmit={(e) => saveInvestmentEdits(e)}
           >
-            Cancel
-          </motion.button>
-          <motion.button
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.8 }}
-            className="buttonPrimary buttonCashBalSave"
-            type="submit"
-          >
-            Save
-          </motion.button>
-        </div>
-      </motion.form>
+            <label className="newStockInputRow">
+              Quantity Held
+              <input
+                name="quantity"
+                className="newStockInputField"
+                type="number"
+                required
+                onChange={updateFormDataState}
+                value={formData.quantity}
+              />
+            </label>
+            <label className="newStockInputRow">
+              Total cost {data.holding_currency_code}{" "}
+              <input
+                name="cost"
+                className="newStockInputField"
+                type="number"
+                required
+                value={formData.cost}
+                onChange={updateFormDataState}
+              />
+            </label>
+            <label className="newStockInputRow">
+              Broker / Bank Name
+              <input
+                name="institution"
+                className="newStockInputField"
+                type="text"
+                required
+                minLength={3}
+                maxLength={35}
+                value={formData.institution}
+                onChange={updateFormDataState}
+              />
+            </label>
+            <div className="newStockInputRow">
+              <motion.button
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.8 }}
+                className="buttonPrimary buttonCashBalSave"
+                onClick={cancelForm}
+              >
+                Cancel
+              </motion.button>
+              <motion.button
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.8 }}
+                className="buttonPrimary buttonCashBalSave"
+                type="submit"
+              >
+                Save
+              </motion.button>
+            </div>
+          </motion.form>
+        </Fragment>
+      )}
     </div>
   );
 };

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Fragment } from "react";
+import React, { useState, Fragment } from "react";
 import { InvestmentRowProps } from "../../../types/typeInterfaces";
 import editIcon from "../assets/images/edit.png";
 import getDisplayNumber from "../modules/getDisplayNumber";
@@ -45,7 +45,7 @@ const InvestmentRow: React.FC<InvestmentRowProps> = ({
         }}
       >
         <div>
-          {data.holding_stock_name.toUpperCase()}
+          {data.holding_stock_name}
           <img
             src={editIcon}
             className="editValueIcon"
@@ -57,9 +57,7 @@ const InvestmentRow: React.FC<InvestmentRowProps> = ({
             }
           />
         </div>
-        <div className="columnInWideViewOnly">
-          {data.holding_owner_name.toUpperCase()}
-        </div>
+        <div className="columnInWideViewOnly">{data.holding_owner_name}</div>
         <div className="columnInWideViewOnly"> {data.holding_institution}</div>
         <div className="columnInWideViewOnly">
           {" "}

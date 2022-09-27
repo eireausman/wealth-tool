@@ -14,6 +14,7 @@ import { AxiosResponse } from "axios";
 
 import CashAccountAccRow from "./CashAccountAccRow";
 import NoAssets from "./NoAssetsMessage";
+import { BiSortAlt2 } from "react-icons/bi";
 
 const CashAccounts: React.FC<CashAccountsProps> = ({
   selectedCurrencyCode,
@@ -31,8 +32,9 @@ const CashAccounts: React.FC<CashAccountsProps> = ({
     useState<Array<cashAccountAPIData>>();
 
   const updatedAllAccountBalances = async () => {
-    setcashAccAPIData(undefined);
     setShowSpinner(true);
+    setshowNoAccountsMessage(false);
+    setcashAccAPIData(undefined);
     const cashAccServerDataRequest: AxiosResponse<any, any> | undefined =
       await getCashAccountData(selectedCurrencyCode);
 
@@ -41,19 +43,19 @@ const CashAccounts: React.FC<CashAccountsProps> = ({
       cashAccServerDataRequest.status === 200 &&
       cashAccServerDataRequest.data !== undefined
     ) {
+      setShowSpinner(false);
       setcashAccAPIData(cashAccServerDataRequest.data);
       setshowNoAccountsMessage(false);
     } else if (
       cashAccServerDataRequest !== undefined &&
       cashAccServerDataRequest.status === 204
     ) {
+      setShowSpinner(false);
       setshowNoAccountsMessage(true);
     }
 
     const total = await getNetCashAccountTotal(selectedCurrencyCode);
     setcashAccountNetTotal(total);
-
-    setShowSpinner(false);
   };
 
   //reload API data if currency changes:
@@ -74,8 +76,10 @@ const CashAccounts: React.FC<CashAccountsProps> = ({
 
   return (
     <section className="viewCard">
-      {showSpinner === true && <CardSpinner cardTitle="Cash Accounts" />}
-      {showNoAccountsMessage === true && (
+      {showSpinner === true && showNoAccountsMessage === false && (
+        <CardSpinner cardTitle="Cash Accounts" />
+      )}
+      {showSpinner === false && showNoAccountsMessage === true && (
         <Fragment>
           <NoAssets
             cardTitle="Cash Accounts"
@@ -91,49 +95,60 @@ const CashAccounts: React.FC<CashAccountsProps> = ({
           </motion.button>
         </Fragment>
       )}
-      {cashAccAPIData !== undefined && (
-        <Fragment>
-          <motion.div
-            initial={{ opacity: 0, scale: 0.5 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5 }}
-            className="viewCardHeaderRow"
-          >
-            <h3 className="viewCardHeading">CASH ACCOUNTS</h3>
-            <h3 className="viewCardTotal">
-              {selectedCurrencySymbol} {getDisplayNumber(cashAccountNetTotal)}
-              <motion.button
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                className="buttonWhite buttonAddNewEntry"
-                onClick={showAddNewCashAccForm}
-              >
-                + Add Account
-              </motion.button>
-            </h3>
-          </motion.div>
-          <section className="cashAccountsTable">
-            <header className="cashAccountsTableHeader">
-              <div className="table-header">A/c Name</div>
-              <div className="table-header">Owner</div>
-              <div className="table-header">Balance</div>
-              <div className="table-header">Converted</div>
-            </header>
-            <section className="cashAccountsTableDataContainer scrollbarstyles">
-              {cashAccAPIData?.map((data, index) => (
-                <CashAccountAccRow
-                  key={data.account_id}
-                  data={data}
-                  selectedCurrencySymbol={selectedCurrencySymbol}
-                  updatedAllAccountBalances={updatedAllAccountBalances}
-                  settriggerRecalculations={settriggerRecalculations}
-                  triggerRecalculations={triggerRecalculations}
-                />
-              ))}
+      {cashAccAPIData !== undefined &&
+        showSpinner === false &&
+        showNoAccountsMessage === false && (
+          <Fragment>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.5 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5 }}
+              className="viewCardHeaderRow"
+            >
+              <h3 className="viewCardHeading">CASH ACCOUNTS</h3>
+              <h3 className="viewCardTotal">
+                {selectedCurrencySymbol} {getDisplayNumber(cashAccountNetTotal)}
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  className="buttonWhite buttonAddNewEntry"
+                  onClick={showAddNewCashAccForm}
+                >
+                  + Add Account
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  className="buttonWhite buttonAddNewEntry"
+                  onClick={showAddNewCashAccForm}
+                >
+                  sort
+                  <BiSortAlt2 />
+                </motion.button>
+              </h3>
+            </motion.div>
+            <section className="cashAccountsTable">
+              <header className="cashAccountsTableHeader">
+                <div className="table-header">A/c Name</div>
+                <div className="table-header">Owner</div>
+                <div className="table-header">Balance</div>
+                <div className="table-header">Converted</div>
+              </header>
+              <section className="cashAccountsTableDataContainer scrollbarstyles">
+                {cashAccAPIData?.map((data, index) => (
+                  <CashAccountAccRow
+                    key={data.account_id}
+                    data={data}
+                    selectedCurrencySymbol={selectedCurrencySymbol}
+                    updatedAllAccountBalances={updatedAllAccountBalances}
+                    settriggerRecalculations={settriggerRecalculations}
+                    triggerRecalculations={triggerRecalculations}
+                  />
+                ))}
+              </section>
             </section>
-          </section>
-        </Fragment>
-      )}
+          </Fragment>
+        )}
 
       {showAddNewForm === true && (
         <div className="newAdditionModal" onClick={(e) => closeModal(e)}>

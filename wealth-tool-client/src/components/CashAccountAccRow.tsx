@@ -1,4 +1,4 @@
-import { motion, Target } from "framer-motion";
+import { motion } from "framer-motion";
 import React, { Fragment, useState } from "react";
 import editIcon from "../assets/images/edit.png";
 import getDisplayNumber from "../modules/getDisplayNumber";

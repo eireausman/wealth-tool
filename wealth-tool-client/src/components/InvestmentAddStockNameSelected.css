@@ -13,18 +13,13 @@
   font-size: 0.8rem;
 }
 
-.selectedStockContainerTitle {
+.selectedStockContainerSeachAgain {
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
+  margin-bottom: 4px;
   width: 100%;
-}
-
-.selectedStockContainer > h3 {
-  padding: 0px;
-  margin: 0px 0px 10px 0px;
-  text-decoration: underline;
 }
 
 .selectedStockTextTitle {
@@ -35,7 +30,6 @@
 .selectedStockText {
   display: flex;
   flex-direction: row;
-  /* align-items: center; */
   justify-content: flex-start;
   gap: 5px;
   margin: 0px 0px 5px 0px;

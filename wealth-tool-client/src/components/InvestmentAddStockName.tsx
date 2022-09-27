@@ -9,6 +9,7 @@ import { getCompanyStockByName } from "../modules/serverRequests";
 import CardSpinner from "./CardSpinner";
 import "./InvestmentAddStockName.css";
 import InvestmentAddStockNameSelected from "./InvestmentAddStockNameSelected";
+import { BsSearch } from "react-icons/bs";
 
 const initialState = {
   showSearchResultsContainer: false,
@@ -93,8 +94,8 @@ const InvestmentAddStockName: React.FC<InvestmentAddStockNameProps> = ({
   return (
     <Fragment>
       {state.showSelectedStockInfo === false && (
-        <label className="newStockInputRow">
-          Stock Name
+        <label className="newStockInputRow newStockInputRowStockName">
+          <BsSearch /> Stock Name
           <input
             name="stockName"
             className="newStockInputField"

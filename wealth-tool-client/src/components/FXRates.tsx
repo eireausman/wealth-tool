@@ -13,6 +13,9 @@ const FXRates: React.FC = () => {
     });
   }, []);
 
+  if (allFXRatesAPIData === undefined) {
+    return null;
+  }
   return (
     <section className="viewCard">
       <motion.div

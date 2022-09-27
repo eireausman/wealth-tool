@@ -2,6 +2,11 @@ var express = require("express");
 var router = express.Router();
 var userController = require("../controllers/loginController");
 var dbQueryController = require("../controllers/dbQueryController");
+import { Request, Response, NextFunction } from "express";
+
+router.get("/", (req: Request, res: Response, next: NextFunction) => {
+  res.send("API root reachable.");
+});
 
 // user login requests:
 router.post("/login", userController.logUserIn);
