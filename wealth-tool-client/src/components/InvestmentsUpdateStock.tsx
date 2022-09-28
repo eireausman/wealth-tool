@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import {
   InvestmentsUpdateStockProps,
@@ -28,6 +28,12 @@ const InvestmentsUpdateStock: React.FC<InvestmentsUpdateStockProps> = ({
   const [saveProgressText, setsaveProgressText] = useState<string>(
     "Saving data. Not long now..."
   );
+
+  const investQtyInputBox = useRef<HTMLInputElement | null>(null);
+
+  useEffect(() => {
+    investQtyInputBox.current !== null && investQtyInputBox.current.focus();
+  }, []);
 
   const updateFormDataState = (e: React.FormEvent<EventTarget>) => {
     const formDataCopy: investmentUpdateStockFormData = { ...formData };
@@ -87,6 +93,7 @@ const InvestmentsUpdateStock: React.FC<InvestmentsUpdateStockProps> = ({
                 name="quantity"
                 className="newStockInputField"
                 type="number"
+                ref={investQtyInputBox}
                 required
                 onChange={updateFormDataState}
                 value={formData.quantity}
@@ -142,7 +149,7 @@ const InvestmentsUpdateStock: React.FC<InvestmentsUpdateStockProps> = ({
       )}
       {showSoftDelConfirm === true && (
         <SoftDeleteButtonConfirm
-          assetType="cashAccount"
+          assetType="investment"
           assetID={data.holding_id}
           assetTitle={data.holding_stock_name}
           refreshBalances={refreshInvestmentsData}

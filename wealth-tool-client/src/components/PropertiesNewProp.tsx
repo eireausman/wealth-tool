@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useRef } from "react";
+import React, { Fragment, useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import {
   PropertiesNewPropProps,
@@ -20,6 +20,13 @@ const PropertiesNewProp: React.FC<PropertiesNewPropProps> = ({
   const [saveProgressText, setsaveProgressText] = useState<string>(
     "Saving property. Not long now..."
   );
+
+  const propertyNameInputBox = useRef<HTMLInputElement | null>(null);
+
+  useEffect(() => {
+    propertyNameInputBox.current !== null &&
+      propertyNameInputBox.current.focus();
+  }, []);
 
   const currencyCodeSelection = useRef<HTMLSelectElement | null>(null);
 
@@ -93,6 +100,7 @@ const PropertiesNewProp: React.FC<PropertiesNewPropProps> = ({
                 className="newPropInputField"
                 type="text"
                 required
+                ref={propertyNameInputBox}
                 onChange={updateFormDataState}
               />
             </label>

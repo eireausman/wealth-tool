@@ -128,7 +128,7 @@ const PropertiesUpdateVal: React.FC<propertiesUpdateValProps> = ({
       )}
       {showSoftDelConfirm === true && (
         <SoftDeleteButtonConfirm
-          assetType="cashAccount"
+          assetType="property"
           assetID={data.property_id}
           assetTitle={data.property_nickname}
           refreshBalances={refreshPropertiesValues}

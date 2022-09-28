@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 
 import { motion } from "framer-motion";
 import {
@@ -22,6 +22,12 @@ const CashAccountAddAcc: React.FC<AddNewCashAccountPropProps> = ({
   const [saveProgressText, setsaveProgressText] = useState<string>(
     "Saving data. Not long now..."
   );
+  const accountNicknameInputBox = useRef<HTMLInputElement | null>(null);
+
+  useEffect(() => {
+    accountNicknameInputBox.current !== null &&
+      accountNicknameInputBox.current.focus();
+  }, []);
 
   const cancelForm = (e: React.FormEvent<EventTarget>) => {
     e.preventDefault();
@@ -99,6 +105,7 @@ const CashAccountAddAcc: React.FC<AddNewCashAccountPropProps> = ({
               className="newCashAccInputField"
               type="text"
               required
+              ref={accountNicknameInputBox}
               value={formData?.account_nickname}
               onChange={updateFormDataState}
             />

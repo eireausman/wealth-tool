@@ -1,4 +1,10 @@
-import React, { Fragment, useState, useReducer } from "react";
+import React, {
+  Fragment,
+  useState,
+  useReducer,
+  useEffect,
+  useRef,
+} from "react";
 import {
   InvestmentAddStockNameProps,
   companyNameSearchResults,
@@ -65,6 +71,13 @@ const InvestmentAddStockName: React.FC<InvestmentAddStockNameProps> = ({
 
   const [state, dispatch] = useReducer(reducer, initialState);
 
+  const stockNameNameInputBox = useRef<HTMLInputElement | null>(null);
+
+  useEffect(() => {
+    stockNameNameInputBox.current !== null &&
+      stockNameNameInputBox.current.focus();
+  }, []);
+
   const getStockName = async (e: React.FormEvent<EventTarget>) => {
     // search for the string:
 
@@ -99,6 +112,7 @@ const InvestmentAddStockName: React.FC<InvestmentAddStockNameProps> = ({
           <input
             name="stockName"
             className="newStockInputField"
+            ref={stockNameNameInputBox}
             type="text"
             required
             minLength={3}
