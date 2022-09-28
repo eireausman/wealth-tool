@@ -7,6 +7,8 @@ import {
 import { updateInvestmentData } from "../modules/serverRequests";
 import "./InvestmentsUpdateStock.css";
 import ModalSavingData from "./ModalSavingData";
+import SoftDeleteButton from "./SoftDeleteButton";
+import SoftDeleteButtonConfirm from "./SoftDeleteButtonConfirm";
 
 const InvestmentsUpdateStock: React.FC<InvestmentsUpdateStockProps> = ({
   data,
@@ -21,6 +23,7 @@ const InvestmentsUpdateStock: React.FC<InvestmentsUpdateStockProps> = ({
     cost: data.holding_cost_total_value,
     institution: data.holding_institution,
   });
+  const [showSoftDelConfirm, setshowSoftDelConfirm] = useState<boolean>(false);
   const [showSavingMessage, setshowSavingMessage] = useState<boolean>(false);
   const [saveProgressText, setsaveProgressText] = useState<string>(
     "Saving data. Not long now..."
@@ -38,8 +41,7 @@ const InvestmentsUpdateStock: React.FC<InvestmentsUpdateStockProps> = ({
     setformData(formDataCopy);
   };
 
-  const cancelForm = (e: React.FormEvent<EventTarget>) => {
-    e.preventDefault();
+  const cancelForm = () => {
     setshowEditStockForm(false);
   };
 
@@ -66,7 +68,7 @@ const InvestmentsUpdateStock: React.FC<InvestmentsUpdateStockProps> = ({
       {showSavingMessage === true && (
         <ModalSavingData title={saveProgressText} />
       )}
-      {showSavingMessage === false && (
+      {showSavingMessage === false && showSoftDelConfirm === false && (
         <Fragment>
           <p className="stockName">
             {data?.holding_stock_name} ({data.holding_market_identifier})
@@ -132,8 +134,22 @@ const InvestmentsUpdateStock: React.FC<InvestmentsUpdateStockProps> = ({
                 Save
               </motion.button>
             </div>
+            {showSoftDelConfirm === false && (
+              <SoftDeleteButton setshowSoftDelConfirm={setshowSoftDelConfirm} />
+            )}
           </motion.form>
         </Fragment>
+      )}
+      {showSoftDelConfirm === true && (
+        <SoftDeleteButtonConfirm
+          assetType="cashAccount"
+          assetID={data.holding_id}
+          assetTitle={data.holding_stock_name}
+          refreshBalances={refreshInvestmentsData}
+          triggerRecalculations={triggerRecalculations}
+          settriggerRecalculations={settriggerRecalculations}
+          cancelForm={cancelForm}
+        />
       )}
     </div>
   );

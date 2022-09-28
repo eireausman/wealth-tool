@@ -218,6 +218,7 @@ export interface SoftDeleteButtonProps {
 export interface SoftDeleteButtonConfirmProps {
   assetType: string;
   assetID: number;
+  assetTitle: string;
   refreshBalances: () => void;
   triggerRecalculations: number;
   settriggerRecalculations: React.Dispatch<React.SetStateAction<number>>;
@@ -270,10 +271,7 @@ export interface PropertiesProps {
 
 export interface propertiesUpdateValProps {
   setpropertyToEdit: React.Dispatch<React.SetStateAction<number | undefined>>;
-  editingPropertyDetails: editingPropertyDetails | undefined;
-  seteditingPropertyDetails: React.Dispatch<
-    React.SetStateAction<editingPropertyDetails | undefined>
-  >;
+  data: propertiesAPIData;
   refreshPropertiesValues: () => Promise<void>;
   settriggerRecalculations: React.Dispatch<React.SetStateAction<number>>;
   triggerRecalculations: number;

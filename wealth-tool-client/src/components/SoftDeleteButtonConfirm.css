@@ -3,7 +3,8 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  width: 100%;
+  justify-self: center;
+  max-width: 272px;
   background-color: rgb(28 135 235);
   margin: 10px 0px 10px 0px;
   padding: 20px;
@@ -11,4 +12,15 @@
   border-radius: 5px;
   border: 1px solid grey;
   cursor: pointer;
+}
+
+.buttonSoftDeleteCancel {
+  margin: 20px;
+  width: 100%;
+  border-radius: 7px;
+}
+
+.buttonSoftDeleteConfirm {
+  width: 100%;
+  border-radius: 7px;
 }

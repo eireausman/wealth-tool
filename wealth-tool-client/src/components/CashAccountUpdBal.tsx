@@ -61,7 +61,7 @@ const CashAccountUpdBal: React.FC<CashAccountUpdateBalProps> = ({
       {showSavingMessage === true && (
         <ModalSavingData title={saveProgressText} />
       )}
-      {showSavingMessage === false && (
+      {showSavingMessage === false && showSoftDelConfirm === false && (
         <motion.form
           initial={{ opacity: 0, scale: 0.5 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -69,22 +69,8 @@ const CashAccountUpdBal: React.FC<CashAccountUpdateBalProps> = ({
           className="editAccountBalForm"
           onSubmit={saveNewAccountBalance}
         >
-          <span className="accountNickname">
-            {data.account_nickname}
-            {showSoftDelConfirm === false && (
-              <SoftDeleteButton setshowSoftDelConfirm={setshowSoftDelConfirm} />
-            )}
-          </span>
-          {showSoftDelConfirm === true && (
-            <SoftDeleteButtonConfirm
-              assetType="cashAccount"
-              assetID={data.account_id}
-              refreshBalances={updatedAllAccountBalances}
-              triggerRecalculations={triggerRecalculations}
-              settriggerRecalculations={settriggerRecalculations}
-              cancelForm={cancelForm}
-            />
-          )}
+          <span className="accountNickname">{data.account_nickname}</span>
+
           <div className="currencySymbolWrapper">
             {data.currencySymbol}
             <input
@@ -113,7 +99,22 @@ const CashAccountUpdBal: React.FC<CashAccountUpdateBalProps> = ({
               Save
             </motion.button>
           </div>
+          {showSoftDelConfirm === false && (
+            <SoftDeleteButton setshowSoftDelConfirm={setshowSoftDelConfirm} />
+          )}
         </motion.form>
+      )}
+
+      {showSoftDelConfirm === true && (
+        <SoftDeleteButtonConfirm
+          assetType="cashAccount"
+          assetID={data.account_id}
+          assetTitle={data.account_nickname}
+          refreshBalances={updatedAllAccountBalances}
+          triggerRecalculations={triggerRecalculations}
+          settriggerRecalculations={settriggerRecalculations}
+          cancelForm={cancelForm}
+        />
       )}
     </div>
   );

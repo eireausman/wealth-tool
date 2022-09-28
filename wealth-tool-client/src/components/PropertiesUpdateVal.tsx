@@ -5,15 +5,22 @@ import "./PropertiesUpdateVal.css";
 
 import { updatePropertyValue } from "../modules/serverRequests";
 import ModalSavingData from "./ModalSavingData";
+import SoftDeleteButtonConfirm from "./SoftDeleteButtonConfirm";
+import { setLabels } from "react-chartjs-2/dist/utils";
+import SoftDeleteButton from "./SoftDeleteButton";
 
 const PropertiesUpdateVal: React.FC<propertiesUpdateValProps> = ({
   setpropertyToEdit,
-  editingPropertyDetails,
-  seteditingPropertyDetails,
+  data,
   refreshPropertiesValues,
   settriggerRecalculations,
   triggerRecalculations,
 }) => {
+  const [propValuation, setpropValuation] = useState<number>(
+    data.property_valuation
+  );
+  const [loanValue, setloanValue] = useState<number>(data.property_loan_value);
+  const [showSoftDelConfirm, setshowSoftDelConfirm] = useState<boolean>(false);
   const [showSavingMessage, setshowSavingMessage] = useState<boolean>(false);
   const [saveProgressText, setsaveProgressText] = useState<string>(
     "Saving data. Not long now..."
@@ -30,9 +37,9 @@ const PropertiesUpdateVal: React.FC<propertiesUpdateValProps> = ({
     e.preventDefault();
 
     updatePropertyValue(
-      editingPropertyDetails!.property_id,
-      editingPropertyDetails!.property_valuation,
-      editingPropertyDetails!.property_loan_value
+      data.property_id,
+      data.property_valuation,
+      data.property_loan_value
     )
       .then((data) => {
         setsaveProgressText("Saved.  One sec...");
@@ -44,23 +51,16 @@ const PropertiesUpdateVal: React.FC<propertiesUpdateValProps> = ({
   };
 
   const newPropValuation = (e: React.FormEvent<EventTarget>) => {
-    console.log();
     const target = e.target as HTMLInputElement;
     const number = parseInt(target.value);
-    const editingPropertyDetailsCopy = { ...editingPropertyDetails! };
-    editingPropertyDetailsCopy.property_valuation = number;
-    seteditingPropertyDetails(editingPropertyDetailsCopy);
+    setpropValuation(number);
   };
   const newPropLoanAmount = (e: React.FormEvent<EventTarget>) => {
-    console.log();
     const target = e.target as HTMLInputElement;
     const number = parseInt(target.value);
-    const editingPropertyDetailsCopy = { ...editingPropertyDetails! };
-    editingPropertyDetailsCopy.property_loan_value = number;
-    seteditingPropertyDetails(editingPropertyDetailsCopy);
+    setloanValue(number);
   };
-  const cancelForm = (e: React.FormEvent<EventTarget>) => {
-    e.preventDefault();
+  const cancelForm = () => {
     setpropertyToEdit(-1);
   };
   return (
@@ -68,7 +68,7 @@ const PropertiesUpdateVal: React.FC<propertiesUpdateValProps> = ({
       {showSavingMessage === true && (
         <ModalSavingData title={saveProgressText} />
       )}
-      {showSavingMessage === false && (
+      {showSavingMessage === false && showSoftDelConfirm === false && (
         <motion.form
           initial={{ opacity: 0, scale: 0.5 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -77,29 +77,28 @@ const PropertiesUpdateVal: React.FC<propertiesUpdateValProps> = ({
           onSubmit={(e) => saveNewPropValue(e)}
         >
           <span className="propertyValUpdateName">
-            {editingPropertyDetails?.property_nickname.toUpperCase()}
+            {data.property_nickname.toUpperCase()}
           </span>
           <label className="newPropertyValueInputRow">
-            Valuation {editingPropertyDetails?.property_valuation_curr_symbol}
+            Valuation {data.property_valuation_curr_symbol}
             {}
             <input
               name="newPropertyValueInputBox"
               className="newPropertyValueInputBox"
               type="number"
               ref={newPropValueInputBox}
-              value={editingPropertyDetails?.property_valuation}
+              value={propValuation}
               onChange={newPropValuation}
               required
             />
           </label>
-
           <label className="newPropertyValueInputRow">
-            Loan Amount {editingPropertyDetails?.property_valuation_curr_symbol}
+            Loan Amount {data.property_valuation_curr_symbol}
             <input
               name="newPropertyLoanAmountInputBox"
               className="newPropertyLoanAmountInputBox"
               type="number"
-              value={editingPropertyDetails?.property_loan_value}
+              value={loanValue}
               onChange={newPropLoanAmount}
               required
             />
@@ -123,6 +122,20 @@ const PropertiesUpdateVal: React.FC<propertiesUpdateValProps> = ({
             </motion.button>
           </div>
         </motion.form>
+      )}
+      {showSoftDelConfirm === false && (
+        <SoftDeleteButton setshowSoftDelConfirm={setshowSoftDelConfirm} />
+      )}
+      {showSoftDelConfirm === true && (
+        <SoftDeleteButtonConfirm
+          assetType="cashAccount"
+          assetID={data.property_id}
+          assetTitle={data.property_nickname}
+          refreshBalances={refreshPropertiesValues}
+          triggerRecalculations={triggerRecalculations}
+          settriggerRecalculations={settriggerRecalculations}
+          cancelForm={cancelForm}
+        />
       )}
     </Fragment>
   );

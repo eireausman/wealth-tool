@@ -174,8 +174,7 @@ const Properties: React.FC<PropertiesProps> = ({
                   {propertyToEdit === data.property_id ? (
                     <PropertiesUpdateVal
                       setpropertyToEdit={setpropertyToEdit}
-                      editingPropertyDetails={editingPropertyDetails}
-                      seteditingPropertyDetails={seteditingPropertyDetails}
+                      data={data}
                       refreshPropertiesValues={refreshPropertiesValues}
                       settriggerRecalculations={settriggerRecalculations}
                       triggerRecalculations={triggerRecalculations}
