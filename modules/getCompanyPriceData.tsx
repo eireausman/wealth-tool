@@ -28,14 +28,13 @@ const getCompanyPriceData = async (companyTicker?: string) => {
 
     for (let stock in stockListArray) {
       const stockTicker = stockListArray[stock].holding_market_identifier;
-      console.log(stockListArray[stock].holding_market_identifier);
       const stockPriceRecentlyUpdated = await checkIfStockPriceUpdatedWithin(
         stockTicker,
         queryNDaysAgoDate
       );
 
       if (stockPriceRecentlyUpdated === 0) {
-        // await upsertPriceData(stockTicker);
+        await upsertPriceData(stockTicker);
         await APIthrottleDelay(1500);
       }
     }
@@ -45,7 +44,7 @@ const getCompanyPriceData = async (companyTicker?: string) => {
       queryNDaysAgoDate
     );
     if (stockPriceRecentlyUpdated === 0) {
-      // await upsertPriceData(companyTicker);
+      await upsertPriceData(companyTicker);
       await APIthrottleDelay(1500);
     }
   }

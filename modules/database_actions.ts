@@ -315,7 +315,6 @@ export async function getAllFXRatesFromDB() {
 export async function getAllHeldStocksFromDB(dateToday: string) {
   try {
     const companiesQuery = await Investments.findAll({
-      logging: console.log,
       group: ["holding_market_identifier"],
       order: [["holding_market_identifier", "ASC"]],
       include: {

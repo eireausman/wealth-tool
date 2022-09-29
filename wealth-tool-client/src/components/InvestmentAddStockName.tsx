@@ -87,7 +87,7 @@ const InvestmentAddStockName: React.FC<InvestmentAddStockNameProps> = ({
     if (targetValue.length > 2) {
       dispatch({ type: "initialSearchCommenced" });
       const serverResponse = await getCompanyStockByName(targetValue);
-      console.log(serverResponse);
+
       if (serverResponse.length === 0) {
         dispatch({ type: "emptyCompaniesListReceived" });
       } else {
@@ -98,8 +98,6 @@ const InvestmentAddStockName: React.FC<InvestmentAddStockNameProps> = ({
   };
 
   const selectThisCompany = (item: companyNameSearchResults) => {
-    console.log(item);
-
     newStockNameSelectedFromSearch(item);
     dispatch({ type: "companiesListEntrySelected" });
   };

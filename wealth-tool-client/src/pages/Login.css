@@ -69,3 +69,7 @@
 .createAccountLinkText {
   color: white;
 }
+
+.createAccountLinkText:visited {
+  color: white;
+}

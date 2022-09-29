@@ -9,6 +9,7 @@ import { createAccountAttempt } from "../modules/serverRequests";
 import { motion } from "framer-motion";
 import "./CreateAccount.css";
 import CardSpinner from "../components/CardSpinner";
+import { VscAccount } from "react-icons/vsc";
 
 const CreateAccount: React.FC = () => {
   const [formData, setFormData] = useState<createAccountFormData>({
@@ -63,6 +64,8 @@ const CreateAccount: React.FC = () => {
         className="column-form createAccountForm"
         onSubmit={submitFormData}
       >
+        <b>Create Account</b>
+        <VscAccount size={40} color={"#087fed"} />
         <div className="createAccountFormInputRow">
           <label>
             Username

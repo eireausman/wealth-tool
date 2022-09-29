@@ -629,6 +629,12 @@ exports.getInvestmentsData = async function (
       investmentsArray[i].investmentConvertedValue = parseInt(
         investmentConvertedValue.toString()
       );
+    } else {
+      investmentsArray[i].investment_price_histories = [
+        {
+          holding_current_price: "0",
+        },
+      ];
     }
   }
 

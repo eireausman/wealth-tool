@@ -9,6 +9,7 @@ import { loginAttempt } from "../modules/serverRequests";
 import { motion } from "framer-motion";
 import "./Login.css";
 import CardSpinner from "../components/CardSpinner";
+import { RiDoorLockLine } from "react-icons/ri";
 
 const Login: React.FC = () => {
   const [formData, setFormData] = useState<LoginAttemptFormData>({
@@ -53,7 +54,7 @@ const Login: React.FC = () => {
   };
 
   return (
-    <div className="form-container">
+    <section className="form-container">
       <motion.form
         initial={{ opacity: 0, scale: 0.5 }}
         animate={{ opacity: 1, scale: 1 }}
@@ -62,6 +63,8 @@ const Login: React.FC = () => {
         className="column-form loginForm"
         onSubmit={submitFormData}
       >
+        <b>Login</b>
+        <RiDoorLockLine size={50} color={"#087fed"} />
         <div className="loginFormInputRow">
           <label>
             Username
@@ -90,7 +93,6 @@ const Login: React.FC = () => {
             />
           </label>
         </div>
-
         <motion.button
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.8 }}
@@ -130,7 +132,7 @@ const Login: React.FC = () => {
       <p className="createAccountLinkText">
         <Link to="/createaccount"> Need an account? Create one here.</Link>
       </p>
-    </div>
+    </section>
   );
 };
 

@@ -6,6 +6,7 @@ import InvestmentsUpdateStock from "./InvestmentsUpdateStock";
 import { motion } from "framer-motion";
 import Tippy from "@tippyjs/react";
 import "tippy.js/dist/tippy.css";
+import InvestmentRowPrice from "./InvestmentRowPrice";
 
 const InvestmentRow: React.FC<InvestmentRowProps> = ({
   data,
@@ -65,27 +66,7 @@ const InvestmentRow: React.FC<InvestmentRowProps> = ({
         </div>
         <div>{getDisplayNumber(data.holding_quantity_held)}</div>
         <div className="columnInWideViewOnly">
-          <Tippy
-            content={
-              <span>
-                {parseFloat(
-                  (
-                    parseFloat(
-                      data.investment_price_histories[0].holding_current_price
-                    ) / 100
-                  ).toFixed(6)
-                ).toPrecision()}
-              </span>
-            }
-          >
-            <div>
-              {getDisplayNumber(
-                parseFloat(
-                  data.investment_price_histories[0].holding_current_price
-                ) / 100
-              )}
-            </div>
-          </Tippy>
+          <InvestmentRowPrice data={data} />
         </div>
 
         <div className="columnInWideViewOnly">
