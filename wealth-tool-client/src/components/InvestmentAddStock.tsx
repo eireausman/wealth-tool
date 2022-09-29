@@ -6,7 +6,10 @@ import {
   AddNewInvestmentFormData,
 } from "../../../types/typeInterfaces";
 import "./InvestmentAddStock.css";
-import { addnewinvestment } from "../modules/serverRequests";
+import {
+  addnewinvestment,
+  refreshSingleStockPricingData,
+} from "../modules/serverRequests";
 import InvestmentAddStockName from "./InvestmentAddStockName";
 import ModalSavingData from "./ModalSavingData";
 
@@ -20,7 +23,7 @@ const InvestmentAddStock: React.FC<AddANewInvestmentProps> = ({
   const [formData, setformData] = useState<AddNewInvestmentFormData>();
   const [showSavingMessage, setshowSavingMessage] = useState<boolean>(false);
   const [saveProgressText, setsaveProgressText] = useState<string>(
-    "Saving property. Not long now..."
+    "Saving data. Not long now..."
   );
   const [showAdditionStockInfoFields, setshowAdditionStockInfoFields] =
     useState<boolean>(false);
@@ -65,19 +68,21 @@ const InvestmentAddStock: React.FC<AddANewInvestmentProps> = ({
     setformData(formDataCopy);
   };
 
-  const saveNewInvestment = (e: React.FormEvent<EventTarget>) => {
+  const saveNewInvestment = async (e: React.FormEvent<EventTarget>) => {
     setshowSavingMessage(true);
     e.preventDefault();
 
     if (formData) {
-      addnewinvestment(formData)
-        .then((data) => {
-          setsaveProgressText("Saved.  One sec...");
-          settriggerRecalculations(triggerRecalculations + 1);
-          refreshInvestmentsData();
-          setShowAddNewStockForm(false);
-        })
-        .catch((err) => console.log(err));
+      const serverAddInvestment = await addnewinvestment(formData);
+      setsaveProgressText(
+        "Saved.  Obtaining pricing data for new investment..."
+      );
+      const serverGetPricing = await refreshSingleStockPricingData(formData);
+
+      setsaveProgressText("Pricing obtained.  One sec...");
+      settriggerRecalculations(triggerRecalculations + 1);
+      refreshInvestmentsData();
+      setShowAddNewStockForm(false);
     }
   };
 

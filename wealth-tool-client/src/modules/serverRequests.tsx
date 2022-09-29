@@ -15,6 +15,20 @@ const addnewinvestment = async (formData: AddNewInvestmentFormData) => {
   }
 };
 
+const refreshSingleStockPricingData = async (
+  formData: AddNewInvestmentFormData
+) => {
+  try {
+    const serverResponse = await axios.post(
+      "/api/refreshsinglestockpricingdata",
+      formData
+    );
+    return await serverResponse.data;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 const addNewCashAccount = async (formData: AddNewCashAccountFormData) => {
   try {
     const serverResponse = await axios.post("/api/addnewcashaccount", formData);
@@ -336,4 +350,5 @@ export {
   deleteCashAccount,
   deleteProperty,
   deleteInvestment,
+  refreshSingleStockPricingData,
 };

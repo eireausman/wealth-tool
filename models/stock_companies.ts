@@ -61,6 +61,16 @@ module.exports = () => {
           },
         },
       },
+      pricingAPI_lastattempt: {
+        type: DataTypes.DATEONLY,
+        allowNull: true,
+        validate: {
+          isDate: {
+            args: true,
+            msg: "lastfaildate date must be a date",
+          },
+        },
+      },
     },
     {
       indexes: [

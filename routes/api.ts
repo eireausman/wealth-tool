@@ -31,6 +31,11 @@ router.get("/getcurrencycodes", dbQueryController.getCurrencyData);
 
 router.post("/addnewinvestment", dbQueryController.addNewInvestment);
 
+router.post(
+  "/refreshsinglestockpricingdata",
+  dbQueryController.refreshSingleStockPricingData
+);
+
 router.post("/addnewproperty", dbQueryController.addNewProperty);
 
 router.post("/addnewcashaccount", dbQueryController.addNewCashAccount);

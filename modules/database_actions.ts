@@ -34,6 +34,16 @@ User.hasMany(Investments, { foreignKey: "userUsersId" });
 CashAccount.belongsTo(User, { foreignKey: "userUsersId" });
 Investments.belongsTo(User, { foreignKey: "userUsersId" });
 
+Investments.belongsTo(stockCompanies, {
+  foreignKey: "holding_market_identifier",
+  targetKey: "company_symbol",
+});
+
+stockCompanies.hasMany(Investments, {
+  sourceKey: "company_symbol",
+  foreignKey: "holding_market_identifier",
+});
+
 User.hasMany(Properties, { foreignKey: "userUsersId" });
 
 CurrencyCodes.hasMany(Properties, {
@@ -101,6 +111,22 @@ syncFunctions().then((data) => {
   console.log("database sync functions all complete");
 });
 
+export async function updateLastAPIPriceingAttemptDate(
+  stockTicker: string,
+  date: string
+) {
+  await stockCompanies.update(
+    {
+      pricingAPI_lastattempt: date,
+    },
+    {
+      where: {
+        company_symbol: stockTicker,
+      },
+    }
+  );
+}
+
 export async function updateStockPriceData(
   stockTicker: string,
   price: string,
@@ -112,6 +138,7 @@ export async function updateStockPriceData(
       holding_current_price: price,
       price_asatdate: date,
     });
+
     return created;
   } catch (err) {
     console.log(err);
@@ -285,14 +312,20 @@ export async function getAllFXRatesFromDB() {
   }
 }
 
-export async function getAllHeldStocksFromDB() {
+export async function getAllHeldStocksFromDB(dateToday: string) {
   try {
     const companiesQuery = await Investments.findAll({
-      attributes: [
-        sequelize.fn("DISTINCT", sequelize.col("holding_market_identifier")),
-        "holding_market_identifier",
-      ],
+      logging: console.log,
+      group: ["holding_market_identifier"],
       order: [["holding_market_identifier", "ASC"]],
+      include: {
+        model: stockCompanies,
+        where: {
+          pricingAPI_lastattempt: {
+            [Op.ne]: dateToday,
+          },
+        },
+      },
     });
 
     return companiesQuery;

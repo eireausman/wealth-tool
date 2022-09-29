@@ -46,14 +46,25 @@ exports.addNewInvestment = async function (
       res.locals.currentUser.id,
       req.body
     );
-
     const dataArray = JSON.parse(JSON.stringify(newInvestmentData));
 
-    // update the pricing data for the new stock in case it doesn't already have price history for another user:
-    await getCompanyPriceData();
-
-    // const getPrice = getPriceForNewInvestment(data);
     res.send(dataArray);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+exports.refreshSingleStockPricingData = async function (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    // update the pricing data for the new stock in case it doesn't already have price history for another user:
+    const companyTicker = req.body.identifier;
+    const DBpriceUpdate = await getCompanyPriceData(companyTicker);
+
+    res.send(DBpriceUpdate);
   } catch (error) {
     console.log(error);
   }
@@ -170,12 +181,15 @@ exports.getTotalPosAssetValue = async function (
   }
 
   investSummaryArray.forEach((data) => {
-    const pencePrice =
-      parseFloat(data.investment_price_histories[0].holding_current_price) /
-      100;
+    data.total = "0";
+    if (data.investment_price_histories.length > 0) {
+      const pencePrice =
+        parseFloat(data.investment_price_histories[0].holding_current_price) /
+        100;
 
-    const total = data.holding_quantity_held * pencePrice;
-    data.total = total.toString();
+      const total = data.holding_quantity_held * pencePrice;
+      data.total = total.toString();
+    }
   });
 
   let CashAccSummaryArray: Array<cashAccountAPIData> = [];
@@ -365,20 +379,22 @@ exports.getInvestmentsTotal = async function (
   for (let item in investSummaryArray) {
     const fromCurrency: string = investSummaryArray[item].holding_currency_code;
 
-    const pencePrice =
-      parseFloat(
-        investSummaryArray[item].investment_price_histories[0]
-          .holding_current_price
-      ) / 100;
+    if (investSummaryArray[item].investment_price_histories.length > 0) {
+      const pencePrice =
+        parseFloat(
+          investSummaryArray[item].investment_price_histories[0]
+            .holding_current_price
+        ) / 100;
 
-    const valCalc: number =
-      parseInt(investSummaryArray[item].holding_quantity_held) * pencePrice;
+      const valCalc: number =
+        parseInt(investSummaryArray[item].holding_quantity_held) * pencePrice;
 
-    const totalVal = parseInt(valCalc.toString());
+      const totalVal = parseInt(valCalc.toString());
 
-    const rateQuery = await getFXRateFromDB(fromCurrency, selectedCurrency);
-    const rate: number = rateQuery.currency_fxrate;
-    investSummaryConvertedTotal += totalVal * rate;
+      const rateQuery = await getFXRateFromDB(fromCurrency, selectedCurrency);
+      const rate: number = rateQuery.currency_fxrate;
+      investSummaryConvertedTotal += totalVal * rate;
+    }
   }
 
   const returnNumber = parseInt(investSummaryConvertedTotal.toString());
@@ -597,19 +613,23 @@ exports.getInvestmentsData = async function (
       selectedCurrency
     );
 
-    const pencePrice =
-      parseFloat(
-        investmentsArray[i].investment_price_histories[0].holding_current_price
-      ) / 100;
+    investmentsArray[i].investmentConvertedValue = 0;
+    if (investmentsArray[i].investment_price_histories.length > 0) {
+      const pencePrice =
+        parseFloat(
+          investmentsArray[i].investment_price_histories[0]
+            .holding_current_price
+        ) / 100;
 
-    const valCalc: number =
-      investmentsArray[i].holding_quantity_held * pencePrice;
+      const valCalc: number =
+        investmentsArray[i].holding_quantity_held * pencePrice;
 
-    const investmentConvertedValue: number =
-      valCalc * invest_rate.currency_fxrate;
-    investmentsArray[i].investmentConvertedValue = parseInt(
-      investmentConvertedValue.toString()
-    );
+      const investmentConvertedValue: number =
+        valCalc * invest_rate.currency_fxrate;
+      investmentsArray[i].investmentConvertedValue = parseInt(
+        investmentConvertedValue.toString()
+      );
+    }
   }
 
   res.send(investmentsArray);
