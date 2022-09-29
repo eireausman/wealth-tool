@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 
 import {
   getNetCashAccountTotal,
@@ -8,9 +8,11 @@ import {
 import { ChartNetWealthCategoriesProps } from "../../../types/typeInterfaces";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Pie } from "react-chartjs-2";
+import { LoggedInContext } from "../modules/Contexts";
 import "./ChartNetWealthCategories.css";
 import Tippy from "@tippyjs/react";
 import "tippy.js/dist/tippy.css";
+import { AssetCountContext } from "../modules/Contexts";
 
 const ChartNetWealthCategories: React.FC<ChartNetWealthCategoriesProps> = ({
   selectedCurrencyCode,
@@ -20,6 +22,8 @@ const ChartNetWealthCategories: React.FC<ChartNetWealthCategoriesProps> = ({
     Array<number>
   >([]);
   const noAssets = useRef<boolean>(true);
+
+  const LoggedInperson = useContext(LoggedInContext);
 
   const getChartDataFromDB = async () => {
     const PropertyValue = await getNetPropertyTotal(selectedCurrencyCode);
@@ -43,6 +47,9 @@ const ChartNetWealthCategories: React.FC<ChartNetWealthCategoriesProps> = ({
   useEffect(() => {
     getChartDataFromDB();
   }, [triggerRecalculations, selectedCurrencyCode]);
+
+  const assetCount = useContext(AssetCountContext);
+  if (assetCount.totalAssetCount === 0) return null;
 
   ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -81,12 +88,13 @@ const ChartNetWealthCategories: React.FC<ChartNetWealthCategoriesProps> = ({
         content={
           <span>
             Net breakdown of wealth by asset type. Click a key item to
-            add/remove it from the chart.{" "}
+            add/remove it from the chart.
           </span>
         }
       >
-        <span className="chartTitle"> NET WEALTH BREAKDOWN</span>
+        <span className="chartTitle">NET WEALTH BREAKDOWN</span>
       </Tippy>
+
       <div className="viewCardRow viewCardChartInner">
         <Pie data={data} options={options} />
       </div>

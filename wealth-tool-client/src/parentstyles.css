@@ -82,11 +82,21 @@ code {
   margin-left: 5px;
 }
 
+.editValueIcon {
+  height: 14px;
+  width: 14px;
+  margin: 0px 3px 0px 3px;
+  opacity: 0;
+}
+
 .viewCard h3,
 h4 {
   color: rgb(255, 255, 255);
 }
 .viewCardHeading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   font-weight: 300;
   margin: 0px 0px 5px 0px;
 }
@@ -138,6 +148,10 @@ h4 {
   color: black;
   margin: 0px 0px 0px 10px;
   border-radius: 10px;
+}
+.buttonAddNewEntry > svg,
+.buttonAddNewEntry > span {
+  vertical-align: middle;
 }
 
 .buttonWhite {

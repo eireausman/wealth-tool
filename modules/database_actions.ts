@@ -654,6 +654,69 @@ export async function getInvestmentDataFromDB(reslocalsuser: string) {
   }
 }
 
+export async function countUsersInvestments(reslocalsuser: string) {
+  try {
+    const usersInvestmentData = await User.count({
+      where: {
+        users_id: reslocalsuser,
+      },
+      include: {
+        model: Investments,
+        where: {
+          soft_deleted: 0,
+        },
+      },
+    });
+
+    return await usersInvestmentData;
+  } catch (err) {
+    console.log(err);
+    return err;
+  }
+}
+
+export async function countUsersCashAccounts(reslocalsuser: string) {
+  try {
+    const usersCashAccountData = await User.count({
+      where: {
+        users_id: reslocalsuser,
+      },
+      include: {
+        model: CashAccount,
+        where: {
+          soft_deleted: 0,
+        },
+      },
+    });
+
+    return await usersCashAccountData;
+  } catch (err) {
+    console.log(err);
+    return err;
+  }
+}
+
+export async function countUsersProperties(reslocalsuser: string) {
+  try {
+    const usersPropertyData = await User.count({
+      where: {
+        users_id: reslocalsuser,
+      },
+      include: {
+        model: Properties,
+        where: {
+          soft_deleted: 0,
+        },
+      },
+    });
+
+    return await usersPropertyData;
+  } catch (err) {
+    console.log(err);
+    return err;
+  }
+}
+
 export async function getPosInvestmentTotalsByCurrency(reslocalsuser: string) {
   try {
     const usersInvestmentData = await User.findOne({

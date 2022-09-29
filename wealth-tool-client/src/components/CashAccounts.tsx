@@ -15,6 +15,10 @@ import { AxiosResponse } from "axios";
 import CashAccountAccRow from "./CashAccountAccRow";
 import NoAssets from "./NoAssetsMessage";
 import { BiSortAlt2 } from "react-icons/bi";
+import { FaPiggyBank } from "react-icons/fa";
+import ButtonAddAsset from "./ButtonAddAsset";
+import ViewCardCascadeTitleRow from "./ViewCardCascadeTitleRow";
+import ViewCardHeaderRow from "./ViewCardHeaderRow";
 
 const CashAccounts: React.FC<CashAccountsProps> = ({
   selectedCurrencyCode,
@@ -86,47 +90,24 @@ const CashAccounts: React.FC<CashAccountsProps> = ({
             cardText="No accounts being tracked"
             assetType="cashAccount"
           />
-          <motion.button
-            whileTap={{ scale: 0.9 }}
-            className="buttonWhite buttonAddNewEntry"
-            onClick={showAddNewCashAccForm}
-          >
-            + Add Account
-          </motion.button>
+          <ButtonAddAsset
+            clickFunction={showAddNewCashAccForm}
+            buttonTextContent="Add Account"
+          />
         </Fragment>
       )}
       {cashAccAPIData !== undefined &&
         showSpinner === false &&
         showNoAccountsMessage === false && (
           <Fragment>
-            <motion.div
-              initial={{ opacity: 0, scale: 0.5 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5 }}
-              className="viewCardHeaderRow"
-            >
-              <h3 className="viewCardHeading">CASH ACCOUNTS</h3>
-              <h3 className="viewCardTotal">
-                {selectedCurrencySymbol} {getDisplayNumber(cashAccountNetTotal)}
-                <motion.button
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                  className="buttonWhite buttonAddNewEntry"
-                  onClick={showAddNewCashAccForm}
-                >
-                  + Add Account
-                </motion.button>
-                <motion.button
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                  className="buttonWhite buttonAddNewEntry"
-                  onClick={showAddNewCashAccForm}
-                >
-                  sort
-                  <BiSortAlt2 />
-                </motion.button>
-              </h3>
-            </motion.div>
+            <ViewCardHeaderRow
+              rowIcon={<FaPiggyBank size={25} color={"white"} />}
+              rowTitle="CASH ACCOUNTS"
+              selectedCurrencySymbol={selectedCurrencySymbol}
+              netTotal={cashAccountNetTotal}
+              clickFunction={showAddNewCashAccForm}
+            />
+
             <section className="cashAccountsTable">
               <header className="cashAccountsTableHeader">
                 <div className="table-header">A/c Name</div>

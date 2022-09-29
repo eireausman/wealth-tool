@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import React, { Fragment, useState } from "react";
-import editIcon from "../assets/images/edit.png";
+import { FaEdit } from "react-icons/fa";
 import getDisplayNumber from "../modules/getDisplayNumber";
 import { CashAccountAccRowProps } from "../../../types/typeInterfaces";
 import CashAccountUpdBal from "./CashAccountUpdBal";
@@ -49,10 +49,9 @@ const CashAccountAccRow: React.FC<CashAccountAccRowProps> = ({
       >
         <div>
           {data.account_nickname.toUpperCase()}
-          <img
-            src={editIcon}
+          <FaEdit
             className="editValueIcon"
-            alt="Edit Value"
+            color={"#087fed"}
             style={
               styleRowID === data.account_id
                 ? styleForHoverDiv

@@ -68,6 +68,8 @@ router.get("/getinvestmentsnettotal", dbQueryController.getInvestmentsTotal);
 
 router.get("/getinvestmentdata", dbQueryController.getInvestmentsData);
 
+router.get("/usersassetcount", dbQueryController.usersAssetCount);
+
 router.get(
   "/searchforcompanybyname",
   dbQueryController.searchForStockCompanyByName

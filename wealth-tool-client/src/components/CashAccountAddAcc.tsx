@@ -7,7 +7,6 @@ import {
 } from "../../../types/typeInterfaces";
 import "./CashAccountAddAcc.css";
 import { addNewCashAccount } from "../modules/serverRequests";
-import CardSpinner from "./CardSpinner";
 import ModalSavingData from "./ModalSavingData";
 const CashAccountAddAcc: React.FC<AddNewCashAccountPropProps> = ({
   currencyCodesFromDB,

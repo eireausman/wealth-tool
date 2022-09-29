@@ -3,12 +3,9 @@ import {
   PropertiesProps,
   editingPropertyDetails,
 } from "../../../types/typeInterfaces";
-
 import { motion } from "framer-motion";
 import CardSpinner from "./CardSpinner";
 import "./Properties.css";
-import editIcon from "../assets/images/edit.png";
-
 import PropertiesUpdateVal from "./PropertiesUpdateVal";
 import getDisplayNumber from "../modules/getDisplayNumber";
 import PropertiesNewProp from "./PropertiesNewProp";
@@ -19,8 +16,10 @@ import {
 } from "../modules/serverRequests";
 import { AxiosResponse } from "axios";
 import NoAssets from "./NoAssetsMessage";
-import Tippy from "@tippyjs/react";
-import "tippy.js/dist/tippy.css";
+import ButtonAddAsset from "./ButtonAddAsset";
+import { BsHouseDoor } from "react-icons/bs";
+import { FaEdit } from "react-icons/fa";
+import ViewCardHeaderRow from "./ViewCardHeaderRow";
 
 const Properties: React.FC<PropertiesProps> = ({
   selectedCurrencyCode,
@@ -39,6 +38,10 @@ const Properties: React.FC<PropertiesProps> = ({
   const [propertyAccAPIData, setpropertyAccAPIData] =
     useState<Array<propertiesAPIData>>();
   const [netTotalPropValue, setnetTotalPropValue] = useState<number>(0);
+  const [styleRowID, setstyleRowID] = useState<number>(-1);
+  const [styleForHoverDiv, setStyleForHoverDiv] = useState<object>({
+    opacity: 0,
+  });
 
   const refreshPropertiesValues = async () => {
     setShowSpinner(true);
@@ -117,51 +120,24 @@ const Properties: React.FC<PropertiesProps> = ({
             cardText="No properties being tracked"
             assetType="property"
           />
-          <motion.button
-            whileTap={{ scale: 0.9 }}
-            className="buttonWhite buttonAddNewEntry"
-            onClick={showAddPropForm}
-          >
-            + Add Property
-          </motion.button>
+          <ButtonAddAsset
+            clickFunction={showAddPropForm}
+            buttonTextContent="Add Property"
+          />
         </Fragment>
       )}
       {propertyAccAPIData !== undefined &&
         showSpinner === false &&
         showNoAccountsMessage === false && (
           <Fragment>
-            <motion.div
-              initial={{ opacity: 0, scale: 0.5 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5 }}
-              className="viewCardHeaderRow"
-            >
-              <h3 className="viewCardHeading">PROPERTY</h3>
+            <ViewCardHeaderRow
+              rowIcon={<BsHouseDoor size={25} color={"white"} />}
+              rowTitle="PROPERTY"
+              selectedCurrencySymbol={selectedCurrencySymbol}
+              netTotal={netTotalPropValue}
+              clickFunction={showAddPropForm}
+            />
 
-              <h3 className="viewCardTotal">
-                <Tippy
-                  content={
-                    <span>
-                      Net total value (valuations minus loans) in your currently
-                      selected currency.
-                    </span>
-                  }
-                >
-                  <span>
-                    {selectedCurrencySymbol}{" "}
-                    {getDisplayNumber(netTotalPropValue)}
-                  </span>
-                </Tippy>
-                <motion.button
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                  className="buttonWhite buttonAddNewEntry"
-                  onClick={showAddPropForm}
-                >
-                  + Add Property
-                </motion.button>
-              </h3>
-            </motion.div>
             <div className="propertiesOflowContainer scrollbarstyles">
               {propertyAccAPIData?.map((data) => (
                 <motion.div
@@ -170,6 +146,23 @@ const Properties: React.FC<PropertiesProps> = ({
                   transition={{ duration: 0.5 }}
                   className="viewCardRow propertiesViewCardRow"
                   key={data.property_id}
+                  onMouseEnter={(e) => {
+                    setstyleRowID(data.property_id);
+                    setStyleForHoverDiv({ opacity: "1" });
+                  }}
+                  onMouseLeave={(e) => {
+                    setStyleForHoverDiv({ opacity: "0" });
+                    setstyleRowID(-1);
+                  }}
+                  onClick={() =>
+                    editThisProperty(
+                      data.property_id,
+                      data.property_nickname,
+                      data.property_valuation,
+                      data.property_loan_value,
+                      data.property_valuation_curr_symbol
+                    )
+                  }
                 >
                   {propertyToEdit === data.property_id ? (
                     <PropertiesUpdateVal
@@ -181,24 +174,17 @@ const Properties: React.FC<PropertiesProps> = ({
                     />
                   ) : (
                     <Fragment>
-                      <div
-                        className="viewCardRowLeftBox PropertyLeftBox"
-                        onClick={() =>
-                          editThisProperty(
-                            data.property_id,
-                            data.property_nickname,
-                            data.property_valuation,
-                            data.property_loan_value,
-                            data.property_valuation_curr_symbol
-                          )
-                        }
-                      >
+                      <div className="viewCardRowLeftBox PropertyLeftBox">
                         <span className="propertyName">
                           {data.property_nickname.toUpperCase()}
-                          <img
-                            src={editIcon}
+                          <FaEdit
                             className="editValueIcon"
-                            alt="Edit Value"
+                            color={"#087fed"}
+                            style={
+                              styleRowID === data.property_id
+                                ? styleForHoverDiv
+                                : { opacity: "0" }
+                            }
                           />
                         </span>
                         <span className="ownerText">

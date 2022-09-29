@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { allFXRatesAPIData } from "../../../types/typeInterfaces";
 import { getAllFXRateData } from "../modules/serverRequests";
 import "./FXRates.css";
 import { motion } from "framer-motion";
+import { AssetCountContext } from "../modules/Contexts";
 
 const FXRates: React.FC = () => {
   const [allFXRatesAPIData, setallFXRatesAPIData] =
@@ -13,9 +14,9 @@ const FXRates: React.FC = () => {
     });
   }, []);
 
-  if (allFXRatesAPIData === undefined) {
-    return null;
-  }
+  const assetCount = useContext(AssetCountContext);
+  if (assetCount.totalAssetCount === 0) return null;
+
   return (
     <section className="viewCard">
       <motion.div

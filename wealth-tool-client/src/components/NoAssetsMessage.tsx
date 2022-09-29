@@ -1,7 +1,7 @@
 import React from "react";
 import "./NoAssetsMessage.css";
 import { motion } from "framer-motion";
-import { TbZoomMoney } from "react-icons/tb";
+import { FaPiggyBank } from "react-icons/fa";
 import { BsHouseDoor } from "react-icons/bs";
 import { GoGraph } from "react-icons/go";
 
@@ -25,14 +25,10 @@ const NoAssets: React.FC<NoAssetsInterface> = ({
     >
       <p className="messageText">{cardTitle}</p>
       {assetType === "cashAccount" && (
-        <TbZoomMoney size={56} className="moneyIcon" />
+        <FaPiggyBank size={56} className="Icon" />
       )}
-      {assetType === "property" && (
-        <BsHouseDoor size={56} className="moneyIcon" />
-      )}
-      {assetType === "investment" && (
-        <GoGraph size={56} className="moneyIcon" />
-      )}
+      {assetType === "property" && <BsHouseDoor size={56} className="Icon" />}
+      {assetType === "investment" && <GoGraph size={56} className="Icon" />}
       <p className="messageText">{cardText}</p>
     </motion.div>
   );

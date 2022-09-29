@@ -25,6 +25,9 @@ import {
   deleteCashAccountFromDB,
   deletePropertyFromDB,
   deleteInvestmentFromDB,
+  countUsersInvestments,
+  countUsersCashAccounts,
+  countUsersProperties,
 } from "../modules/database_actions";
 import { getCompanyPriceData } from "../modules/getCompanyPriceData";
 
@@ -52,6 +55,28 @@ exports.addNewInvestment = async function (
   } catch (error) {
     console.log(error);
   }
+};
+
+exports.usersAssetCount = async function (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  const user = res.locals.currentUser.id;
+  let totalCount = 0;
+  const investmentCount = await countUsersInvestments(user);
+  totalCount += investmentCount;
+  const cashAccountCount = await countUsersCashAccounts(user);
+  totalCount += cashAccountCount;
+  const propertiesCount = await countUsersProperties(user);
+  totalCount += propertiesCount;
+
+  res.json({
+    investments: investmentCount,
+    cashAccounts: cashAccountCount,
+    properties: propertiesCount,
+    totalAssetCount: totalCount,
+  });
 };
 
 exports.refreshSingleStockPricingData = async function (

@@ -1,11 +1,9 @@
 import React, { useState, Fragment } from "react";
 import { InvestmentRowProps } from "../../../types/typeInterfaces";
-import editIcon from "../assets/images/edit.png";
+import { FaEdit } from "react-icons/fa";
 import getDisplayNumber from "../modules/getDisplayNumber";
 import InvestmentsUpdateStock from "./InvestmentsUpdateStock";
 import { motion } from "framer-motion";
-import Tippy from "@tippyjs/react";
-import "tippy.js/dist/tippy.css";
 import InvestmentRowPrice from "./InvestmentRowPrice";
 
 const InvestmentRow: React.FC<InvestmentRowProps> = ({
@@ -47,10 +45,9 @@ const InvestmentRow: React.FC<InvestmentRowProps> = ({
       >
         <div>
           {data.holding_stock_name}
-          <img
-            src={editIcon}
+          <FaEdit
             className="editValueIcon"
-            alt="Edit Value"
+            color={"#087fed"}
             style={
               styleRowID === data.holding_id
                 ? styleForHoverDiv

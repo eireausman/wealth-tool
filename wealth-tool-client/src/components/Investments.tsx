@@ -1,9 +1,7 @@
 import React, { useState, useEffect, Fragment } from "react";
 import { InvestmentsProps } from "../../../types/typeInterfaces";
-import { motion } from "framer-motion";
 import CardSpinner from "./CardSpinner";
 import "./Investments.css";
-import getDisplayNumber from "../modules/getDisplayNumber";
 import InvestmentAddStock from "./InvestmentAddStock";
 import InvestmentRow from "./InvestmentRow";
 import { investmentsAPIData } from "../../../types/typeInterfaces";
@@ -13,6 +11,9 @@ import {
 } from "../modules/serverRequests";
 import NoAssets from "./NoAssetsMessage";
 import { AxiosResponse } from "axios";
+import ButtonAddAsset from "./ButtonAddAsset";
+import { GoGraph } from "react-icons/go";
+import ViewCardHeaderRow from "./ViewCardHeaderRow";
 
 const Investments: React.FC<InvestmentsProps> = ({
   selectedCurrencyCode,
@@ -83,40 +84,24 @@ const Investments: React.FC<InvestmentsProps> = ({
             cardText="No investments being tracked"
             assetType="investment"
           />
-          <motion.button
-            whileTap={{ scale: 0.9 }}
-            className="buttonWhite buttonAddNewEntry"
-            onClick={addANewStock}
-          >
-            + Add Stock
-          </motion.button>
+          <ButtonAddAsset
+            clickFunction={addANewStock}
+            buttonTextContent="Add Stock"
+          />
         </Fragment>
       )}
       {investmentAPIData !== undefined &&
         showSpinner === false &&
         showNoAccountsMessage === false && (
           <Fragment>
-            <motion.div
-              initial={{ opacity: 0, scale: 0.5 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5 }}
-              className="viewCardHeaderRow"
-            >
-              <h3 className="viewCardHeading">INVESTMENTS</h3>
-              <h3 className="viewCardTotal">
-                {" "}
-                {selectedCurrencySymbol}{" "}
-                {getDisplayNumber(investmentsTotalValue)}
-                <motion.button
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                  className="buttonWhite buttonAddNewEntry"
-                  onClick={addANewStock}
-                >
-                  + Add Stock
-                </motion.button>
-              </h3>
-            </motion.div>
+            <ViewCardHeaderRow
+              rowIcon={<GoGraph size={25} color={"white"} />}
+              rowTitle="INVESTMENTS"
+              selectedCurrencySymbol={selectedCurrencySymbol}
+              netTotal={investmentsTotalValue}
+              clickFunction={addANewStock}
+            />
+
             <section className="investmentsTable">
               <header className="investmentsTableHeader">
                 <div className="table-header">Holding</div>

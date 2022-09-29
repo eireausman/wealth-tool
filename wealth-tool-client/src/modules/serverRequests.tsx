@@ -56,6 +56,15 @@ const checkifuserloggedin = async () => {
   }
 };
 
+const usersAssetCount = async () => {
+  try {
+    const serverResponse = await axios.get("/api/usersassetcount");
+    return await serverResponse.data;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 const addNewProperty = async (formData: AddNewPropertyFormData) => {
   try {
     const serverResponse = await axios.post("/api/addnewproperty", formData);
@@ -351,4 +360,5 @@ export {
   deleteProperty,
   deleteInvestment,
   refreshSingleStockPricingData,
+  usersAssetCount,
 };

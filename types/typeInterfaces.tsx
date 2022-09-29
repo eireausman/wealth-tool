@@ -285,6 +285,10 @@ export interface CashAccountUpdateBalProps {
   triggerRecalculations: number;
 }
 
+export interface AssetCountContextCountData {
+  [key: string]: number;
+}
+
 export interface InvestmentsUpdateStockProps {
   data: investmentsAPIData;
   setshowEditStockForm: React.Dispatch<React.SetStateAction<boolean>>;

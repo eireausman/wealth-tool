@@ -96,6 +96,7 @@ const Login: React.FC = () => {
         <motion.button
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.8 }}
+          transition={{ type: "spring", stiffness: 400, damping: 10 }}
           type="submit"
           className="buttonPrimary buttonLogin"
         >

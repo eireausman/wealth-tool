@@ -1,5 +1,6 @@
 .propertiesViewCardRow {
   min-width: 318px;
+  cursor: pointer;
 }
 
 .calculatedBalanceValueRow {

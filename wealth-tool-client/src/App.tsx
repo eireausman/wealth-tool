@@ -2,16 +2,21 @@ import React, { useEffect, Fragment, useState } from "react";
 import CashAccounts from "./components/CashAccounts";
 import OptionsBoard from "./components/OptionsBoard";
 import Properties from "./components/Properties";
-import { currencyCodesAPIData } from "../../types/typeInterfaces";
+import {
+  AssetCountContextCountData,
+  currencyCodesAPIData,
+} from "../../types/typeInterfaces";
 import {
   checkifuserloggedin,
   getCurrencyCodeData,
+  usersAssetCount,
 } from "./modules/serverRequests";
 import ChartNetWealthCategories from "./components/ChartNetWealthCategories";
 import Investments from "./components/Investments";
 import FXRates from "./components/FXRates";
 import { useNavigate } from "react-router-dom";
 import ViewCardCascadeTitleRow from "./components/ViewCardCascadeTitleRow";
+import { LoggedInContext, AssetCountContext } from "./modules/Contexts";
 
 function App() {
   const [selectedCurrencyCode, setselectedCurrencyCode] =
@@ -20,6 +25,8 @@ function App() {
     useState<string>("$");
   const [currencyCodesFromDB, setcurrencyCodesFromDB] =
     useState<Array<currencyCodesAPIData>>();
+  const [assetCountDBOutput, setassetCountDBOutput] =
+    useState<AssetCountContextCountData>({ totalAssetCount: 0 });
   const [loggedInUser, setloggedInUser] = useState<false | string>(false);
   const [triggerRecalculations, settriggerRecalculations] = useState<number>(0); // used to trigger a reclalc for components comibing figures from other component updates
 
@@ -34,6 +41,12 @@ function App() {
   }, []);
 
   useEffect(() => {
+    usersAssetCount().then((data) => {
+      setassetCountDBOutput(data);
+    });
+  }, [triggerRecalculations]);
+
+  useEffect(() => {
     if (currencyCodesFromDB === undefined) {
       getCurrencyCodeData()
         .then((data) => {
@@ -44,54 +57,61 @@ function App() {
   }, []);
 
   return (
-    <Fragment>
-      <OptionsBoard
-        selectedCurrencyCode={selectedCurrencyCode}
-        selectedCurrencySymbol={selectedCurrencySymbol}
-        setselectedCurrencyCode={setselectedCurrencyCode}
-        currencyCodesFromDB={currencyCodesFromDB}
-        setselectedCurrencySymbol={setselectedCurrencySymbol}
-        loggedInUser={loggedInUser}
-        setloggedInUser={setloggedInUser}
-        triggerRecalculations={triggerRecalculations}
-      />
-      <ViewCardCascadeTitleRow sectionTitle="Your Assets" />
-      <div className="viewCardsCascade">
-        <CashAccounts
+    <AssetCountContext.Provider value={assetCountDBOutput}>
+      <LoggedInContext.Provider value={loggedInUser}>
+        <OptionsBoard
           selectedCurrencyCode={selectedCurrencyCode}
           selectedCurrencySymbol={selectedCurrencySymbol}
+          setselectedCurrencyCode={setselectedCurrencyCode}
           currencyCodesFromDB={currencyCodesFromDB}
-          settriggerRecalculations={settriggerRecalculations}
+          setselectedCurrencySymbol={setselectedCurrencySymbol}
+          loggedInUser={loggedInUser}
+          setloggedInUser={setloggedInUser}
           triggerRecalculations={triggerRecalculations}
         />
-        <Properties
-          selectedCurrencyCode={selectedCurrencyCode}
-          selectedCurrencySymbol={selectedCurrencySymbol}
-          currencyCodesFromDB={currencyCodesFromDB}
-          settriggerRecalculations={settriggerRecalculations}
-          triggerRecalculations={triggerRecalculations}
+        <ViewCardCascadeTitleRow
+          sectionTitle="Your Assets"
+          showIfNoAssets={true}
         />
-        <Investments
-          selectedCurrencyCode={selectedCurrencyCode}
-          selectedCurrencySymbol={selectedCurrencySymbol}
-          currencyCodesFromDB={currencyCodesFromDB}
-          settriggerRecalculations={settriggerRecalculations}
-          triggerRecalculations={triggerRecalculations}
+        <div className="viewCardsCascade">
+          <CashAccounts
+            selectedCurrencyCode={selectedCurrencyCode}
+            selectedCurrencySymbol={selectedCurrencySymbol}
+            currencyCodesFromDB={currencyCodesFromDB}
+            settriggerRecalculations={settriggerRecalculations}
+            triggerRecalculations={triggerRecalculations}
+          />
+          <Properties
+            selectedCurrencyCode={selectedCurrencyCode}
+            selectedCurrencySymbol={selectedCurrencySymbol}
+            currencyCodesFromDB={currencyCodesFromDB}
+            settriggerRecalculations={settriggerRecalculations}
+            triggerRecalculations={triggerRecalculations}
+          />
+          <Investments
+            selectedCurrencyCode={selectedCurrencyCode}
+            selectedCurrencySymbol={selectedCurrencySymbol}
+            currencyCodesFromDB={currencyCodesFromDB}
+            settriggerRecalculations={settriggerRecalculations}
+            triggerRecalculations={triggerRecalculations}
+          />
+        </div>
+        <ViewCardCascadeTitleRow
+          sectionTitle="Asset Analysis"
+          showIfNoAssets={false}
         />
-      </div>
-      <ViewCardCascadeTitleRow sectionTitle="Asset Analysis" />
-
-      <div className="viewCardsCascade">
-        <ChartNetWealthCategories
-          selectedCurrencyCode={selectedCurrencyCode}
-          triggerRecalculations={triggerRecalculations}
-        />
-      </div>
-      <ViewCardCascadeTitleRow sectionTitle="Data" />
-      <div className="viewCardsCascade">
-        <FXRates />
-      </div>
-    </Fragment>
+        <div className="viewCardsCascade">
+          <ChartNetWealthCategories
+            selectedCurrencyCode={selectedCurrencyCode}
+            triggerRecalculations={triggerRecalculations}
+          />
+        </div>
+        <ViewCardCascadeTitleRow sectionTitle="Data" showIfNoAssets={false} />
+        <div className="viewCardsCascade">
+          <FXRates />
+        </div>
+      </LoggedInContext.Provider>
+    </AssetCountContext.Provider>
   );
 }
 

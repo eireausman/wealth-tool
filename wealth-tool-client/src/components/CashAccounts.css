@@ -28,13 +28,6 @@
   border-radius: 5px;
 }
 
-.editValueIcon {
-  height: 11px;
-  width: 11px;
-  margin: 0px 3px 0px 3px;
-  opacity: 0;
-}
-
 .currentValueText {
   font-weight: unset;
   margin-top: 0px;
