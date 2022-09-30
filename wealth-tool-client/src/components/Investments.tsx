@@ -22,6 +22,8 @@ const Investments: React.FC<InvestmentsProps> = ({
   settriggerRecalculations,
   triggerRecalculations,
 }) => {
+  const sortArray = ["Holding Name", "Owner", "Held at", "Cost"];
+
   const [showSpinner, setShowSpinner] = useState<boolean>(true);
   const [showNoAccountsMessage, setshowNoAccountsMessage] = useState(false);
 
@@ -94,13 +96,14 @@ const Investments: React.FC<InvestmentsProps> = ({
         showSpinner === false &&
         showNoAccountsMessage === false && (
           <Fragment>
-            <ViewCardHeaderRow
+            {/* <ViewCardHeaderRow
               rowIcon={<GoGraph size={25} color={"white"} />}
               rowTitle="INVESTMENTS"
               selectedCurrencySymbol={selectedCurrencySymbol}
               netTotal={investmentsTotalValue}
               clickFunction={addANewStock}
-            />
+              sortArray={sortArray}
+            /> */}
 
             <section className="investmentsTable">
               <header className="investmentsTableHeader">

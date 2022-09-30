@@ -23,19 +23,28 @@ const Properties: React.FC<PropertiesProps> = ({
   settriggerRecalculations,
   triggerRecalculations,
 }) => {
+  const sortArray = [
+    { readableString: "Property Name", dbField: "property_nickname" },
+    { readableString: "Owner", dbField: "property_owner_name" },
+    { readableString: "Valuation", dbField: "property_valuation" },
+    { readableString: "Loan", dbField: "property_loan_value" },
+  ];
+
   const [showSpinner, setShowSpinner] = useState<boolean>(true);
   const [showNoAccountsMessage, setshowNoAccountsMessage] = useState(false);
   const [showAddNewForm, setshowAddNewForm] = useState(false);
   const [propertyAccAPIData, setpropertyAccAPIData] =
     useState<Array<propertiesAPIData>>();
   const [netTotalPropValue, setnetTotalPropValue] = useState<number>(0);
+  const [orderByThisColumn, setorderByThisColumn] =
+    useState<string>("property_nickname");
 
   const refreshPropertiesValues = async () => {
     setShowSpinner(true);
     setshowNoAccountsMessage(false);
     setpropertyAccAPIData(undefined);
     const propData: AxiosResponse<any, any> | undefined =
-      await getPropertiesData(selectedCurrencyCode);
+      await getPropertiesData(selectedCurrencyCode, orderByThisColumn);
     if (
       propData !== undefined &&
       propData.status === 200 &&
@@ -56,7 +65,7 @@ const Properties: React.FC<PropertiesProps> = ({
   //reload API data if currency changes:
   useEffect(() => {
     refreshPropertiesValues();
-  }, [selectedCurrencyCode]);
+  }, [selectedCurrencyCode, orderByThisColumn]);
 
   // remove the loading status if cash account data populated in state
   useEffect(() => {
@@ -103,7 +112,10 @@ const Properties: React.FC<PropertiesProps> = ({
               rowTitle="PROPERTY"
               selectedCurrencySymbol={selectedCurrencySymbol}
               netTotal={netTotalPropValue}
-              clickFunction={showAddPropForm}
+              addNewFunction={showAddPropForm}
+              sortArray={sortArray}
+              orderByThisColumn={orderByThisColumn}
+              setorderByThisColumn={setorderByThisColumn}
             />
 
             <div className="propertiesOflowContainer scrollbarstyles">

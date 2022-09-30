@@ -1,15 +1,26 @@
 import { motion } from "framer-motion";
-import React from "react";
-import { BiSortAlt2 } from "react-icons/bi";
+import React, { useState } from "react";
+
 import getDisplayNumber from "../modules/getDisplayNumber";
 import ButtonAddAsset from "./ButtonAddAsset";
+import ButtonSort from "./ButtonSort";
+
+import "./ViewCardHeaderRow.css";
+
+interface selectDropDownSortArray {
+  readableString: string;
+  dbField: string;
+}
 
 interface ViewCardHeaderRowProps {
   rowIcon: JSX.Element;
   rowTitle: string;
   selectedCurrencySymbol: string;
   netTotal: number;
-  clickFunction: () => void;
+  addNewFunction: () => void;
+  sortArray: Array<selectDropDownSortArray>;
+  orderByThisColumn: string;
+  setorderByThisColumn: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const ViewCardHeaderRow: React.FC<ViewCardHeaderRowProps> = ({
@@ -17,36 +28,44 @@ const ViewCardHeaderRow: React.FC<ViewCardHeaderRowProps> = ({
   rowTitle,
   selectedCurrencySymbol,
   netTotal,
-  clickFunction,
+  addNewFunction,
+  sortArray,
+  orderByThisColumn,
+  setorderByThisColumn,
 }) => {
+  // const sortArray = ["A/c Name", "Owner", "Balance"];
+
   return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.5 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.5 }}
-      className="viewCardHeaderRow"
-    >
-      <h3 className="viewCardHeading">
-        {rowIcon}
-        {rowTitle}
-      </h3>
-      <h3 className="viewCardTotal">
-        {selectedCurrencySymbol} {getDisplayNumber(netTotal)}
-        <ButtonAddAsset
-          clickFunction={clickFunction}
-          buttonTextContent="Add Account"
-        />
-        <motion.button
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
-          className="buttonWhite buttonAddNewEntry"
-          onClick={clickFunction}
-        >
-          sort
-          <BiSortAlt2 />
-        </motion.button>
-      </h3>
-    </motion.div>
+    <>
+      <motion.div
+        initial={{ opacity: 0, scale: 0.5 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.5 }}
+        className="viewCardHeaderRow"
+      >
+        <h3 className="viewCardHeading">
+          {rowIcon}
+          {rowTitle}
+        </h3>
+      </motion.div>
+      <div className="viewCardSubHeading">
+        <h3 className="viewCardTotal">
+          {selectedCurrencySymbol} {getDisplayNumber(netTotal)}
+        </h3>
+        <div className="viewCardButtons">
+          <ButtonSort
+            sortArray={sortArray}
+            orderByThisColumn={orderByThisColumn}
+            setorderByThisColumn={setorderByThisColumn}
+          />
+
+          <ButtonAddAsset
+            clickFunction={addNewFunction}
+            buttonTextContent="Add Account"
+          />
+        </div>
+      </div>
+    </>
   );
 };
 

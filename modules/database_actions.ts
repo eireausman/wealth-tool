@@ -603,9 +603,19 @@ export async function updateSingleInvestmentToDB(
   }
 }
 
-export async function getPropertyDataFromDB(reslocalsuser: string) {
+export async function getPropertyDataFromDB(
+  reslocalsuser: string,
+  selectedOrderBy: string | undefined
+) {
   try {
+    const sortOrder = [
+      { model: Properties, as: "properties" },
+      selectedOrderBy ? selectedOrderBy : "property_nickname",
+      "ASC",
+    ];
     const usersPropertyDataQuery = await User.findOne({
+      logging: console.log,
+
       attributes: ["users_id"],
       where: {
         users_id: reslocalsuser,
@@ -616,6 +626,7 @@ export async function getPropertyDataFromDB(reslocalsuser: string) {
           soft_deleted: 0,
         },
       },
+      order: [sortOrder],
     });
 
     return usersPropertyDataQuery;
@@ -1031,19 +1042,30 @@ export async function deletePropertyFromDB(property_id: number) {
   }
 }
 
-export async function getCashAccountDataFromDB(reslocalsuser: string) {
+export async function getCashAccountDataFromDB(
+  reslocalsuser: string,
+  selectedOrderBy: string | undefined
+) {
   try {
+    const sortOrder = [
+      { model: CashAccount, as: "cashAccounts" },
+      selectedOrderBy ? selectedOrderBy : "account_nickname",
+      "ASC",
+    ];
+
     const usersCashAccounts = await User.findOne({
       attributes: ["users_id"],
       where: {
         users_id: reslocalsuser,
       },
+
       include: {
         model: CashAccount,
         where: {
           soft_deleted: 0,
         },
       },
+      order: [sortOrder],
     });
 
     // returns an array of accounts owned by the current user

@@ -1,0 +1,33 @@
+.selectContainer {
+  position: absolute;
+  background-color: #087fed;
+  color: white;
+  border-radius: 5px;
+  min-width: 120px;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  border: 1px solid rgb(246, 246, 246);
+  padding: 12px 16px;
+  margin: 1px 0px 0px 0px;
+  z-index: 1;
+}
+
+.selectDropDownList {
+  list-style-type: none;
+  padding: 0;
+  margin: 0px 0px 0px 0px;
+}
+
+.selectDropDownList li {
+  padding: 3px;
+
+  border-radius: 5px;
+}
+
+.selectDropDownListItem:hover {
+  background-color: #3fa0fa;
+  cursor: pointer;
+}
+
+.selectDropDownListItemActive {
+  background-color: #08243d;
+}

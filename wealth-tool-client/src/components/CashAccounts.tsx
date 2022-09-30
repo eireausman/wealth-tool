@@ -23,10 +23,18 @@ const CashAccounts: React.FC<CashAccountsProps> = ({
   settriggerRecalculations,
   triggerRecalculations,
 }) => {
+  const sortArray = [
+    { readableString: "A/c Name", dbField: "account_nickname" },
+    { readableString: "Owner", dbField: "account_owner_name" },
+    { readableString: "Balance", dbField: "account_balance" },
+  ];
+
   const [showSpinner, setShowSpinner] = useState<boolean>(true);
   const [showAddNewForm, setshowAddNewForm] = useState(false);
   const [showNoAccountsMessage, setshowNoAccountsMessage] = useState(false);
   const [cashAccountNetTotal, setcashAccountNetTotal] = useState<number>(0);
+  const [orderByThisColumn, setorderByThisColumn] =
+    useState<string>("account_nickname");
 
   const [cashAccAPIData, setcashAccAPIData] =
     useState<Array<cashAccountAPIData>>();
@@ -36,7 +44,7 @@ const CashAccounts: React.FC<CashAccountsProps> = ({
     setshowNoAccountsMessage(false);
     setcashAccAPIData(undefined);
     const cashAccServerDataRequest: AxiosResponse<any, any> | undefined =
-      await getCashAccountData(selectedCurrencyCode);
+      await getCashAccountData(selectedCurrencyCode, orderByThisColumn);
 
     if (
       cashAccServerDataRequest !== undefined &&
@@ -61,7 +69,7 @@ const CashAccounts: React.FC<CashAccountsProps> = ({
   //reload API data if currency changes:
   useEffect(() => {
     updatedAllAccountBalances();
-  }, [selectedCurrencyCode]);
+  }, [selectedCurrencyCode, orderByThisColumn]);
 
   const showAddNewCashAccForm = () => {
     setshowAddNewForm(true);
@@ -101,7 +109,10 @@ const CashAccounts: React.FC<CashAccountsProps> = ({
               rowTitle="CASH ACCOUNTS"
               selectedCurrencySymbol={selectedCurrencySymbol}
               netTotal={cashAccountNetTotal}
-              clickFunction={showAddNewCashAccForm}
+              addNewFunction={showAddNewCashAccForm}
+              sortArray={sortArray}
+              orderByThisColumn={orderByThisColumn}
+              setorderByThisColumn={setorderByThisColumn}
             />
 
             <section className="cashAccountsTable">

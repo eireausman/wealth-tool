@@ -391,6 +391,7 @@ exports.getInvestmentsTotal = async function (
   );
 
   const selectedCurrency = req.query.selectedcurrency;
+
   if (!selectedCurrency) {
     res.status(400).json({ error: "Currency not specified" });
     return;
@@ -450,8 +451,15 @@ exports.getCashAccountData = async function (
     return;
   }
 
+  let selectedOrderBy = req.query.sortby;
+
+  if (typeof selectedOrderBy !== "string") {
+    selectedOrderBy = undefined;
+  }
+
   const cashAccountData = await getCashAccountDataFromDB(
-    res.locals.currentUser.id
+    res.locals.currentUser.id,
+    selectedOrderBy
   );
   if (!cashAccountData) {
     res.sendStatus(204);
@@ -574,7 +582,16 @@ exports.getPropertiesData = async function (
     return;
   }
 
-  const propertyData = await getPropertyDataFromDB(res.locals.currentUser.id);
+  let selectedOrderBy = req.query.sortby;
+
+  if (typeof selectedOrderBy !== "string") {
+    selectedOrderBy = undefined;
+  }
+
+  const propertyData = await getPropertyDataFromDB(
+    res.locals.currentUser.id,
+    selectedOrderBy
+  );
 
   if (!propertyData) {
     res.sendStatus(204);

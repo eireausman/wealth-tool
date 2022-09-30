@@ -1,0 +1,36 @@
+.viewCardHeaderRow {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-left: 5px;
+}
+
+.viewCardHeaderRow h3 {
+  color: rgb(255, 255, 255);
+}
+
+.viewCardHeading {
+  display: flex;
+  align-items: center;
+  font-weight: 300;
+  margin: 0px 0px 5px 0px;
+}
+
+.viewCardSubHeading {
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  justify-content: space-between;
+  margin: 3px 10px 10px 5px;
+}
+
+.viewCardSubHeading h3 {
+  color: rgb(255, 255, 255);
+}
+
+.viewCardButtons {
+}
+
+.viewCardTotal {
+  margin: 0px 0px 0px 0px;
+}
