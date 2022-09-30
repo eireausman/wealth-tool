@@ -146,14 +146,6 @@ export interface InvestmentsProps {
   triggerRecalculations: number;
 }
 
-export interface editingPropertyDetails {
-  property_id: number;
-  property_nickname: string;
-  property_valuation: number;
-  property_loan_value: number;
-  property_valuation_curr_symbol: string;
-}
-
 export interface propertiesAPIData {
   [key: string]: string | number | undefined;
   property_id: number;
@@ -270,11 +262,11 @@ export interface PropertiesProps {
 }
 
 export interface propertiesUpdateValProps {
-  setpropertyToEdit: React.Dispatch<React.SetStateAction<number | undefined>>;
   data: propertiesAPIData;
   refreshPropertiesValues: () => Promise<void>;
   settriggerRecalculations: React.Dispatch<React.SetStateAction<number>>;
   triggerRecalculations: number;
+  setshowEditPropertyForm: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export interface CashAccountUpdateBalProps {

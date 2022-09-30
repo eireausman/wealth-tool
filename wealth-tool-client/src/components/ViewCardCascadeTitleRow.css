@@ -1,4 +1,11 @@
 .ViewCardCascadeTitle {
+  display: flex;
   margin: 15px;
   color: white;
+}
+
+@media only screen and (max-width: 770px) {
+  .ViewCardCascadeTitle {
+    justify-content: center;
+  }
 }

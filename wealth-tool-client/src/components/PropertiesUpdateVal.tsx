@@ -2,19 +2,17 @@ import React, { useState, useEffect, useRef, Fragment } from "react";
 import { propertiesUpdateValProps } from "../../../types/typeInterfaces";
 import { motion } from "framer-motion";
 import "./PropertiesUpdateVal.css";
-
 import { updatePropertyValue } from "../modules/serverRequests";
 import ModalSavingData from "./ModalSavingData";
 import SoftDeleteButtonConfirm from "./SoftDeleteButtonConfirm";
-import { setLabels } from "react-chartjs-2/dist/utils";
 import SoftDeleteButton from "./SoftDeleteButton";
 
 const PropertiesUpdateVal: React.FC<propertiesUpdateValProps> = ({
-  setpropertyToEdit,
   data,
   refreshPropertiesValues,
   settriggerRecalculations,
   triggerRecalculations,
+  setshowEditPropertyForm,
 }) => {
   const [propValuation, setpropValuation] = useState<number>(
     data.property_valuation
@@ -45,7 +43,6 @@ const PropertiesUpdateVal: React.FC<propertiesUpdateValProps> = ({
         setsaveProgressText("Saved.  One sec...");
         settriggerRecalculations(triggerRecalculations + 1);
         refreshPropertiesValues();
-        setpropertyToEdit(-1);
       })
       .catch((err) => console.log(err));
   };
@@ -61,13 +58,14 @@ const PropertiesUpdateVal: React.FC<propertiesUpdateValProps> = ({
     setloanValue(number);
   };
   const cancelForm = () => {
-    setpropertyToEdit(-1);
+    setshowEditPropertyForm(false);
   };
   return (
-    <Fragment>
+    <div className="viewCardRow">
       {showSavingMessage === true && (
         <ModalSavingData title={saveProgressText} />
       )}
+
       {showSavingMessage === false && showSoftDelConfirm === false && (
         <motion.form
           initial={{ opacity: 0, scale: 0.5 }}
@@ -137,7 +135,7 @@ const PropertiesUpdateVal: React.FC<propertiesUpdateValProps> = ({
           cancelForm={cancelForm}
         />
       )}
-    </Fragment>
+    </div>
   );
 };
 

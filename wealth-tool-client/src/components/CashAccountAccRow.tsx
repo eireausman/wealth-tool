@@ -4,6 +4,8 @@ import { FaEdit } from "react-icons/fa";
 import getDisplayNumber from "../modules/getDisplayNumber";
 import { CashAccountAccRowProps } from "../../../types/typeInterfaces";
 import CashAccountUpdBal from "./CashAccountUpdBal";
+import Tippy from "@tippyjs/react";
+import "tippy.js/dist/tippy.css";
 
 const CashAccountAccRow: React.FC<CashAccountAccRowProps> = ({
   data,
@@ -60,16 +62,20 @@ const CashAccountAccRow: React.FC<CashAccountAccRowProps> = ({
           />
         </div>
         <div>{data.account_owner_name.toUpperCase()}</div>
-        <div>
-          {" "}
-          {data.account_currency_symbol}{" "}
-          {getDisplayNumber(data.account_balance)}
-        </div>
-        <div>
-          {" "}
-          {selectedCurrencySymbol}{" "}
-          {getDisplayNumber(data.accountBalConvertedValue)}
-        </div>
+        <Tippy
+          content={
+            <span>
+              Base currency value: {data.account_currency_code}{" "}
+              {data.account_currency_symbol}
+              {getDisplayNumber(data.account_balance)}
+            </span>
+          }
+        >
+          <div>
+            {selectedCurrencySymbol}{" "}
+            {getDisplayNumber(data.accountBalConvertedValue)}
+          </div>
+        </Tippy>
       </motion.div>
       {showEditAccountForm === true && (
         <div className="newAdditionModal" onClick={(e) => closeModal(e)}>

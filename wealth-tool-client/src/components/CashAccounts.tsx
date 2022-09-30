@@ -1,9 +1,7 @@
 import React, { useState, useEffect, Fragment } from "react";
 import { CashAccountsProps } from "../../../types/typeInterfaces";
-import { motion } from "framer-motion";
 import "./CashAccounts.css";
 import CardSpinner from "./CardSpinner";
-import getDisplayNumber from "../modules/getDisplayNumber";
 import CashAccountAddAcc from "./CashAccountAddAcc";
 import { cashAccountAPIData } from "../../../types/typeInterfaces";
 import {
@@ -14,10 +12,8 @@ import { AxiosResponse } from "axios";
 
 import CashAccountAccRow from "./CashAccountAccRow";
 import NoAssets from "./NoAssetsMessage";
-import { BiSortAlt2 } from "react-icons/bi";
 import { FaPiggyBank } from "react-icons/fa";
 import ButtonAddAsset from "./ButtonAddAsset";
-import ViewCardCascadeTitleRow from "./ViewCardCascadeTitleRow";
 import ViewCardHeaderRow from "./ViewCardHeaderRow";
 
 const CashAccounts: React.FC<CashAccountsProps> = ({
@@ -113,7 +109,6 @@ const CashAccounts: React.FC<CashAccountsProps> = ({
                 <div className="table-header">A/c Name</div>
                 <div className="table-header">Owner</div>
                 <div className="table-header">Balance</div>
-                <div className="table-header">Converted</div>
               </header>
               <section className="cashAccountsTableDataContainer scrollbarstyles">
                 {cashAccAPIData?.map((data, index) => (

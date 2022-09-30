@@ -15,8 +15,8 @@
   border-radius: 5px;
 }
 
-@media only screen and (max-width: 500px) {
+@media only screen and (max-width: 770px) {
   .messageContainer {
-    min-width: 300px;
+    min-width: 305px;
   }
 }

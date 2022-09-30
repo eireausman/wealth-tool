@@ -1,7 +1,8 @@
-import Tippy from "@tippyjs/react";
 import React, { Fragment } from "react";
 import { investmentsAPIData } from "../../../types/typeInterfaces";
 import getDisplayNumber from "../modules/getDisplayNumber";
+import Tippy from "@tippyjs/react";
+import "tippy.js/dist/tippy.css";
 import { TbCircleDashed } from "react-icons/tb";
 
 interface InvestmentRowPriceProps {

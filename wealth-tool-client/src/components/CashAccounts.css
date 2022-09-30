@@ -57,7 +57,7 @@
 .cashAccountsTableHeader,
 .cashAccountsTableDataGridRow {
   display: grid;
-  grid-template-columns: 40% repeat(3, 20%);
+  grid-template-columns: 40% repeat(2, 30%);
 }
 
 .cashAccountsTableDataContainer {
