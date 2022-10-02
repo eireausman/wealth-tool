@@ -1,3 +1,4 @@
+import { motion } from "framer-motion";
 import React from "react";
 import "./SelectDropDown.css";
 
@@ -20,7 +21,10 @@ const SelectDropDown: React.FC<SelectDropDownProps> = ({
   setorderByThisColumn,
 }) => {
   return (
-    <div
+    <motion.div
+      initial={{ scale: 0.5 }}
+      animate={{ scale: 1 }}
+      transition={{ type: "spring", stiffness: 400, damping: 25 }}
       className="selectContainer"
       onMouseEnter={() => setshowDropdown(true)}
       onMouseLeave={() => setshowDropdown(false)}
@@ -40,7 +44,7 @@ const SelectDropDown: React.FC<SelectDropDownProps> = ({
           </li>
         ))}
       </ul>
-    </div>
+    </motion.div>
   );
 };
 

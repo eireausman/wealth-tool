@@ -635,14 +635,19 @@ export async function getPropertyDataFromDB(
   }
 }
 
-export async function getInvestmentDataFromDB(reslocalsuser: string) {
+export async function getInvestmentDataFromDB(
+  reslocalsuser: string,
+  selectedOrderBy: string | undefined
+) {
+  const sortOrder = [
+    { model: Investments, as: "investments" },
+    selectedOrderBy ? selectedOrderBy : "holding_stock_name",
+    "ASC",
+  ];
+
   try {
     const usersInvestmentQuery = await User.findOne({
       attributes: ["users_id"],
-      order: [
-        [Investments, "holding_owner_name", "ASC"],
-        [Investments, "holding_stock_name", "ASC"],
-      ],
       where: {
         users_id: reslocalsuser,
       },
@@ -657,6 +662,7 @@ export async function getInvestmentDataFromDB(reslocalsuser: string) {
           order: [["price_asatdate", "DESC"]],
         },
       },
+      order: [sortOrder],
     });
 
     return await usersInvestmentQuery;

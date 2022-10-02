@@ -634,8 +634,15 @@ exports.getInvestmentsData = async function (
     return;
   }
 
+  let selectedOrderBy = req.query.sortby;
+
+  if (typeof selectedOrderBy !== "string") {
+    selectedOrderBy = undefined;
+  }
+
   const investmentData = await getInvestmentDataFromDB(
-    res.locals.currentUser.id
+    res.locals.currentUser.id,
+    selectedOrderBy
   );
 
   if (!investmentData) {

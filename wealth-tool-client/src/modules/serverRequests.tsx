@@ -327,10 +327,13 @@ const updatePropertyValue = async (
   }
 };
 
-const getInvestmentData = async (selectedCurrency: string) => {
+const getInvestmentData = async (
+  selectedCurrency: string,
+  sortByField: string
+) => {
   try {
     const serverResponse = await axios.get(
-      `/api/getinvestmentdata?selectedcurrency=${selectedCurrency}`
+      `/api/getinvestmentdata?selectedcurrency=${selectedCurrency}&sortby=${sortByField}`
     );
 
     return await serverResponse;

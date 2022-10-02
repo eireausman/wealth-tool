@@ -22,10 +22,17 @@ const Investments: React.FC<InvestmentsProps> = ({
   settriggerRecalculations,
   triggerRecalculations,
 }) => {
-  const sortArray = ["Holding Name", "Owner", "Held at", "Cost"];
+  const sortArray = [
+    { readableString: "Stock Name", dbField: "holding_stock_name" },
+    { readableString: "Held at", dbField: "holding_institution" },
+    { readableString: "Cost", dbField: "holding_cost_total_value" },
+    { readableString: "Currency", dbField: "holding_currency_code" },
+  ];
 
   const [showSpinner, setShowSpinner] = useState<boolean>(true);
   const [showNoAccountsMessage, setshowNoAccountsMessage] = useState(false);
+  const [orderByThisColumn, setorderByThisColumn] =
+    useState<string>("holding_stock_name");
 
   const [showAddNewStockForm, setShowAddNewStockForm] =
     useState<boolean>(false);
@@ -39,7 +46,7 @@ const Investments: React.FC<InvestmentsProps> = ({
     setinvestmentAPIData(undefined);
 
     const investData: AxiosResponse<any, any> | undefined =
-      await getInvestmentData(selectedCurrencyCode);
+      await getInvestmentData(selectedCurrencyCode, orderByThisColumn);
 
     if (
       investData !== undefined &&
@@ -61,7 +68,7 @@ const Investments: React.FC<InvestmentsProps> = ({
   //reload API data if currency changes:
   useEffect(() => {
     refreshInvestmentsData();
-  }, [selectedCurrencyCode]);
+  }, [selectedCurrencyCode, orderByThisColumn]);
 
   const addANewStock = () => {
     setShowAddNewStockForm(true);
@@ -96,14 +103,16 @@ const Investments: React.FC<InvestmentsProps> = ({
         showSpinner === false &&
         showNoAccountsMessage === false && (
           <Fragment>
-            {/* <ViewCardHeaderRow
+            <ViewCardHeaderRow
               rowIcon={<GoGraph size={25} color={"white"} />}
               rowTitle="INVESTMENTS"
               selectedCurrencySymbol={selectedCurrencySymbol}
               netTotal={investmentsTotalValue}
-              clickFunction={addANewStock}
+              addNewFunction={addANewStock}
               sortArray={sortArray}
-            /> */}
+              orderByThisColumn={orderByThisColumn}
+              setorderByThisColumn={setorderByThisColumn}
+            />
 
             <section className="investmentsTable">
               <header className="investmentsTableHeader">

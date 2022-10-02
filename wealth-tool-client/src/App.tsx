@@ -17,6 +17,7 @@ import FXRates from "./components/FXRates";
 import { useNavigate } from "react-router-dom";
 import ViewCardCascadeTitleRow from "./components/ViewCardCascadeTitleRow";
 import { LoggedInContext, AssetCountContext } from "./modules/Contexts";
+import InvestmentsPriceChart from "./components/InvestmentsPriceChart";
 
 function App() {
   const [selectedCurrencyCode, setselectedCurrencyCode] =
@@ -69,6 +70,7 @@ function App() {
           setloggedInUser={setloggedInUser}
           triggerRecalculations={triggerRecalculations}
         />
+        <InvestmentsPriceChart />
         <ViewCardCascadeTitleRow
           sectionTitle="Your Assets"
           showIfNoAssets={true}

@@ -5,6 +5,7 @@ import getDisplayNumber from "../modules/getDisplayNumber";
 import InvestmentsUpdateStock from "./InvestmentsUpdateStock";
 import { motion } from "framer-motion";
 import InvestmentRowPrice from "./InvestmentRowPrice";
+import InvestmentsPriceChart from "./InvestmentsPriceChart";
 
 const InvestmentRow: React.FC<InvestmentRowProps> = ({
   data,
