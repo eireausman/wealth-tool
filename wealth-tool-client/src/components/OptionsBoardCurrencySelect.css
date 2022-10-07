@@ -1,0 +1,67 @@
+.buttonSelectedCurrency {
+  display: flex;
+  border-radius: 5px;
+  gap: 5px;
+  align-items: center;
+  background-color: transparent;
+  padding-bottom: 5px;
+  padding-top: 5px;
+  border: 0;
+  font-size: 1em;
+  color: white;
+  cursor: pointer;
+}
+
+.buttonSelectedCurrency:hover {
+  background-color: blue;
+}
+
+.currencySelectDropDownContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 2em;
+}
+
+.currencySelectDropDownList {
+  list-style-type: none;
+  padding: 0.4em 0.3em 1.5em 0.3em;
+  margin: 0;
+}
+.currencySelectDropDownList li {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 10px;
+  padding: 3px 3px 3px 15px;
+  border-radius: 5px;
+}
+
+.currencySelectDropDownList button {
+  padding: 0;
+  background-color: transparent;
+  border: 0;
+  margin: 0.1em;
+  color: rgb(255, 255, 255);
+  font-size: 1em;
+  cursor: pointer;
+}
+
+.currencySelectDropDownListItem:hover {
+  background-color: #3fa0fa;
+  cursor: pointer;
+}
+
+.currencySelectDropDownListItemActive {
+  background-color: #bfc5ca;
+  color: black;
+}
+
+.currencySelectDropDownListItemActive button {
+  color: black;
+}
+
+.currencyFlagImage {
+  height: 18px;
+}

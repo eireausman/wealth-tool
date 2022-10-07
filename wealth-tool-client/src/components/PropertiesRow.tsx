@@ -1,14 +1,16 @@
 import { motion } from "framer-motion";
 import React, { Fragment, useState } from "react";
-import { propertiesAPIData } from "../../../types/typeInterfaces";
+import {
+  propertiesAPIData,
+  selectedCurrencyDetails,
+} from "../../../types/typeInterfaces";
 import PropertiesUpdateVal from "./PropertiesUpdateVal";
 import getDisplayNumber from "../modules/getDisplayNumber";
 import { FaEdit } from "react-icons/fa";
 
 interface PropertiesRowProps {
   data: propertiesAPIData;
-  selectedCurrencyCode: string;
-  selectedCurrencySymbol: string;
+  selectedCurrency: selectedCurrencyDetails;
   refreshPropertiesValues: () => Promise<void>;
   settriggerRecalculations: React.Dispatch<React.SetStateAction<number>>;
   triggerRecalculations: number;
@@ -19,8 +21,7 @@ const PropertiesRow: React.FC<PropertiesRowProps> = ({
   refreshPropertiesValues,
   settriggerRecalculations,
   triggerRecalculations,
-  selectedCurrencyCode,
-  selectedCurrencySymbol,
+  selectedCurrency,
 }) => {
   const [styleRowID, setstyleRowID] = useState<number>(-1);
   const [showEditPropertyForm, setshowEditPropertyForm] =
@@ -85,9 +86,9 @@ const PropertiesRow: React.FC<PropertiesRowProps> = ({
           >
             <tbody>
               <tr className="calculatedBalanceValueRow">
-                <td>Net {selectedCurrencyCode}: </td>
+                <td>Net {selectedCurrency.currency_code}: </td>
                 <td>
-                  {selectedCurrencySymbol}{" "}
+                  {selectedCurrency.currency_symbol}{" "}
                   {getDisplayNumber(data.propertyValuationInSelCurr)}
                 </td>
               </tr>

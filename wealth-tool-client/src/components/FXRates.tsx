@@ -3,7 +3,7 @@ import { allFXRatesAPIData } from "../../../types/typeInterfaces";
 import { getAllFXRateData } from "../modules/serverRequests";
 import "./FXRates.css";
 import { motion } from "framer-motion";
-import { AssetCountContext } from "../modules/Contexts";
+import { useAssetCountContext } from "../modules/Contexts";
 
 const FXRates: React.FC = () => {
   const [allFXRatesAPIData, setallFXRatesAPIData] =
@@ -14,7 +14,7 @@ const FXRates: React.FC = () => {
     });
   }, []);
 
-  const assetCount = useContext(AssetCountContext);
+  const assetCount = useContext(useAssetCountContext);
   if (assetCount.totalAssetCount === 0) return null;
 
   return (

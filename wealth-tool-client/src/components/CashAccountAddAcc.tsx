@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useContext } from "react";
 
 import { motion } from "framer-motion";
 import {
@@ -8,13 +8,15 @@ import {
 import "./CashAccountAddAcc.css";
 import { addNewCashAccount } from "../modules/serverRequests";
 import ModalSavingData from "./ModalSavingData";
+import { useCurrenciesFromDBContext } from "../modules/Contexts";
 const CashAccountAddAcc: React.FC<AddNewCashAccountPropProps> = ({
-  currencyCodesFromDB,
   setshowAddNewForm,
   updatedAllAccountBalances,
   settriggerRecalculations,
   triggerRecalculations,
 }) => {
+  const currencyCodesFromDB = useContext(useCurrenciesFromDBContext);
+
   const [formData, setformData] = useState<AddNewCashAccountFormData>();
   const currencyCodeSelection = useRef<HTMLSelectElement | null>(null);
   const [showSavingMessage, setshowSavingMessage] = useState<boolean>(false);

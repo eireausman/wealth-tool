@@ -8,11 +8,11 @@ import {
 import { ChartNetWealthCategoriesProps } from "../../../types/typeInterfaces";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Pie } from "react-chartjs-2";
-import { LoggedInContext } from "../modules/Contexts";
+import { useLoggedInContext } from "../modules/Contexts";
 import "./ChartNetWealthCategories.css";
 import Tippy from "@tippyjs/react";
 import "tippy.js/dist/tippy.css";
-import { AssetCountContext } from "../modules/Contexts";
+import { useAssetCountContext } from "../modules/Contexts";
 
 const ChartNetWealthCategories: React.FC<ChartNetWealthCategoriesProps> = ({
   selectedCurrencyCode,
@@ -23,7 +23,7 @@ const ChartNetWealthCategories: React.FC<ChartNetWealthCategoriesProps> = ({
   >([]);
   const noAssets = useRef<boolean>(true);
 
-  const LoggedInperson = useContext(LoggedInContext);
+  const LoggedInperson = useContext(useLoggedInContext);
 
   const getChartDataFromDB = async () => {
     const PropertyValue = await getNetPropertyTotal(selectedCurrencyCode);
@@ -48,7 +48,7 @@ const ChartNetWealthCategories: React.FC<ChartNetWealthCategoriesProps> = ({
     getChartDataFromDB();
   }, [triggerRecalculations, selectedCurrencyCode]);
 
-  const assetCount = useContext(AssetCountContext);
+  const assetCount = useContext(useAssetCountContext);
   if (assetCount.totalAssetCount === 0) return null;
 
   ChartJS.register(ArcElement, Tooltip, Legend);

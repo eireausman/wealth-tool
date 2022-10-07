@@ -16,6 +16,10 @@
   margin: 0px 0px 5px 0px;
 }
 
+.viewCardHeading svg {
+  margin-right: 5px;
+}
+
 .viewCardSubHeading {
   display: flex;
   align-items: center;
@@ -26,9 +30,6 @@
 
 .viewCardSubHeading h3 {
   color: rgb(255, 255, 255);
-}
-
-.viewCardButtons {
 }
 
 .viewCardTotal {

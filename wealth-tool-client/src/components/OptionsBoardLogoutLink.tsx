@@ -8,21 +8,20 @@ import "tippy.js/dist/tippy.css";
 const OptionsBoardLogoutLink: React.FC<OptionsBoardLogoutLinkProps> = ({
   performLogoutAction,
   loggedInUser,
-  windowWidth,
-  wideWidthLimit,
 }) => {
   const [spinIsActive, setspinIsActive] = useState(false);
+
   return (
     <Fragment>
-      {windowWidth > wideWidthLimit ? (
+      {2 > 1 ? (
         <motion.div
           whileTap={{ scale: 0.9 }}
           className="loginBox"
-          onHoverStart={() => setspinIsActive(true)}
-          onHoverEnd={() => setspinIsActive(false)}
+          onMouseEnter={() => setspinIsActive(true)}
+          onMouseLeave={() => setspinIsActive(false)}
         >
           <Tippy content={<span>Logout user {loggedInUser}</span>}>
-            <div className="loginBoxLink" onClick={performLogoutAction}>
+            <button className="loginBoxLink" onClick={performLogoutAction}>
               {loggedInUser}
               <motion.span
                 animate={{
@@ -31,16 +30,16 @@ const OptionsBoardLogoutLink: React.FC<OptionsBoardLogoutLinkProps> = ({
               >
                 <TbDoorExit />
               </motion.span>
-            </div>
+            </button>
           </Tippy>
         </motion.div>
       ) : (
         <motion.div whileTap={{ scale: 0.9 }} className="loginBox">
           <Tippy content={<span>Logout user {loggedInUser}</span>}>
-            <div className="loginBoxLink" onClick={performLogoutAction}>
+            <button className="loginBoxLink" onClick={performLogoutAction}>
               logout
               <TbDoorExit />
-            </div>
+            </button>
           </Tippy>
         </motion.div>
       )}

@@ -1,5 +1,4 @@
 export interface AddNewCashAccountPropProps {
-  currencyCodesFromDB: currencyCodesAPIData[] | undefined;
   setshowAddNewForm: React.Dispatch<React.SetStateAction<boolean>>;
   updatedAllAccountBalances: () => void;
   settriggerRecalculations: React.Dispatch<React.SetStateAction<number>>;
@@ -7,7 +6,6 @@ export interface AddNewCashAccountPropProps {
 }
 
 export interface AddANewInvestmentProps {
-  currencyCodesFromDB: currencyCodesAPIData[] | undefined;
   setShowAddNewStockForm: React.Dispatch<React.SetStateAction<boolean>>;
   refreshInvestmentsData: () => void;
   settriggerRecalculations: React.Dispatch<React.SetStateAction<number>>;
@@ -15,7 +13,6 @@ export interface AddANewInvestmentProps {
 }
 
 export interface PropertiesNewPropProps {
-  currencyCodesFromDB: currencyCodesAPIData[] | undefined;
   setshowAddNewForm: React.Dispatch<React.SetStateAction<boolean>>;
   refreshPropertiesValues: () => void;
   settriggerRecalculations: React.Dispatch<React.SetStateAction<number>>;
@@ -130,20 +127,22 @@ export interface currencyFXAPIData {
   currency_fxrate_dateupdated: string;
 }
 
+export interface selectedCurrencyDetails {
+  currency_code: string;
+  currency_symbol: string;
+  currency_name: string;
+}
+
 export interface CashAccountsProps {
-  selectedCurrencyCode: string;
-  selectedCurrencySymbol: string;
-  currencyCodesFromDB: currencyCodesAPIData[] | undefined;
   settriggerRecalculations: React.Dispatch<React.SetStateAction<number>>;
   triggerRecalculations: number;
+  selectedCurrency: selectedCurrencyDetails;
 }
 
 export interface InvestmentsProps {
-  selectedCurrencyCode: string;
-  selectedCurrencySymbol: string;
-  currencyCodesFromDB: currencyCodesAPIData[] | undefined;
   settriggerRecalculations: React.Dispatch<React.SetStateAction<number>>;
   triggerRecalculations: number;
+  selectedCurrency: selectedCurrencyDetails;
 }
 
 export interface propertiesAPIData {
@@ -161,46 +160,16 @@ export interface propertiesAPIData {
 export interface OptionsBoardLogoutLinkProps {
   performLogoutAction: () => Promise<void>;
   loggedInUser: string | false;
-  windowWidth: number;
-  wideWidthLimit: number;
-}
-
-export interface OptionsBoardWideProps {
-  setCurrency: (e: React.FormEvent<EventTarget>) => void;
-  selectedCurrency: string;
-  currencyCodesFromDB: currencyCodesAPIData[] | undefined;
-  selectedCurrencySymbol: string;
-  netWealthValue: number;
-  totalPosAssets: number;
-  totalDebtValue: number;
-  windowWidth: number;
-  wideWidthLimit: number;
-  performLogoutAction: () => Promise<void>;
-  loggedInUser: string | false;
-}
-
-export interface OptionsBoardNarrowProps {
-  setCurrency: (e: React.FormEvent<EventTarget>) => void;
-  selectedCurrency: string;
-  currencyCodesFromDB: currencyCodesAPIData[] | undefined;
-  selectedCurrencySymbol: string;
-  netWealthValue: number;
-  totalPosAssets: number;
-  totalDebtValue: number;
-  windowWidth: number;
-  wideWidthLimit: number;
-  performLogoutAction: () => Promise<void>;
-  loggedInUser: string | false;
 }
 
 export interface OptionsBoardNetWealthProps {
-  netWealthValue: number;
-  selectedCurrencySymbol: string;
+  netWealthValue: number | undefined;
+  selectedCurrency: selectedCurrencyDetails;
 }
 
 export interface OptionsBoardTotalAssetsProps {
   selectedCurrencySymbol: string;
-  totalPosAssets: number;
+  totalPosAssets: number | undefined;
 }
 
 export interface SoftDeleteButtonProps {
@@ -217,16 +186,22 @@ export interface SoftDeleteButtonConfirmProps {
   cancelForm: () => void;
 }
 export interface OptionsBoardTotalDebtProps {
-  totalDebtValue: number;
+  totalDebtValue: number | undefined;
   selectedCurrencySymbol: string;
 }
 
+export interface currencyImagesList {
+  [key: string]: string;
+}
+
 export interface OptionsBoardCurrencySelectProps {
-  setCurrency: (e: React.FormEvent<EventTarget>) => void;
-  selectedCurrency: string;
-  currencyCodesFromDB: currencyCodesAPIData[] | undefined;
-  windowWidth: number;
-  wideWidthLimit: number;
+  currencyImages: currencyImagesList;
+  selectedCurrency: selectedCurrencyDetails;
+  setCurrency: (
+    currency_code: string,
+    currency_symbol: string,
+    currency_name: string
+  ) => void;
 }
 
 export interface totalsByCurr {
@@ -254,11 +229,9 @@ export interface investmentsAPIData {
 }
 
 export interface PropertiesProps {
-  selectedCurrencyCode: string;
-  selectedCurrencySymbol: string;
-  currencyCodesFromDB: currencyCodesAPIData[] | undefined;
   settriggerRecalculations: React.Dispatch<React.SetStateAction<number>>;
   triggerRecalculations: number;
+  selectedCurrency: selectedCurrencyDetails;
 }
 
 export interface propertiesUpdateValProps {
@@ -355,11 +328,19 @@ export interface stockCompanys {
 }
 
 export interface OptionsBoardProps {
-  selectedCurrencyCode: string;
-  selectedCurrencySymbol: string;
-  setselectedCurrencyCode: React.Dispatch<React.SetStateAction<string>>;
+  selectedCurrency: {
+    currency_code: string;
+    currency_symbol: string;
+    currency_name: string;
+  };
+  setselectedCurrency: React.Dispatch<
+    React.SetStateAction<{
+      currency_code: string;
+      currency_symbol: string;
+      currency_name: string;
+    }>
+  >;
   currencyCodesFromDB: currencyCodesAPIData[] | undefined;
-  setselectedCurrencySymbol: React.Dispatch<React.SetStateAction<string>>;
   loggedInUser: string | false;
   setloggedInUser: React.Dispatch<React.SetStateAction<string | false>>;
   triggerRecalculations: number;
@@ -367,15 +348,15 @@ export interface OptionsBoardProps {
 
 export interface CashAccountAccRowProps {
   data: cashAccountAPIData;
-  selectedCurrencySymbol: string;
   updatedAllAccountBalances: () => void;
   settriggerRecalculations: React.Dispatch<React.SetStateAction<number>>;
   triggerRecalculations: number;
+  selectedCurrency: selectedCurrencyDetails;
 }
 
 export interface InvestmentRowProps {
   data: investmentsAPIData;
-  selectedCurrencySymbol: string;
+  selectedCurrency: selectedCurrencyDetails;
   refreshInvestmentsData: () => void;
   settriggerRecalculations: React.Dispatch<React.SetStateAction<number>>;
   triggerRecalculations: number;

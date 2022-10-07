@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import "./ViewCardCascadeTitleRow.css";
-import { AssetCountContext } from "../modules/Contexts";
+import { useAssetCountContext } from "../modules/Contexts";
 
 interface ViewCardCascadeTitleRowProps {
   sectionTitle: string;
@@ -11,7 +11,7 @@ const ViewCardCascadeTitleRow: React.FC<ViewCardCascadeTitleRowProps> = ({
   sectionTitle,
   showIfNoAssets,
 }) => {
-  const assetCount = useContext(AssetCountContext);
+  const assetCount = useContext(useAssetCountContext);
 
   if (assetCount.totalAssetCount === 0 && showIfNoAssets === false) return null;
 

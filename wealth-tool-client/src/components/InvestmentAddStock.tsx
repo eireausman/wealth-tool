@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useContext, useState } from "react";
 import { motion } from "framer-motion";
 import { companyNameSearchResults } from "../../../types/typeInterfaces";
 import {
@@ -12,14 +12,15 @@ import {
 } from "../modules/serverRequests";
 import InvestmentAddStockName from "./InvestmentAddStockName";
 import ModalSavingData from "./ModalSavingData";
+import { useCurrenciesFromDBContext } from "../modules/Contexts";
 
 const InvestmentAddStock: React.FC<AddANewInvestmentProps> = ({
-  currencyCodesFromDB,
   setShowAddNewStockForm,
   refreshInvestmentsData,
   settriggerRecalculations,
   triggerRecalculations,
 }) => {
+  const currencyCodesFromDB = useContext(useCurrenciesFromDBContext);
   const [formData, setformData] = useState<AddNewInvestmentFormData>();
   const [showSavingMessage, setshowSavingMessage] = useState<boolean>(false);
   const [saveProgressText, setsaveProgressText] = useState<string>(

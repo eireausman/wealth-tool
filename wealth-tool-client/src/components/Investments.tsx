@@ -16,11 +16,9 @@ import { GoGraph } from "react-icons/go";
 import ViewCardHeaderRow from "./ViewCardHeaderRow";
 
 const Investments: React.FC<InvestmentsProps> = ({
-  selectedCurrencyCode,
-  selectedCurrencySymbol,
-  currencyCodesFromDB,
-  settriggerRecalculations,
   triggerRecalculations,
+  settriggerRecalculations,
+  selectedCurrency,
 }) => {
   const sortArray = [
     { readableString: "Stock Name", dbField: "holding_stock_name" },
@@ -46,7 +44,10 @@ const Investments: React.FC<InvestmentsProps> = ({
     setinvestmentAPIData(undefined);
 
     const investData: AxiosResponse<any, any> | undefined =
-      await getInvestmentData(selectedCurrencyCode, orderByThisColumn);
+      await getInvestmentData(
+        selectedCurrency.currency_code,
+        orderByThisColumn
+      );
 
     if (
       investData !== undefined &&
@@ -61,14 +62,14 @@ const Investments: React.FC<InvestmentsProps> = ({
       setshowNoAccountsMessage(true);
     }
 
-    const total = await getNetInvestmentTotal(selectedCurrencyCode);
+    const total = await getNetInvestmentTotal(selectedCurrency.currency_code);
     setInvestmentsTotalValue(total);
   };
 
   //reload API data if currency changes:
   useEffect(() => {
     refreshInvestmentsData();
-  }, [selectedCurrencyCode, orderByThisColumn]);
+  }, [selectedCurrency.currency_code, orderByThisColumn]);
 
   const addANewStock = () => {
     setShowAddNewStockForm(true);
@@ -106,7 +107,7 @@ const Investments: React.FC<InvestmentsProps> = ({
             <ViewCardHeaderRow
               rowIcon={<GoGraph size={25} color={"white"} />}
               rowTitle="INVESTMENTS"
-              selectedCurrencySymbol={selectedCurrencySymbol}
+              selectedCurrency={selectedCurrency}
               netTotal={investmentsTotalValue}
               addNewFunction={addANewStock}
               sortArray={sortArray}
@@ -132,7 +133,7 @@ const Investments: React.FC<InvestmentsProps> = ({
                   <InvestmentRow
                     key={data.holding_id}
                     data={data}
-                    selectedCurrencySymbol={selectedCurrencySymbol}
+                    selectedCurrency={selectedCurrency}
                     refreshInvestmentsData={refreshInvestmentsData}
                     settriggerRecalculations={settriggerRecalculations}
                     triggerRecalculations={triggerRecalculations}
@@ -147,7 +148,6 @@ const Investments: React.FC<InvestmentsProps> = ({
         <div className="newAdditionModal" onClick={(e) => closeModal(e)}>
           <div className="newAdditionModalInner">
             <InvestmentAddStock
-              currencyCodesFromDB={currencyCodesFromDB}
               setShowAddNewStockForm={setShowAddNewStockForm}
               refreshInvestmentsData={refreshInvestmentsData}
               settriggerRecalculations={settriggerRecalculations}

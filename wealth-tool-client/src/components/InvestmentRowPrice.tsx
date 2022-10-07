@@ -4,6 +4,7 @@ import getDisplayNumber from "../modules/getDisplayNumber";
 import Tippy from "@tippyjs/react";
 import "tippy.js/dist/tippy.css";
 import { TbCircleDashed } from "react-icons/tb";
+import InvestmentsPriceChart from "./InvestmentsPriceChart";
 
 interface InvestmentRowPriceProps {
   data: investmentsAPIData;

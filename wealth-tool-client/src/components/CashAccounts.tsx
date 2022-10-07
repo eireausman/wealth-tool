@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Fragment } from "react";
+import React, { useState, useEffect, Fragment, useContext } from "react";
 import { CashAccountsProps } from "../../../types/typeInterfaces";
 import "./CashAccounts.css";
 import CardSpinner from "./CardSpinner";
@@ -17,11 +17,9 @@ import ButtonAddAsset from "./ButtonAddAsset";
 import ViewCardHeaderRow from "./ViewCardHeaderRow";
 
 const CashAccounts: React.FC<CashAccountsProps> = ({
-  selectedCurrencyCode,
-  selectedCurrencySymbol,
-  currencyCodesFromDB,
-  settriggerRecalculations,
   triggerRecalculations,
+  settriggerRecalculations,
+  selectedCurrency,
 }) => {
   const sortArray = [
     { readableString: "A/c Name", dbField: "account_nickname" },
@@ -44,7 +42,10 @@ const CashAccounts: React.FC<CashAccountsProps> = ({
     setshowNoAccountsMessage(false);
     setcashAccAPIData(undefined);
     const cashAccServerDataRequest: AxiosResponse<any, any> | undefined =
-      await getCashAccountData(selectedCurrencyCode, orderByThisColumn);
+      await getCashAccountData(
+        selectedCurrency.currency_code,
+        orderByThisColumn
+      );
 
     if (
       cashAccServerDataRequest !== undefined &&
@@ -62,14 +63,14 @@ const CashAccounts: React.FC<CashAccountsProps> = ({
       setshowNoAccountsMessage(true);
     }
 
-    const total = await getNetCashAccountTotal(selectedCurrencyCode);
+    const total = await getNetCashAccountTotal(selectedCurrency.currency_code);
     setcashAccountNetTotal(total);
   };
 
   //reload API data if currency changes:
   useEffect(() => {
     updatedAllAccountBalances();
-  }, [selectedCurrencyCode, orderByThisColumn]);
+  }, [selectedCurrency.currency_code, orderByThisColumn]);
 
   const showAddNewCashAccForm = () => {
     setshowAddNewForm(true);
@@ -107,8 +108,8 @@ const CashAccounts: React.FC<CashAccountsProps> = ({
             <ViewCardHeaderRow
               rowIcon={<FaPiggyBank size={25} color={"white"} />}
               rowTitle="CASH ACCOUNTS"
-              selectedCurrencySymbol={selectedCurrencySymbol}
               netTotal={cashAccountNetTotal}
+              selectedCurrency={selectedCurrency}
               addNewFunction={showAddNewCashAccForm}
               sortArray={sortArray}
               orderByThisColumn={orderByThisColumn}
@@ -126,10 +127,10 @@ const CashAccounts: React.FC<CashAccountsProps> = ({
                   <CashAccountAccRow
                     key={data.account_id}
                     data={data}
-                    selectedCurrencySymbol={selectedCurrencySymbol}
                     updatedAllAccountBalances={updatedAllAccountBalances}
                     settriggerRecalculations={settriggerRecalculations}
                     triggerRecalculations={triggerRecalculations}
+                    selectedCurrency={selectedCurrency}
                   />
                 ))}
               </section>
@@ -142,7 +143,6 @@ const CashAccounts: React.FC<CashAccountsProps> = ({
           <div className="newAdditionModalInner">
             {" "}
             <CashAccountAddAcc
-              currencyCodesFromDB={currencyCodesFromDB}
               setshowAddNewForm={setshowAddNewForm}
               updatedAllAccountBalances={updatedAllAccountBalances}
               settriggerRecalculations={settriggerRecalculations}

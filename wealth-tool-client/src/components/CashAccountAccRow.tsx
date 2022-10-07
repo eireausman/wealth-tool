@@ -9,10 +9,10 @@ import "tippy.js/dist/tippy.css";
 
 const CashAccountAccRow: React.FC<CashAccountAccRowProps> = ({
   data,
-  selectedCurrencySymbol,
   updatedAllAccountBalances,
   settriggerRecalculations,
   triggerRecalculations,
+  selectedCurrency,
 }) => {
   const [styleForHoverDiv, setStyleForHoverDiv] = useState<object>({
     opacity: 0,
@@ -72,7 +72,7 @@ const CashAccountAccRow: React.FC<CashAccountAccRowProps> = ({
           }
         >
           <div>
-            {selectedCurrencySymbol}{" "}
+            {selectedCurrency.currency_symbol}{" "}
             {getDisplayNumber(data.accountBalConvertedValue)}
           </div>
         </Tippy>

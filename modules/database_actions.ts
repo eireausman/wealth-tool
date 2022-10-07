@@ -658,7 +658,7 @@ export async function getInvestmentDataFromDB(
         },
         include: {
           model: InvestmentPriceHistory,
-          limit: 1,
+          limit: 20,
           order: [["price_asatdate", "DESC"]],
         },
       },

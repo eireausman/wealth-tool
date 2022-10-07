@@ -16,6 +16,7 @@ import CardSpinner from "./CardSpinner";
 import "./InvestmentAddStockName.css";
 import InvestmentAddStockNameSelected from "./InvestmentAddStockNameSelected";
 import { BsSearch } from "react-icons/bs";
+import useDebounce from "../hooks/useDebounce";
 
 const initialState = {
   showSearchResultsContainer: false,
@@ -72,21 +73,24 @@ const InvestmentAddStockName: React.FC<InvestmentAddStockNameProps> = ({
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const stockNameNameInputBox = useRef<HTMLInputElement | null>(null);
+  const [stockNameInput, setstockNameInput] = useState<string>("");
 
   useEffect(() => {
     stockNameNameInputBox.current !== null &&
       stockNameNameInputBox.current.focus();
   }, []);
 
-  const getStockName = async (e: React.FormEvent<EventTarget>) => {
-    // search for the string:
+  const searchTerm = useDebounce(stockNameInput, 500);
+  useEffect(() => {
+    if (searchTerm) {
+      getStockName();
+    }
+  }, [searchTerm]);
 
-    const target = e.target as HTMLInputElement;
-    const targetValue = target.value;
-
-    if (targetValue.length > 2) {
+  const getStockName = async () => {
+    if (stockNameInput.length > 2) {
       dispatch({ type: "initialSearchCommenced" });
-      const serverResponse = await getCompanyStockByName(targetValue);
+      const serverResponse = await getCompanyStockByName(stockNameInput);
 
       if (serverResponse.length === 0) {
         dispatch({ type: "emptyCompaniesListReceived" });
@@ -111,11 +115,12 @@ const InvestmentAddStockName: React.FC<InvestmentAddStockNameProps> = ({
             name="stockName"
             className="newStockInputField"
             ref={stockNameNameInputBox}
+            value={stockNameInput}
             type="text"
             required
             minLength={3}
             maxLength={40}
-            onChange={getStockName}
+            onChange={(e) => setstockNameInput(e.target.value)}
           />
         </label>
       )}

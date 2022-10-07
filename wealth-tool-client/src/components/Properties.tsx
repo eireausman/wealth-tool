@@ -17,11 +17,9 @@ import ViewCardHeaderRow from "./ViewCardHeaderRow";
 import PropertiesRow from "./PropertiesRow";
 
 const Properties: React.FC<PropertiesProps> = ({
-  selectedCurrencyCode,
-  selectedCurrencySymbol,
-  currencyCodesFromDB,
-  settriggerRecalculations,
   triggerRecalculations,
+  settriggerRecalculations,
+  selectedCurrency,
 }) => {
   const sortArray = [
     { readableString: "Property Name", dbField: "property_nickname" },
@@ -44,7 +42,10 @@ const Properties: React.FC<PropertiesProps> = ({
     setshowNoAccountsMessage(false);
     setpropertyAccAPIData(undefined);
     const propData: AxiosResponse<any, any> | undefined =
-      await getPropertiesData(selectedCurrencyCode, orderByThisColumn);
+      await getPropertiesData(
+        selectedCurrency.currency_code,
+        orderByThisColumn
+      );
     if (
       propData !== undefined &&
       propData.status === 200 &&
@@ -58,14 +59,14 @@ const Properties: React.FC<PropertiesProps> = ({
       setshowNoAccountsMessage(true);
     }
 
-    const total = await getNetPropertyTotal(selectedCurrencyCode);
+    const total = await getNetPropertyTotal(selectedCurrency.currency_code);
     setnetTotalPropValue(total);
   };
 
   //reload API data if currency changes:
   useEffect(() => {
     refreshPropertiesValues();
-  }, [selectedCurrencyCode, orderByThisColumn]);
+  }, [selectedCurrency.currency_code, orderByThisColumn]);
 
   // remove the loading status if cash account data populated in state
   useEffect(() => {
@@ -110,7 +111,7 @@ const Properties: React.FC<PropertiesProps> = ({
             <ViewCardHeaderRow
               rowIcon={<BsHouseDoor size={25} color={"white"} />}
               rowTitle="PROPERTY"
-              selectedCurrencySymbol={selectedCurrencySymbol}
+              selectedCurrency={selectedCurrency}
               netTotal={netTotalPropValue}
               addNewFunction={showAddPropForm}
               sortArray={sortArray}
@@ -123,8 +124,7 @@ const Properties: React.FC<PropertiesProps> = ({
                 <PropertiesRow
                   key={data.property_id}
                   data={data}
-                  selectedCurrencyCode={selectedCurrencyCode}
-                  selectedCurrencySymbol={selectedCurrencySymbol}
+                  selectedCurrency={selectedCurrency}
                   refreshPropertiesValues={refreshPropertiesValues}
                   settriggerRecalculations={settriggerRecalculations}
                   triggerRecalculations={triggerRecalculations}
@@ -138,7 +138,6 @@ const Properties: React.FC<PropertiesProps> = ({
         <div className="newAdditionModal" onClick={(e) => closeModal(e)}>
           <div className="newAdditionModalInner">
             <PropertiesNewProp
-              currencyCodesFromDB={currencyCodesFromDB}
               setshowAddNewForm={setshowAddNewForm}
               refreshPropertiesValues={refreshPropertiesValues}
               settriggerRecalculations={settriggerRecalculations}

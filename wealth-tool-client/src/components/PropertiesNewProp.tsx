@@ -1,4 +1,10 @@
-import React, { Fragment, useState, useRef, useEffect } from "react";
+import React, {
+  Fragment,
+  useState,
+  useRef,
+  useEffect,
+  useContext,
+} from "react";
 import { motion } from "framer-motion";
 import {
   PropertiesNewPropProps,
@@ -7,14 +13,15 @@ import {
 import "./PropertiesNewProp.css";
 import { addNewProperty } from "../modules/serverRequests";
 import ModalSavingData from "./ModalSavingData";
+import { useCurrenciesFromDBContext } from "../modules/Contexts";
 
 const PropertiesNewProp: React.FC<PropertiesNewPropProps> = ({
-  currencyCodesFromDB,
   setshowAddNewForm,
   refreshPropertiesValues,
   settriggerRecalculations,
   triggerRecalculations,
 }) => {
+  const currencyCodesFromDB = useContext(useCurrenciesFromDBContext);
   const [formData, setformData] = useState<AddNewPropertyFormData>();
   const [showSavingMessage, setshowSavingMessage] = useState<boolean>(false);
   const [saveProgressText, setsaveProgressText] = useState<string>(

@@ -9,7 +9,7 @@ import InvestmentsPriceChart from "./InvestmentsPriceChart";
 
 const InvestmentRow: React.FC<InvestmentRowProps> = ({
   data,
-  selectedCurrencySymbol,
+  selectedCurrency,
   refreshInvestmentsData,
   settriggerRecalculations,
   triggerRecalculations,
@@ -56,6 +56,7 @@ const InvestmentRow: React.FC<InvestmentRowProps> = ({
             }
           />
         </div>
+        <InvestmentsPriceChart data={data} />
         <div className="columnInWideViewOnly">{data.holding_owner_name}</div>
         <div className="columnInWideViewOnly"> {data.holding_institution}</div>
         <div className="columnInWideViewOnly">
@@ -72,7 +73,7 @@ const InvestmentRow: React.FC<InvestmentRowProps> = ({
           {data.holding_cost_total_value}
         </div>
         <div>
-          {selectedCurrencySymbol}{" "}
+          {selectedCurrency.currency_symbol}{" "}
           {getDisplayNumber(data.investmentConvertedValue)}
         </div>
       </motion.div>

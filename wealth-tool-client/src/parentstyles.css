@@ -6,6 +6,10 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: #161616;
+  background-image: url("./assets/images/backgroundWave.svg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center top;
 }
 
 code {
@@ -56,6 +60,12 @@ code {
   max-width: 350px;
 }
 
+.spanReset {
+  padding: 0;
+  margin: 0;
+  transform: translate(0em, -0.1em);
+}
+
 .viewCardsCascade {
   display: flex;
   flex-direction: row;
@@ -73,6 +83,7 @@ code {
   border-radius: 10px;
   padding: 10px;
   border: 1px solid #949494;
+  min-width: 346px;
 }
 
 .editValueIcon {
@@ -92,7 +103,6 @@ code {
   border-radius: 10px;
   margin: 0px 10px 5px 10px;
   padding: 3px;
-  /* min-width: 390px; */
 }
 
 .viewCardRowLeftBox {
@@ -142,6 +152,10 @@ code {
   background-color: rgb(218, 30, 30);
   color: white;
   cursor: pointer;
+}
+
+.currencyFlagImage {
+  height: 18px;
 }
 
 /* width */

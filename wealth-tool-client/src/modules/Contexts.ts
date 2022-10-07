@@ -1,8 +1,16 @@
 import { createContext } from "react";
-import { AssetCountContextCountData } from "../../../types/typeInterfaces";
+import {
+  AssetCountContextCountData,
+  currencyCodesAPIData,
+  selectedCurrencyDetails,
+} from "../../../types/typeInterfaces";
 
-export const LoggedInContext = createContext<string | false>(false);
+export const useLoggedInContext = createContext<string | false>(false);
 
-export const AssetCountContext = createContext<AssetCountContextCountData>({
+export const useAssetCountContext = createContext<AssetCountContextCountData>({
   "": 0,
 });
+
+export const useCurrenciesFromDBContext = createContext<
+  Array<currencyCodesAPIData> | undefined
+>(undefined);

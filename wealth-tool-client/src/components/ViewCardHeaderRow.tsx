@@ -1,10 +1,9 @@
 import { motion } from "framer-motion";
-import React, { useState } from "react";
-
+import React from "react";
+import { selectedCurrencyDetails } from "../../../types/typeInterfaces";
 import getDisplayNumber from "../modules/getDisplayNumber";
 import ButtonAddAsset from "./ButtonAddAsset";
 import ButtonSort from "./ButtonSort";
-
 import "./ViewCardHeaderRow.css";
 
 interface selectDropDownSortArray {
@@ -15,9 +14,9 @@ interface selectDropDownSortArray {
 interface ViewCardHeaderRowProps {
   rowIcon: JSX.Element;
   rowTitle: string;
-  selectedCurrencySymbol: string;
   netTotal: number;
   addNewFunction: () => void;
+  selectedCurrency: selectedCurrencyDetails;
   sortArray: Array<selectDropDownSortArray>;
   orderByThisColumn: string;
   setorderByThisColumn: React.Dispatch<React.SetStateAction<string>>;
@@ -26,15 +25,13 @@ interface ViewCardHeaderRowProps {
 const ViewCardHeaderRow: React.FC<ViewCardHeaderRowProps> = ({
   rowIcon,
   rowTitle,
-  selectedCurrencySymbol,
   netTotal,
   addNewFunction,
+  selectedCurrency,
   sortArray,
   orderByThisColumn,
   setorderByThisColumn,
 }) => {
-  // const sortArray = ["A/c Name", "Owner", "Balance"];
-
   return (
     <>
       <motion.div
@@ -50,7 +47,7 @@ const ViewCardHeaderRow: React.FC<ViewCardHeaderRowProps> = ({
       </motion.div>
       <div className="viewCardSubHeading">
         <h3 className="viewCardTotal">
-          {selectedCurrencySymbol} {getDisplayNumber(netTotal)}
+          {selectedCurrency.currency_code} {getDisplayNumber(netTotal)}
         </h3>
         <div className="viewCardButtons">
           <ButtonSort

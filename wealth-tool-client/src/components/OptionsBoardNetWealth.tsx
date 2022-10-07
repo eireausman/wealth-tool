@@ -3,25 +3,38 @@ import getDisplayNumber from "../modules/getDisplayNumber";
 import { OptionsBoardNetWealthProps } from "../../../types/typeInterfaces";
 import Tippy from "@tippyjs/react";
 import "tippy.js/dist/tippy.css";
+import { FiInfo } from "react-icons/fi";
+import Shimmer from "./Shimmer";
 
 const OptionsBoardNetWealth: React.FC<OptionsBoardNetWealthProps> = ({
   netWealthValue,
-  selectedCurrencySymbol,
+  selectedCurrency,
 }) => {
   return (
-    <Tippy content={<span>Total Assets minus Total Debt.</span>}>
-      <div className="totalAssetBox">
-        <b>Net Wealth</b>{" "}
-        <span
+    <button className="wealthContainerButton">
+      <Tippy content={<span>Total Assets minus Total Debt.</span>}>
+        <span className="spanReset">
+          <FiInfo color="white" />
+        </span>
+      </Tippy>
+      <b className="wealthFigureTitle">Net Wealth</b>
+      {netWealthValue === undefined ? (
+        <p className="wealthFigureShimmer">
+          <Shimmer height={25} width={65} borderRadiusPX={5} />
+        </p>
+      ) : (
+        <p
           className={
-            netWealthValue < 0 ? "optionsBoardNegative" : "optionsBoardPositive"
+            netWealthValue !== undefined && netWealthValue < 0
+              ? "wealthFigureNegative"
+              : "wealthFigurePositive"
           }
         >
-          {selectedCurrencySymbol}
-          {getDisplayNumber(netWealthValue)}
-        </span>
-      </div>
-    </Tippy>
+          {selectedCurrency.currency_symbol}
+          {netWealthValue !== undefined && getDisplayNumber(netWealthValue)}
+        </p>
+      )}
+    </button>
   );
 };
 
