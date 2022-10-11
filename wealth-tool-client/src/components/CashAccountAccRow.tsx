@@ -1,11 +1,12 @@
 import { motion } from "framer-motion";
-import React, { Fragment, useState } from "react";
+import React, { Fragment, Key, useState } from "react";
 import { FaEdit } from "react-icons/fa";
 import getDisplayNumber from "../modules/getDisplayNumber";
 import { CashAccountAccRowProps } from "../../../types/typeInterfaces";
 import CashAccountUpdBal from "./CashAccountUpdBal";
 import Tippy from "@tippyjs/react";
 import "tippy.js/dist/tippy.css";
+import { keyboardKey } from "@testing-library/user-event";
 
 const CashAccountAccRow: React.FC<CashAccountAccRowProps> = ({
   data,
@@ -21,8 +22,14 @@ const CashAccountAccRow: React.FC<CashAccountAccRowProps> = ({
   const [showEditAccountForm, setShowEditAccountForm] =
     useState<boolean>(false);
 
-  const editThisAccount = (account_id: number) => {
+  const editThisAccount = () => {
     setShowEditAccountForm(true);
+  };
+
+  const enterKeyIsEdit = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      setShowEditAccountForm(true);
+    }
   };
 
   const closeModal = (e: React.FormEvent<EventTarget>) => {
@@ -39,7 +46,9 @@ const CashAccountAccRow: React.FC<CashAccountAccRowProps> = ({
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.5 }}
         className="cashAccountsTableDataGridRow"
-        onClick={(e) => editThisAccount(data.account_id)}
+        tabIndex={0}
+        onKeyUp={(e) => enterKeyIsEdit(e)}
+        onClick={(e) => editThisAccount()}
         onMouseEnter={(e) => {
           setstyleRowID(data.account_id);
           setStyleForHoverDiv({ opacity: "1" });

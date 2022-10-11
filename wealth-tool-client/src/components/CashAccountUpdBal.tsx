@@ -87,6 +87,7 @@ const CashAccountUpdBal: React.FC<CashAccountUpdateBalProps> = ({
               whileTap={{ scale: 0.8 }}
               className="buttonPrimary buttonCashBalSave"
               onClick={cancelForm}
+              type="button"
             >
               Cancel
             </motion.button>

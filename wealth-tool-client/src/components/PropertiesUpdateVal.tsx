@@ -34,11 +34,7 @@ const PropertiesUpdateVal: React.FC<propertiesUpdateValProps> = ({
     setshowSavingMessage(true);
     e.preventDefault();
 
-    updatePropertyValue(
-      data.property_id,
-      data.property_valuation,
-      data.property_loan_value
-    )
+    updatePropertyValue(data.property_id, propValuation, loanValue)
       .then((data) => {
         setsaveProgressText("Saved.  One sec...");
         settriggerRecalculations(triggerRecalculations + 1);

@@ -165,6 +165,7 @@ export interface OptionsBoardLogoutLinkProps {
 export interface OptionsBoardNetWealthProps {
   netWealthValue: number | undefined;
   selectedCurrency: selectedCurrencyDetails;
+  showInfo: boolean;
 }
 
 export interface OptionsBoardTotalAssetsProps {

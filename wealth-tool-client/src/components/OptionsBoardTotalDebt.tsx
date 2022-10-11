@@ -28,7 +28,7 @@ const OptionsBoardTotalDebt: React.FC<OptionsBoardTotalDebtProps> = ({
       <b className="wealthFigureTitle">Total Debt </b>
       {totalDebtValue === undefined ? (
         <p className="wealthFigureShimmer">
-          <Shimmer height={25} width={65} borderRadiusPX={5} />
+          <Shimmer height={25} width={96} borderRadiusPX={5} />
         </p>
       ) : (
         <p

@@ -551,7 +551,10 @@ exports.updatePropValue = function (
   res: Response,
   next: NextFunction
 ) {
-  /// REQUIRES USER CHECK?
+  if (!res.locals.currentUser) {
+    res.sendStatus(403);
+    return;
+  }
   const updateBalanceRequest = updatePropValueToDB(
     req.body.property_id,
     req.body.property_valuation,

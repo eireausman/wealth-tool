@@ -9,18 +9,23 @@ import Shimmer from "./Shimmer";
 const OptionsBoardNetWealth: React.FC<OptionsBoardNetWealthProps> = ({
   netWealthValue,
   selectedCurrency,
+  showInfo,
 }) => {
+  const tf = false;
+
   return (
     <button className="wealthContainerButton">
-      <Tippy content={<span>Total Assets minus Total Debt.</span>}>
-        <span className="spanReset">
-          <FiInfo color="white" />
-        </span>
-      </Tippy>
+      {showInfo === true && (
+        <Tippy content={<span>Total Assets minus Total Debt.</span>}>
+          <span className="spanReset">
+            <FiInfo color="white" />
+          </span>
+        </Tippy>
+      )}
       <b className="wealthFigureTitle">Net Wealth</b>
       {netWealthValue === undefined ? (
         <p className="wealthFigureShimmer">
-          <Shimmer height={25} width={65} borderRadiusPX={5} />
+          <Shimmer height={25} width={96} borderRadiusPX={5} />
         </p>
       ) : (
         <p

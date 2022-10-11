@@ -58,7 +58,7 @@ const ViewCardHeaderRow: React.FC<ViewCardHeaderRowProps> = ({
 
           <ButtonAddAsset
             clickFunction={addNewFunction}
-            buttonTextContent="Add Account"
+            buttonTextContent="Add"
           />
         </div>
       </div>

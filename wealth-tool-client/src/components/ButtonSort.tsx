@@ -23,12 +23,12 @@ const ButtonSort: React.FC<ButtonSortProps> = ({
   return (
     <>
       <motion.button
-        whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
         transition={{ type: "spring", stiffness: 400, damping: 10 }}
         className="buttonWhite buttonAddNewEntry"
         onMouseEnter={() => setshowDropdown(true)}
         onMouseLeave={() => setshowDropdown(false)}
+        onClick={() => setshowDropdown(!showDropdown)}
       >
         sort
         <BiSortAlt2 />

@@ -41,7 +41,7 @@ const ModalMainMenu: React.FC<ModalMainMenuProps> = ({
 }) => {
   const loggedInUser = useContext(useLoggedInContext);
 
-  const [showSlideOutMenu, setshowSlideOutMenu] = useState<boolean>(true);
+  const [showSlideOutMenu, setshowSlideOutMenu] = useState<boolean>(false);
   const [closeButtonSpinIsActive, setcloseButtonSpinIsActive] =
     useState<boolean>(false);
   const [burgerButtonSpinIsActive, setburgerButtonSpinIsActive] =
@@ -144,17 +144,19 @@ const ModalMainMenu: React.FC<ModalMainMenuProps> = ({
           <OptionsBoardNetWealth
             netWealthValue={netWealthValue}
             selectedCurrency={selectedCurrency}
+            showInfo={false}
           />
+
+          <motion.span
+            animate={{
+              rotate: burgerButtonSpinIsActive === true ? 360 : 0,
+            }}
+            onMouseEnter={() => setburgerButtonSpinIsActive(true)}
+            onMouseLeave={() => setburgerButtonSpinIsActive(false)}
+          >
+            <CgMenu size={28} color={"black"} />
+          </motion.span>
         </div>
-        <motion.span
-          animate={{
-            rotate: burgerButtonSpinIsActive === true ? 360 : 0,
-          }}
-          onMouseEnter={() => setburgerButtonSpinIsActive(true)}
-          onMouseLeave={() => setburgerButtonSpinIsActive(false)}
-        >
-          <CgMenu size={28} />
-        </motion.span>
       </div>
       {showSlideOutMenu === true && (
         <section className="modalMainMenuContainer" onClick={hideSlideOutMenu}>
@@ -179,6 +181,7 @@ const ModalMainMenu: React.FC<ModalMainMenuProps> = ({
             <OptionsBoardNetWealth
               netWealthValue={netWealthValue}
               selectedCurrency={selectedCurrency}
+              showInfo={true}
             />
             <OptionsBoardTotalAssets
               totalPosAssets={totalPosAssets}

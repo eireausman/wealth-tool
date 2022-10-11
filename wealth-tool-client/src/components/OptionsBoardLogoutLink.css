@@ -1,0 +1,14 @@
+.loginButtonLink {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4em;
+  width: 100%;
+  min-height: 20px;
+  cursor: pointer;
+  background-color: #bfc5ca;
+  border: 0;
+  border-radius: 5px;
+  margin-top: 20px;
+}
