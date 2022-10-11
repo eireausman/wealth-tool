@@ -13,6 +13,7 @@ const PropertiesUpdateVal: React.FC<propertiesUpdateValProps> = ({
   settriggerRecalculations,
   triggerRecalculations,
   setshowEditPropertyForm,
+  checkForEscapeKey,
 }) => {
   const [propValuation, setpropValuation] = useState<number>(
     data.property_valuation
@@ -57,7 +58,7 @@ const PropertiesUpdateVal: React.FC<propertiesUpdateValProps> = ({
     setshowEditPropertyForm(false);
   };
   return (
-    <div className="viewCardRow">
+    <div className="viewCardRow" onKeyUp={(e) => checkForEscapeKey(e)}>
       {showSavingMessage === true && (
         <ModalSavingData title={saveProgressText} />
       )}

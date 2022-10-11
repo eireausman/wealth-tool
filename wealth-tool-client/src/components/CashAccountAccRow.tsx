@@ -6,7 +6,6 @@ import { CashAccountAccRowProps } from "../../../types/typeInterfaces";
 import CashAccountUpdBal from "./CashAccountUpdBal";
 import Tippy from "@tippyjs/react";
 import "tippy.js/dist/tippy.css";
-import { keyboardKey } from "@testing-library/user-event";
 
 const CashAccountAccRow: React.FC<CashAccountAccRowProps> = ({
   data,
@@ -26,9 +25,15 @@ const CashAccountAccRow: React.FC<CashAccountAccRowProps> = ({
     setShowEditAccountForm(true);
   };
 
-  const enterKeyIsEdit = (e: React.KeyboardEvent) => {
+  const checkKeyEnter = (e: React.KeyboardEvent) => {
     if (e.key === "Enter") {
       setShowEditAccountForm(true);
+    }
+  };
+
+  const checkForEscapeKey = (e: React.KeyboardEvent) => {
+    if (e.key === "Escape") {
+      setShowEditAccountForm(false);
     }
   };
 
@@ -47,7 +52,7 @@ const CashAccountAccRow: React.FC<CashAccountAccRowProps> = ({
         transition={{ duration: 0.5 }}
         className="cashAccountsTableDataGridRow"
         tabIndex={0}
-        onKeyUp={(e) => enterKeyIsEdit(e)}
+        onKeyUp={(e) => checkKeyEnter(e)}
         onClick={(e) => editThisAccount()}
         onMouseEnter={(e) => {
           setstyleRowID(data.account_id);
@@ -95,6 +100,7 @@ const CashAccountAccRow: React.FC<CashAccountAccRowProps> = ({
               updatedAllAccountBalances={updatedAllAccountBalances}
               settriggerRecalculations={settriggerRecalculations}
               triggerRecalculations={triggerRecalculations}
+              checkForEscapeKey={checkForEscapeKey}
             />
           </div>
         </div>

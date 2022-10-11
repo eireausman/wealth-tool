@@ -20,6 +20,18 @@ const InvestmentRow: React.FC<InvestmentRowProps> = ({
   const [styleRowID, setstyleRowID] = useState<number>(-1);
   const [showEditStockForm, setshowEditStockForm] = useState(false);
 
+  const checkKeyEnter = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      setshowEditStockForm(true);
+    }
+  };
+
+  const checkForEscapeKey = (e: React.KeyboardEvent) => {
+    if (e.key === "Escape") {
+      setshowEditStockForm(false);
+    }
+  };
+
   const closeModal = (e: React.FormEvent<EventTarget>) => {
     const target = e.target as HTMLElement;
     if (target.className === "newAdditionModal") {
@@ -35,6 +47,8 @@ const InvestmentRow: React.FC<InvestmentRowProps> = ({
         transition={{ duration: 0.5 }}
         className="investmentsTableDataGridRow"
         onClick={() => setshowEditStockForm(true)}
+        onKeyUp={(e) => checkKeyEnter(e)}
+        tabIndex={0}
         onMouseEnter={(e) => {
           setstyleRowID(data.holding_id);
           setStyleForHoverDiv({ opacity: "1" });
@@ -86,6 +100,7 @@ const InvestmentRow: React.FC<InvestmentRowProps> = ({
               refreshInvestmentsData={refreshInvestmentsData}
               settriggerRecalculations={settriggerRecalculations}
               triggerRecalculations={triggerRecalculations}
+              checkForEscapeKey={checkForEscapeKey}
             />
           </div>
         </div>

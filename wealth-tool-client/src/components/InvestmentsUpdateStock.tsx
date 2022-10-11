@@ -16,6 +16,7 @@ const InvestmentsUpdateStock: React.FC<InvestmentsUpdateStockProps> = ({
   refreshInvestmentsData,
   settriggerRecalculations,
   triggerRecalculations,
+  checkForEscapeKey,
 }) => {
   const [formData, setformData] = useState<investmentUpdateStockFormData>({
     holding_id: data.holding_id,
@@ -70,7 +71,7 @@ const InvestmentsUpdateStock: React.FC<InvestmentsUpdateStockProps> = ({
     }
   };
   return (
-    <div className="viewCardRow">
+    <div className="viewCardRow" onKeyUp={(e) => checkForEscapeKey(e)}>
       {showSavingMessage === true && (
         <ModalSavingData title={saveProgressText} />
       )}

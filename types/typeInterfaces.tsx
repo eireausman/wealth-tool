@@ -241,6 +241,7 @@ export interface propertiesUpdateValProps {
   settriggerRecalculations: React.Dispatch<React.SetStateAction<number>>;
   triggerRecalculations: number;
   setshowEditPropertyForm: React.Dispatch<React.SetStateAction<boolean>>;
+  checkForEscapeKey: (e: React.KeyboardEvent) => void;
 }
 
 export interface CashAccountUpdateBalProps {
@@ -249,6 +250,7 @@ export interface CashAccountUpdateBalProps {
   updatedAllAccountBalances: () => void;
   settriggerRecalculations: React.Dispatch<React.SetStateAction<number>>;
   triggerRecalculations: number;
+  checkForEscapeKey: (e: React.KeyboardEvent) => void;
 }
 
 export interface AssetCountContextCountData {
@@ -261,6 +263,7 @@ export interface InvestmentsUpdateStockProps {
   refreshInvestmentsData: () => void;
   settriggerRecalculations: React.Dispatch<React.SetStateAction<number>>;
   triggerRecalculations: number;
+  checkForEscapeKey: (e: React.KeyboardEvent) => void;
 }
 
 export interface LoginAttemptFormData {

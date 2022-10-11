@@ -34,6 +34,18 @@ const PropertiesRow: React.FC<PropertiesRowProps> = ({
     setshowEditPropertyForm(true);
   };
 
+  const checkKeyEnter = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      setshowEditPropertyForm(true);
+    }
+  };
+
+  const checkForEscapeKey = (e: React.KeyboardEvent) => {
+    if (e.key === "Escape") {
+      setshowEditPropertyForm(false);
+    }
+  };
+
   const closeModal = (e: React.FormEvent<EventTarget>) => {
     const target = e.target as HTMLElement;
     if (target.className === "newAdditionModal") {
@@ -58,6 +70,8 @@ const PropertiesRow: React.FC<PropertiesRowProps> = ({
           setstyleRowID(-1);
         }}
         onClick={() => editThisProperty()}
+        tabIndex={0}
+        onKeyUp={(e) => checkKeyEnter(e)}
       >
         <div className="viewCardRowLeftBox PropertyLeftBox">
           <span className="propertyName">
@@ -128,6 +142,7 @@ const PropertiesRow: React.FC<PropertiesRowProps> = ({
               settriggerRecalculations={settriggerRecalculations}
               triggerRecalculations={triggerRecalculations}
               setshowEditPropertyForm={setshowEditPropertyForm}
+              checkForEscapeKey={checkForEscapeKey}
             />
           </div>
         </div>

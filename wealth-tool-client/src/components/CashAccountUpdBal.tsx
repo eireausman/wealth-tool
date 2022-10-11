@@ -13,6 +13,7 @@ const CashAccountUpdBal: React.FC<CashAccountUpdateBalProps> = ({
   updatedAllAccountBalances,
   settriggerRecalculations,
   triggerRecalculations,
+  checkForEscapeKey,
 }) => {
   const [updatedBalance, setupdatedBalance] = useState<number>(0);
   const [showSoftDelConfirm, setshowSoftDelConfirm] = useState<boolean>(false);
@@ -57,7 +58,7 @@ const CashAccountUpdBal: React.FC<CashAccountUpdateBalProps> = ({
   };
 
   return (
-    <div className="viewCardRow">
+    <div className="viewCardRow" onKeyUp={(e) => checkForEscapeKey(e)}>
       {showSavingMessage === true && (
         <ModalSavingData title={saveProgressText} />
       )}

@@ -20,6 +20,12 @@ const SelectDropDown: React.FC<SelectDropDownProps> = ({
   orderByThisColumn,
   setorderByThisColumn,
 }) => {
+  const checkKeyEnter = (e: React.KeyboardEvent, DBsortField: string) => {
+    if (e.key === "Enter") {
+      setorderByThisColumn(() => DBsortField);
+    }
+  };
+
   return (
     <motion.div
       initial={{ scale: 0.5 }}
@@ -33,11 +39,13 @@ const SelectDropDown: React.FC<SelectDropDownProps> = ({
         {sortArray.map((item, index) => (
           <li
             key={index}
+            tabIndex={0}
             className={
               orderByThisColumn === item.dbField
                 ? "selectDropDownListItemActive"
                 : "selectDropDownListItem"
             }
+            onKeyUp={(e) => checkKeyEnter(e, item.dbField)}
             onClick={() => setorderByThisColumn(() => item.dbField)}
           >
             {item.readableString}
