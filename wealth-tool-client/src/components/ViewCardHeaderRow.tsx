@@ -4,6 +4,7 @@ import { selectedCurrencyDetails } from "../../../types/typeInterfaces";
 import getDisplayNumber from "../modules/getDisplayNumber";
 import ButtonAddAsset from "./ButtonAddAsset";
 import ButtonSort from "./ButtonSort";
+import Shimmer from "./Shimmer";
 import "./ViewCardHeaderRow.css";
 
 interface selectDropDownSortArray {
@@ -14,7 +15,7 @@ interface selectDropDownSortArray {
 interface ViewCardHeaderRowProps {
   rowIcon: JSX.Element;
   rowTitle: string;
-  netTotal: number;
+  netTotal: number | undefined;
   addNewFunction: () => void;
   selectedCurrency: selectedCurrencyDetails;
   sortArray: Array<selectDropDownSortArray>;
@@ -47,7 +48,13 @@ const ViewCardHeaderRow: React.FC<ViewCardHeaderRowProps> = ({
       </motion.div>
       <div className="viewCardSubHeading">
         <h3 className="viewCardTotal">
-          {selectedCurrency.currency_code} {getDisplayNumber(netTotal)}
+          {netTotal === undefined ? (
+            <Shimmer height={20} width={60} borderRadiusPX={1} />
+          ) : (
+            <>
+              {selectedCurrency.currency_code} {getDisplayNumber(netTotal)}
+            </>
+          )}
         </h3>
         <div className="viewCardButtons">
           <ButtonSort

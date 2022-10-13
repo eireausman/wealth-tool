@@ -8,12 +8,14 @@ import { investmentsAPIData } from "../../../types/typeInterfaces";
 import {
   getInvestmentData,
   getNetInvestmentTotal,
+  getSingleInvestmentData,
 } from "../modules/serverRequests";
 import NoAssets from "./NoAssetsMessage";
 import { AxiosResponse } from "axios";
 import ButtonAddAsset from "./ButtonAddAsset";
 import { GoGraph } from "react-icons/go";
 import ViewCardHeaderRow from "./ViewCardHeaderRow";
+import InvestmentRowUpdatingPrices from "./InvestmentRowUpdatingPrices";
 
 const Investments: React.FC<InvestmentsProps> = ({
   triggerRecalculations,
@@ -27,7 +29,6 @@ const Investments: React.FC<InvestmentsProps> = ({
     { readableString: "Currency", dbField: "holding_currency_code" },
   ];
 
-  const [showSpinner, setShowSpinner] = useState<boolean>(true);
   const [showNoAccountsMessage, setshowNoAccountsMessage] = useState(false);
   const [orderByThisColumn, setorderByThisColumn] =
     useState<string>("holding_stock_name");
@@ -36,30 +37,65 @@ const Investments: React.FC<InvestmentsProps> = ({
     useState<boolean>(false);
   const [investmentAPIData, setinvestmentAPIData] =
     useState<Array<investmentsAPIData>>();
-  const [investmentsTotalValue, setInvestmentsTotalValue] = useState<number>(0);
+  const [investmentsTotalValue, setInvestmentsTotalValue] = useState<
+    number | undefined
+  >(0);
 
-  const refreshInvestmentsData = async () => {
-    setShowSpinner(true);
+  const refreshInvestmentsData = async (holdingID?: number) => {
     setshowNoAccountsMessage(false);
-    setinvestmentAPIData(undefined);
+    setInvestmentsTotalValue(undefined);
 
-    const investData: AxiosResponse<any, any> | undefined =
-      await getInvestmentData(
-        selectedCurrency.currency_code,
-        orderByThisColumn
-      );
+    if (holdingID !== undefined && investmentAPIData !== undefined) {
+      const investmentAPIDataCopy = [...investmentAPIData];
+      // if we are only updating a single record:
+      for (let item in investmentAPIDataCopy) {
+        if (investmentAPIDataCopy[item].holding_id === holdingID) {
+          investmentAPIDataCopy[
+            item
+          ].investment_price_histories[0].holding_current_price =
+            "priceReloading";
 
-    if (
-      investData !== undefined &&
-      investData.status === 200 &&
-      investData.data !== undefined
-    ) {
-      setinvestmentAPIData(investData.data);
-      setshowNoAccountsMessage(false);
-      setShowSpinner(false);
-    } else if (investData !== undefined && investData.status === 204) {
-      setShowSpinner(false);
-      setshowNoAccountsMessage(true);
+          setinvestmentAPIData(investmentAPIDataCopy);
+
+          const newPriceData = await getSingleInvestmentData(
+            selectedCurrency.currency_code,
+            holdingID
+          );
+          if (newPriceData) {
+            if (newPriceData.data[0].holding_id === holdingID) {
+              investmentAPIDataCopy[item] = newPriceData.data[0];
+            }
+            setinvestmentAPIData(investmentAPIDataCopy);
+          }
+
+          break;
+        }
+      }
+    } else {
+      if (investmentAPIData !== undefined) {
+        const investmentAPIDataCopy = [...investmentAPIData];
+        investmentAPIDataCopy.forEach((item) => {
+          item.investment_price_histories[0].holding_current_price =
+            "priceReloading";
+        });
+        setinvestmentAPIData(investmentAPIDataCopy);
+      }
+      const investData: AxiosResponse<any, any> | undefined =
+        await getInvestmentData(
+          selectedCurrency.currency_code,
+          orderByThisColumn
+        );
+
+      if (
+        investData !== undefined &&
+        investData.status === 200 &&
+        investData.data !== undefined
+      ) {
+        setinvestmentAPIData(investData.data);
+        setshowNoAccountsMessage(false);
+      } else if (investData !== undefined && investData.status === 204) {
+        setshowNoAccountsMessage(true);
+      }
     }
 
     const total = await getNetInvestmentTotal(selectedCurrency.currency_code);
@@ -84,10 +120,10 @@ const Investments: React.FC<InvestmentsProps> = ({
 
   return (
     <section className="viewCard">
-      {showSpinner === true && showNoAccountsMessage === false && (
+      {investmentAPIData === undefined && showNoAccountsMessage === false && (
         <CardSpinner cardTitle="Investments" />
       )}
-      {showSpinner === false && showNoAccountsMessage === true && (
+      {showNoAccountsMessage === true && (
         <Fragment>
           <NoAssets
             cardTitle="Investments"
@@ -100,49 +136,55 @@ const Investments: React.FC<InvestmentsProps> = ({
           />
         </Fragment>
       )}
-      {investmentAPIData !== undefined &&
-        showSpinner === false &&
-        showNoAccountsMessage === false && (
-          <Fragment>
-            <ViewCardHeaderRow
-              rowIcon={<GoGraph size={25} color={"white"} />}
-              rowTitle="INVESTMENTS"
-              selectedCurrency={selectedCurrency}
-              netTotal={investmentsTotalValue}
-              addNewFunction={addANewStock}
-              sortArray={sortArray}
-              orderByThisColumn={orderByThisColumn}
-              setorderByThisColumn={setorderByThisColumn}
-            />
+      {investmentAPIData !== undefined && showNoAccountsMessage === false && (
+        <Fragment>
+          <ViewCardHeaderRow
+            rowIcon={<GoGraph size={25} color={"white"} />}
+            rowTitle="INVESTMENTS"
+            selectedCurrency={selectedCurrency}
+            netTotal={investmentsTotalValue}
+            addNewFunction={addANewStock}
+            sortArray={sortArray}
+            orderByThisColumn={orderByThisColumn}
+            setorderByThisColumn={setorderByThisColumn}
+          />
 
-            <section className="investmentsTable">
-              <header className="investmentsTableHeader">
-                <div className="table-header">Holding</div>
-                <div className="table-header columnInWideViewOnly">Owner</div>
-                <div className="table-header columnInWideViewOnly">Held at</div>
-                <div className="table-header columnInWideViewOnly">
-                  Currency
-                </div>
-                <div className="table-header">Quantity</div>
-                <div className="table-header columnInWideViewOnly">Price</div>
-                <div className="table-header columnInWideViewOnly">Cost</div>
-                <div className="table-header">Value</div>
-              </header>
-              <section className="investmentsTableDataContainer scrollbarstyles">
-                {investmentAPIData?.map((data, index) => (
-                  <InvestmentRow
-                    key={data.holding_id}
-                    data={data}
-                    selectedCurrency={selectedCurrency}
-                    refreshInvestmentsData={refreshInvestmentsData}
-                    settriggerRecalculations={settriggerRecalculations}
-                    triggerRecalculations={triggerRecalculations}
-                  />
-                ))}
-              </section>
+          <section className="investmentsTable">
+            <header className="investmentsTableHeader">
+              <div className="table-header">Holding</div>
+              <div className="table-header columnInWideViewOnly">Owner</div>
+              <div className="table-header columnInWideViewOnly">Held at</div>
+              <div className="table-header columnInWideViewOnly">Currency</div>
+              <div className="table-header">Quantity</div>
+              <div className="table-header columnInWideViewOnly">Price</div>
+              <div className="table-header columnInWideViewOnly">Cost</div>
+              <div className="table-header">Value</div>
+            </header>
+            <section className="investmentsTableDataContainer scrollbarstyles">
+              {investmentAPIData?.map((data, index) => (
+                <>
+                  {data.investment_price_histories[0].holding_current_price ===
+                  "priceReloading" ? (
+                    <InvestmentRowUpdatingPrices
+                      key={data.holding_id}
+                      data={data}
+                    />
+                  ) : (
+                    <InvestmentRow
+                      key={data.holding_id}
+                      data={data}
+                      selectedCurrency={selectedCurrency}
+                      refreshInvestmentsData={refreshInvestmentsData}
+                      settriggerRecalculations={settriggerRecalculations}
+                      triggerRecalculations={triggerRecalculations}
+                    />
+                  )}
+                </>
+              ))}
             </section>
-          </Fragment>
-        )}
+          </section>
+        </Fragment>
+      )}
 
       {showAddNewStockForm === true && (
         <div className="newAdditionModal" onClick={(e) => closeModal(e)}>

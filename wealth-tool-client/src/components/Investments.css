@@ -73,7 +73,7 @@
   .investmentsTableHeader,
   .investmentsTableDataGridRow {
     display: grid;
-    grid-template-columns: 100px repeat(3, 80px);
+    grid-template-columns: 150px repeat(2, 100px);
   }
   .columnInWideViewOnly {
     display: none;

@@ -28,6 +28,8 @@ import {
   countUsersInvestments,
   countUsersCashAccounts,
   countUsersProperties,
+  getSingleInvestmentDataFromDB,
+  getSinglePropertyDataFromDB,
 } from "../modules/database_actions";
 import { getCompanyPriceData } from "../modules/getCompanyPriceData";
 
@@ -378,7 +380,8 @@ exports.getInvestmentsTotal = async function (
   // investments will be + or 0, and so only need to request Pos db query:
   // const investSummary = await getPosInvestmentTotalsByCurrency(
   const investSummary = await getInvestmentDataFromDB(
-    res.locals.currentUser.id
+    res.locals.currentUser.id,
+    undefined
   );
 
   if (!investSummary) {
@@ -615,6 +618,136 @@ exports.getPropertiesData = async function (
   }
 
   res.send(propertyDataArray);
+};
+
+exports.getSinglePropertyData = async function (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  if (!res.locals.currentUser) {
+    res.sendStatus(403);
+    return;
+  }
+
+  const selectedCurrency = req.query.selectedcurrency;
+  if (!selectedCurrency) {
+    res.status(400).json({ error: "Currency not specified" });
+    return;
+  }
+
+  if (typeof selectedCurrency !== "string") {
+    res.status(500).json({ error: "Invalid currency specified" });
+    return;
+  }
+  const propertyID = req.query.propertyID;
+  if (!propertyID || typeof propertyID !== "string") {
+    res.status(400).json({ error: "Property ID not valid" });
+    return;
+  }
+
+  const propertyData = await getSinglePropertyDataFromDB(
+    res.locals.currentUser.id,
+    parseInt(propertyID)
+  );
+
+  if (!propertyData) {
+    res.sendStatus(204);
+    return;
+  }
+  const propertyDataArray = JSON.parse(JSON.stringify(propertyData.properties));
+
+  for (let i = 0; i < propertyDataArray.length; i += 1) {
+    const prop_baseCurr: string =
+      propertyDataArray[i].property_valuation_currency;
+    const prop_rate = await getFXRateFromDB(prop_baseCurr, selectedCurrency);
+
+    const prop_totalConvertedValue: number =
+      (parseInt(propertyDataArray[i].property_valuation) -
+        parseInt(propertyDataArray[i].property_loan_value)) *
+      prop_rate.currency_fxrate;
+    propertyDataArray[i].propertyValuationInSelCurr = prop_totalConvertedValue;
+  }
+
+  res.send(propertyDataArray);
+};
+
+exports.getSingleInvestmentsData = async function (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  if (!res.locals.currentUser) {
+    res.sendStatus(403);
+    return;
+  }
+  const selectedCurrency = req.query.selectedcurrency;
+  if (!selectedCurrency) {
+    console.log("curr issue");
+
+    res.status(400).json({ error: "Currency not specified" });
+    return;
+  }
+
+  if (typeof selectedCurrency !== "string") {
+    res.status(500).json({ error: "Invalid currency specified" });
+    return;
+  }
+
+  const holdingID = req.query.holdingID;
+  if (!holdingID || typeof holdingID !== "string") {
+    res.status(400).json({ error: "Holding ID not valid" });
+    return;
+  }
+
+  const investmentData = await getSingleInvestmentDataFromDB(
+    res.locals.currentUser.id,
+    parseInt(holdingID)
+  );
+
+  if (!investmentData) {
+    res.sendStatus(204);
+    return;
+  }
+
+  const investmentsArray = JSON.parse(
+    JSON.stringify(investmentData.investments)
+  );
+
+  // convert to the currency selected in front end
+  for (let i = 0; i < investmentsArray.length; i += 1) {
+    const invest_baseCurr: string = investmentsArray[i].holding_currency_code;
+    const invest_rate = await getFXRateFromDB(
+      invest_baseCurr,
+      selectedCurrency
+    );
+
+    investmentsArray[i].investmentConvertedValue = 0;
+    if (investmentsArray[i].investment_price_histories.length > 0) {
+      const pencePrice =
+        parseFloat(
+          investmentsArray[i].investment_price_histories[0]
+            .holding_current_price
+        ) / 100;
+
+      const valCalc: number =
+        investmentsArray[i].holding_quantity_held * pencePrice;
+
+      const investmentConvertedValue: number =
+        valCalc * invest_rate.currency_fxrate;
+      investmentsArray[i].investmentConvertedValue = parseInt(
+        investmentConvertedValue.toString()
+      );
+    } else {
+      investmentsArray[i].investment_price_histories = [
+        {
+          holding_current_price: "0",
+        },
+      ];
+    }
+  }
+
+  res.send(investmentsArray);
 };
 
 exports.getInvestmentsData = async function (

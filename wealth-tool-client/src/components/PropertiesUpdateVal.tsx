@@ -36,10 +36,10 @@ const PropertiesUpdateVal: React.FC<propertiesUpdateValProps> = ({
     e.preventDefault();
 
     updatePropertyValue(data.property_id, propValuation, loanValue)
-      .then((data) => {
+      .then((returnData) => {
         setsaveProgressText("Saved.  One sec...");
         settriggerRecalculations(triggerRecalculations + 1);
-        refreshPropertiesValues();
+        refreshPropertiesValues(data.property_id);
       })
       .catch((err) => console.log(err));
   };

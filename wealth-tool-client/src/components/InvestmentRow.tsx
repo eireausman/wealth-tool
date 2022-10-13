@@ -5,7 +5,6 @@ import getDisplayNumber from "../modules/getDisplayNumber";
 import InvestmentsUpdateStock from "./InvestmentsUpdateStock";
 import { motion } from "framer-motion";
 import InvestmentRowPrice from "./InvestmentRowPrice";
-import InvestmentsPriceChart from "./InvestmentsPriceChart";
 
 const InvestmentRow: React.FC<InvestmentRowProps> = ({
   data,
@@ -70,7 +69,6 @@ const InvestmentRow: React.FC<InvestmentRowProps> = ({
             }
           />
         </div>
-        <InvestmentsPriceChart data={data} />
         <div className="columnInWideViewOnly">{data.holding_owner_name}</div>
         <div className="columnInWideViewOnly"> {data.holding_institution}</div>
         <div className="columnInWideViewOnly">

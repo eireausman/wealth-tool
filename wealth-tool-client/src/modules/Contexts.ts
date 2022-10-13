@@ -2,7 +2,6 @@ import { createContext } from "react";
 import {
   AssetCountContextCountData,
   currencyCodesAPIData,
-  selectedCurrencyDetails,
 } from "../../../types/typeInterfaces";
 
 export const useLoggedInContext = createContext<string | false>(false);

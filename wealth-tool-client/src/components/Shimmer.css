@@ -8,8 +8,8 @@
 .animate {
   padding: 0;
   margin: 0;
-  animation: shimmer 2s infinite linear;
-  background: linear-gradient(to right, #eff1f3 4%, #beb2b2 25%, #eff1f3 36%);
+  animation: shimmer 3s infinite linear;
+  background: linear-gradient(to right, #aaacad 4%, #e4e0e0 25%, #aaacad 36%);
   background-size: 1000px 100%;
 }
 

@@ -138,6 +138,20 @@ const getPropertiesData = async (
   }
 };
 
+const getSinglePropertyData = async (
+  selectedCurrency: string,
+  propertyID: number
+) => {
+  try {
+    const serverResponse = await axios.get(
+      `/api/getsinglepropertydata?selectedcurrency=${selectedCurrency}&propertyID=${propertyID}`
+    );
+    return await serverResponse;
+  } catch (err) {
+    console.error(err);
+  }
+};
+
 const getCashAccountData = async (
   selectedCurrency: string,
   sortByField: string
@@ -342,7 +356,24 @@ const getInvestmentData = async (
   }
 };
 
+const getSingleInvestmentData = async (
+  selectedCurrency: string,
+  holdingID: number
+) => {
+  try {
+    const serverResponse = await axios.get(
+      `/api/getsingleinvestmentdata?selectedcurrency=${selectedCurrency}&holdingID=${holdingID}`
+    );
+
+    return await serverResponse;
+  } catch (err) {
+    console.error(err);
+  }
+};
+
 export {
+  getSingleInvestmentData,
+  getSinglePropertyData,
   createAccountAttempt,
   loginAttempt,
   getCashAccountData,

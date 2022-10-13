@@ -20,6 +20,8 @@ router.post("/createaccount", userController.createUserAccount);
 
 router.get("/getpropertiesdata", dbQueryController.getPropertiesData);
 
+router.get("/getsinglepropertydata", dbQueryController.getSinglePropertyData);
+
 router.get("/getcashaccountdata", dbQueryController.getCashAccountData);
 
 // need to amend to get request
@@ -67,6 +69,11 @@ router.get("/getpropertynettotal", dbQueryController.getPropertyNetTotal);
 router.get("/getinvestmentsnettotal", dbQueryController.getInvestmentsTotal);
 
 router.get("/getinvestmentdata", dbQueryController.getInvestmentsData);
+
+router.get(
+  "/getsingleinvestmentdata",
+  dbQueryController.getSingleInvestmentsData
+);
 
 router.get("/usersassetcount", dbQueryController.usersAssetCount);
 

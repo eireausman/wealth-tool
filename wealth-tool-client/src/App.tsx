@@ -22,7 +22,6 @@ import {
   useAssetCountContext,
   useCurrenciesFromDBContext,
 } from "./modules/Contexts";
-import InvestmentsPriceChart from "./components/InvestmentsPriceChart";
 import ModalMainMenu from "./components/ModalMainMenu";
 
 function importCurrencyImages(imagesFolder: __WebpackModuleApi.RequireContext) {

@@ -614,8 +614,6 @@ export async function getPropertyDataFromDB(
       "ASC",
     ];
     const usersPropertyDataQuery = await User.findOne({
-      logging: console.log,
-
       attributes: ["users_id"],
       where: {
         users_id: reslocalsuser,
@@ -630,6 +628,63 @@ export async function getPropertyDataFromDB(
     });
 
     return usersPropertyDataQuery;
+  } catch (err) {
+    return err;
+  }
+}
+
+export async function getSinglePropertyDataFromDB(
+  reslocalsuser: string,
+  propertyID: number
+) {
+  try {
+    const usersPropertyDataQuery = await User.findOne({
+      attributes: ["users_id"],
+      where: {
+        users_id: reslocalsuser,
+      },
+      include: {
+        model: Properties,
+        where: {
+          soft_deleted: 0,
+          property_id: propertyID,
+        },
+      },
+    });
+
+    return usersPropertyDataQuery;
+  } catch (err) {
+    return err;
+  }
+}
+
+export async function getSingleInvestmentDataFromDB(
+  reslocalsuser: string,
+  holdingID: number
+) {
+  try {
+    const usersInvestmentQuery = await User.findOne({
+      logging: console.log,
+      attributes: ["users_id"],
+      where: {
+        users_id: reslocalsuser,
+      },
+      include: {
+        model: Investments,
+        where: {
+          soft_deleted: 0,
+          holding_id: holdingID,
+        },
+        include: {
+          model: InvestmentPriceHistory,
+          limit: 1,
+          order: [["price_asatdate", "DESC"]],
+        },
+      },
+    });
+    console.log(usersInvestmentQuery);
+
+    return await usersInvestmentQuery;
   } catch (err) {
     return err;
   }

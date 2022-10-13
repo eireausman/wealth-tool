@@ -237,7 +237,7 @@ export interface PropertiesProps {
 
 export interface propertiesUpdateValProps {
   data: propertiesAPIData;
-  refreshPropertiesValues: () => Promise<void>;
+  refreshPropertiesValues: (propertyID?: number) => Promise<void>;
   settriggerRecalculations: React.Dispatch<React.SetStateAction<number>>;
   triggerRecalculations: number;
   setshowEditPropertyForm: React.Dispatch<React.SetStateAction<boolean>>;
@@ -260,7 +260,7 @@ export interface AssetCountContextCountData {
 export interface InvestmentsUpdateStockProps {
   data: investmentsAPIData;
   setshowEditStockForm: React.Dispatch<React.SetStateAction<boolean>>;
-  refreshInvestmentsData: () => void;
+  refreshInvestmentsData: (holdingID?: number) => void;
   settriggerRecalculations: React.Dispatch<React.SetStateAction<number>>;
   triggerRecalculations: number;
   checkForEscapeKey: (e: React.KeyboardEvent) => void;
@@ -364,4 +364,8 @@ export interface InvestmentRowProps {
   refreshInvestmentsData: () => void;
   settriggerRecalculations: React.Dispatch<React.SetStateAction<number>>;
   triggerRecalculations: number;
+}
+
+export interface InvestmentRowUpdatingPricesProps {
+  data: investmentsAPIData;
 }
