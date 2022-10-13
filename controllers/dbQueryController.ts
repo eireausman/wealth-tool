@@ -30,6 +30,7 @@ import {
   countUsersProperties,
   getSingleInvestmentDataFromDB,
   getSinglePropertyDataFromDB,
+  getSingleCashAccountDataFromDB,
 } from "../modules/database_actions";
 import { getCompanyPriceData } from "../modules/getCompanyPriceData";
 
@@ -463,6 +464,64 @@ exports.getCashAccountData = async function (
   const cashAccountData = await getCashAccountDataFromDB(
     res.locals.currentUser.id,
     selectedOrderBy
+  );
+  if (!cashAccountData) {
+    res.sendStatus(204);
+    return;
+  }
+
+  const cashAccountArrray = JSON.parse(
+    JSON.stringify(cashAccountData.cash_accounts)
+  );
+  // convert to the currency selected in front end
+  const selectedCurrency = req.query.selectedcurrency;
+  if (!selectedCurrency) {
+    res.status(400).json({ error: "Currency not specified" });
+    return;
+  }
+
+  if (typeof selectedCurrency !== "string") {
+    res.status(500).json({ error: "Invalid currency specified" });
+    return;
+  }
+
+  for (let i = 0; i < cashAccountArrray.length; i += 1) {
+    const baseCurr: string = cashAccountArrray[i].account_currency_code;
+    const rate = await getFXRateFromDB(baseCurr, selectedCurrency);
+    const accountBalConvertedValue: number =
+      parseInt(cashAccountArrray[i].account_balance) * rate.currency_fxrate;
+    cashAccountArrray[i].accountBalConvertedValue = accountBalConvertedValue;
+  }
+  res.send(cashAccountArrray);
+};
+
+exports.getSingleCashAccountData = async function (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  if (!res.locals.currentUser) {
+    res.sendStatus(403);
+    return;
+  }
+
+  let selectedOrderBy = req.query.sortby;
+
+  if (typeof selectedOrderBy !== "string") {
+    selectedOrderBy = undefined;
+  }
+
+  const cashAccountID = req.query.cashaccountid;
+  if (!cashAccountID || typeof cashAccountID !== "string") {
+    res.status(400).json({
+      error: "Account ID not valid : type is " + typeof cashAccountID,
+    });
+    return;
+  }
+
+  const cashAccountData = await getSingleCashAccountDataFromDB(
+    res.locals.currentUser.id,
+    parseInt(cashAccountID)
   );
   if (!cashAccountData) {
     res.sendStatus(204);

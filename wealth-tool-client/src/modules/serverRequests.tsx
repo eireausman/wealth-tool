@@ -152,6 +152,21 @@ const getSinglePropertyData = async (
   }
 };
 
+const getSingleCashAccountData = async (
+  selectedCurrency: string,
+  cashAccountID: number
+) => {
+  try {
+    const serverResponse = await axios.get(
+      `/api/getsinglecashaccountdata?selectedcurrency=${selectedCurrency}&cashaccountid=${cashAccountID}`
+    );
+
+    return await serverResponse;
+  } catch (err) {
+    console.error(err);
+  }
+};
+
 const getCashAccountData = async (
   selectedCurrency: string,
   sortByField: string
@@ -401,4 +416,5 @@ export {
   deleteInvestment,
   refreshSingleStockPricingData,
   usersAssetCount,
+  getSingleCashAccountData,
 };

@@ -48,9 +48,9 @@ const CashAccountUpdBal: React.FC<CashAccountUpdateBalProps> = ({
     e.preventDefault();
 
     updateCashAccountBalance(data.account_id, updatedBalance)
-      .then((data) => {
+      .then((returnData) => {
         setsaveProgressText("Saved.  One sec...");
-        updatedAllAccountBalances();
+        updatedAllAccountBalances(data.account_id);
         settriggerRecalculations(triggerRecalculations + 1);
         setShowEditAccountForm(false);
       })

@@ -7,6 +7,7 @@ import { cashAccountAPIData } from "../../../types/typeInterfaces";
 import {
   getCashAccountData,
   getNetCashAccountTotal,
+  getSingleCashAccountData,
 } from "../modules/serverRequests";
 import { AxiosResponse } from "axios";
 
@@ -15,6 +16,7 @@ import NoAssets from "./NoAssetsMessage";
 import { FaPiggyBank } from "react-icons/fa";
 import ButtonAddAsset from "./ButtonAddAsset";
 import ViewCardHeaderRow from "./ViewCardHeaderRow";
+import CashAccountAccRowUpdatingVals from "./CashAccountAccRowUpdatingVals";
 
 const CashAccounts: React.FC<CashAccountsProps> = ({
   triggerRecalculations,
@@ -27,40 +29,70 @@ const CashAccounts: React.FC<CashAccountsProps> = ({
     { readableString: "Balance", dbField: "account_balance" },
   ];
 
-  const [showSpinner, setShowSpinner] = useState<boolean>(true);
   const [showAddNewForm, setshowAddNewForm] = useState(false);
   const [showNoAccountsMessage, setshowNoAccountsMessage] = useState(false);
-  const [cashAccountNetTotal, setcashAccountNetTotal] = useState<number>(0);
+  const [cashAccountNetTotal, setcashAccountNetTotal] = useState<
+    number | undefined
+  >(0);
   const [orderByThisColumn, setorderByThisColumn] =
     useState<string>("account_nickname");
 
   const [cashAccAPIData, setcashAccAPIData] =
     useState<Array<cashAccountAPIData>>();
 
-  const updatedAllAccountBalances = async () => {
-    setShowSpinner(true);
+  const updatedAllAccountBalances = async (cashAccountID?: number) => {
     setshowNoAccountsMessage(false);
-    setcashAccAPIData(undefined);
-    const cashAccServerDataRequest: AxiosResponse<any, any> | undefined =
-      await getCashAccountData(
-        selectedCurrency.currency_code,
-        orderByThisColumn
-      );
+    setcashAccountNetTotal(undefined);
+    if (cashAccountID !== undefined && cashAccAPIData !== undefined) {
+      const cashAccAPIDataCopy = [...cashAccAPIData];
+      for (let item in cashAccAPIDataCopy) {
+        if (cashAccAPIData[item].account_id === cashAccountID) {
+          cashAccAPIData[item].reloading = "valReloading";
 
-    if (
-      cashAccServerDataRequest !== undefined &&
-      cashAccServerDataRequest.status === 200 &&
-      cashAccServerDataRequest.data !== undefined
-    ) {
-      setShowSpinner(false);
-      setcashAccAPIData(cashAccServerDataRequest.data);
-      setshowNoAccountsMessage(false);
-    } else if (
-      cashAccServerDataRequest !== undefined &&
-      cashAccServerDataRequest.status === 204
-    ) {
-      setShowSpinner(false);
-      setshowNoAccountsMessage(true);
+          setcashAccAPIData(cashAccAPIDataCopy);
+
+          const newPriceData = await getSingleCashAccountData(
+            selectedCurrency.currency_code,
+            cashAccountID
+          );
+
+          if (newPriceData) {
+            if (newPriceData.data[0].account_id === cashAccountID) {
+              cashAccAPIDataCopy[item] = newPriceData.data[0];
+            }
+            setcashAccAPIData(cashAccAPIDataCopy);
+          }
+
+          break;
+        }
+      }
+    } else {
+      if (cashAccAPIData !== undefined) {
+        const cashAccAPIDataCopy = [...cashAccAPIData];
+        cashAccAPIDataCopy.forEach((item) => {
+          item.reloading = "valReloading";
+        });
+        setcashAccAPIData(cashAccAPIDataCopy);
+      }
+      const cashAccServerDataRequest: AxiosResponse<any, any> | undefined =
+        await getCashAccountData(
+          selectedCurrency.currency_code,
+          orderByThisColumn
+        );
+
+      if (
+        cashAccServerDataRequest !== undefined &&
+        cashAccServerDataRequest.status === 200 &&
+        cashAccServerDataRequest.data !== undefined
+      ) {
+        setcashAccAPIData(cashAccServerDataRequest.data);
+        setshowNoAccountsMessage(false);
+      } else if (
+        cashAccServerDataRequest !== undefined &&
+        cashAccServerDataRequest.status === 204
+      ) {
+        setshowNoAccountsMessage(true);
+      }
     }
 
     const total = await getNetCashAccountTotal(selectedCurrency.currency_code);
@@ -85,10 +117,10 @@ const CashAccounts: React.FC<CashAccountsProps> = ({
 
   return (
     <section className="viewCard">
-      {showSpinner === true && showNoAccountsMessage === false && (
+      {cashAccAPIData === undefined && showNoAccountsMessage === false && (
         <CardSpinner cardTitle="Cash Accounts" />
       )}
-      {showSpinner === false && showNoAccountsMessage === true && (
+      {showNoAccountsMessage === true && (
         <Fragment>
           <NoAssets
             cardTitle="Cash Accounts"
@@ -101,42 +133,53 @@ const CashAccounts: React.FC<CashAccountsProps> = ({
           />
         </Fragment>
       )}
-      {cashAccAPIData !== undefined &&
-        showSpinner === false &&
-        showNoAccountsMessage === false && (
-          <Fragment>
-            <ViewCardHeaderRow
-              rowIcon={<FaPiggyBank size={25} color={"white"} />}
-              rowTitle="CASH ACCOUNTS"
-              netTotal={cashAccountNetTotal}
-              selectedCurrency={selectedCurrency}
-              addNewFunction={showAddNewCashAccForm}
-              sortArray={sortArray}
-              orderByThisColumn={orderByThisColumn}
-              setorderByThisColumn={setorderByThisColumn}
-            />
+      {cashAccAPIData !== undefined && showNoAccountsMessage === false && (
+        <Fragment>
+          <ViewCardHeaderRow
+            rowIcon={<FaPiggyBank size={25} color={"white"} />}
+            rowTitle="CASH ACCOUNTS"
+            netTotal={cashAccountNetTotal}
+            selectedCurrency={selectedCurrency}
+            addNewFunction={showAddNewCashAccForm}
+            sortArray={sortArray}
+            orderByThisColumn={orderByThisColumn}
+            setorderByThisColumn={setorderByThisColumn}
+          />
 
-            <section className="cashAccountsTable">
-              <header className="cashAccountsTableHeader">
-                <div className="table-header">A/c Name</div>
-                <div className="table-header">Owner</div>
-                <div className="table-header">Balance</div>
-              </header>
-              <section className="cashAccountsTableDataContainer scrollbarstyles">
-                {cashAccAPIData?.map((data, index) => (
-                  <CashAccountAccRow
-                    key={data.account_id}
-                    data={data}
-                    updatedAllAccountBalances={updatedAllAccountBalances}
-                    settriggerRecalculations={settriggerRecalculations}
-                    triggerRecalculations={triggerRecalculations}
-                    selectedCurrency={selectedCurrency}
-                  />
-                ))}
-              </section>
+          <section className="cashAccountsTable">
+            <header className="cashAccountsTableHeader">
+              <div className="table-header">A/c Name</div>
+              <div className="table-header">Owner</div>
+              <div className="table-header">Balance</div>
+            </header>
+            <section className="cashAccountsTableDataContainer scrollbarstyles">
+              {cashAccAPIData?.map((data, index) => (
+                <>
+                  {data.reloading === "valReloading" ? (
+                    <CashAccountAccRowUpdatingVals
+                      key={data.account_id}
+                      data={data}
+                      updatedAllAccountBalances={updatedAllAccountBalances}
+                      settriggerRecalculations={settriggerRecalculations}
+                      triggerRecalculations={triggerRecalculations}
+                      selectedCurrency={selectedCurrency}
+                    />
+                  ) : (
+                    <CashAccountAccRow
+                      key={data.account_id}
+                      data={data}
+                      updatedAllAccountBalances={updatedAllAccountBalances}
+                      settriggerRecalculations={settriggerRecalculations}
+                      triggerRecalculations={triggerRecalculations}
+                      selectedCurrency={selectedCurrency}
+                    />
+                  )}
+                </>
+              ))}
             </section>
-          </Fragment>
-        )}
+          </section>
+        </Fragment>
+      )}
 
       {showAddNewForm === true && (
         <div className="newAdditionModal" onClick={(e) => closeModal(e)}>

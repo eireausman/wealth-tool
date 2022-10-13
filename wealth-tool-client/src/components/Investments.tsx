@@ -67,7 +67,6 @@ const Investments: React.FC<InvestmentsProps> = ({
             }
             setinvestmentAPIData(investmentAPIDataCopy);
           }
-
           break;
         }
       }

@@ -247,7 +247,7 @@ export interface propertiesUpdateValProps {
 export interface CashAccountUpdateBalProps {
   data: cashAccountAPIData;
   setShowEditAccountForm: React.Dispatch<React.SetStateAction<boolean>>;
-  updatedAllAccountBalances: () => void;
+  updatedAllAccountBalances: (cashAccountID?: number) => void;
   settriggerRecalculations: React.Dispatch<React.SetStateAction<number>>;
   triggerRecalculations: number;
   checkForEscapeKey: (e: React.KeyboardEvent) => void;

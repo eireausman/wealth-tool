@@ -1103,6 +1103,33 @@ export async function deletePropertyFromDB(property_id: number) {
   }
 }
 
+export async function getSingleCashAccountDataFromDB(
+  reslocalsuser: string,
+  CashAccountID: number
+) {
+  try {
+    const usersCashAccounts = await User.findOne({
+      attributes: ["users_id"],
+      where: {
+        users_id: reslocalsuser,
+      },
+
+      include: {
+        model: CashAccount,
+        where: {
+          soft_deleted: 0,
+          account_id: CashAccountID,
+        },
+      },
+    });
+
+    // returns an array of accounts owned by the current user
+    return usersCashAccounts;
+  } catch (err) {
+    return err;
+  }
+}
+
 export async function getCashAccountDataFromDB(
   reslocalsuser: string,
   selectedOrderBy: string | undefined

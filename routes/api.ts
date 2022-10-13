@@ -24,6 +24,11 @@ router.get("/getsinglepropertydata", dbQueryController.getSinglePropertyData);
 
 router.get("/getcashaccountdata", dbQueryController.getCashAccountData);
 
+router.get(
+  "/getsinglecashaccountdata",
+  dbQueryController.getSingleCashAccountData
+);
+
 // need to amend to get request
 router.post("/getfxrates", dbQueryController.getFXRate);
 
