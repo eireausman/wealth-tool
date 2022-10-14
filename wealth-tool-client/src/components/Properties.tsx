@@ -147,7 +147,7 @@ const Properties: React.FC<PropertiesProps> = ({
 
           <div className="propertiesOflowContainer scrollbarstyles">
             {propertyAccAPIData?.map((data) => (
-              <>
+              <Fragment key={data.property_id}>
                 {data.reloading === "valReloading" ? (
                   <PropertiesRowUpdatingVals
                     key={data.property_id}
@@ -167,7 +167,7 @@ const Properties: React.FC<PropertiesProps> = ({
                     triggerRecalculations={triggerRecalculations}
                   />
                 )}
-              </>
+              </Fragment>
             ))}
           </div>
         </Fragment>

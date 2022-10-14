@@ -49,7 +49,7 @@ const ViewCardHeaderRow: React.FC<ViewCardHeaderRowProps> = ({
       <div className="viewCardSubHeading">
         <h3 className="viewCardTotal">
           {netTotal === undefined ? (
-            <Shimmer height={20} width={60} borderRadiusPX={1} />
+            <Shimmer height={"1em"} width={"60px"} borderRadiusPX={"1px"} />
           ) : (
             <>
               {selectedCurrency.currency_code} {getDisplayNumber(netTotal)}

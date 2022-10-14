@@ -8,13 +8,7 @@ const InvestmentRowUpdatingPrices: React.FC<
 > = ({ data }) => {
   return (
     <Fragment>
-      <motion.div
-        initial={{ opacity: 0, scale: 0.5 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.5 }}
-        className="investmentsTableDataGridRow"
-        tabIndex={0}
-      >
+      <motion.div className="investmentsTableDataGridRow" tabIndex={0}>
         <div>{data.holding_stock_name}</div>
         <div className="columnInWideViewOnly">{data.holding_owner_name}</div>
         <div className="columnInWideViewOnly"> {data.holding_institution}</div>
@@ -23,16 +17,16 @@ const InvestmentRowUpdatingPrices: React.FC<
           {data.holding_currency_code}
         </div>
         <div>
-          <Shimmer height={20} width={40} borderRadiusPX={1} />
+          <Shimmer height={"1em"} width={"40px"} borderRadiusPX={"1px"} />
         </div>
         <div className="columnInWideViewOnly">
-          <Shimmer height={20} width={40} borderRadiusPX={1} />
+          <Shimmer height={"1em"} width={"40px"} borderRadiusPX={"1px"} />
         </div>
         <div className="columnInWideViewOnly">
-          <Shimmer height={20} width={40} borderRadiusPX={1} />
+          <Shimmer height={"1em"} width={"40px"} borderRadiusPX={"1px"} />
         </div>
         <div>
-          <Shimmer height={20} width={40} borderRadiusPX={1} />
+          <Shimmer height={"1em"} width={"40px"} borderRadiusPX={"1px"} />
         </div>
       </motion.div>
     </Fragment>

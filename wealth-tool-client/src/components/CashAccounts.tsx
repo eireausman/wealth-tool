@@ -44,13 +44,15 @@ const CashAccounts: React.FC<CashAccountsProps> = ({
     setshowNoAccountsMessage(false);
     setcashAccountNetTotal(undefined);
     if (cashAccountID !== undefined && cashAccAPIData !== undefined) {
+      // we are dealing with a single cash account edit
       const cashAccAPIDataCopy = [...cashAccAPIData];
       for (let item in cashAccAPIDataCopy) {
+        // update the record so the shimmer shows while it reloads
         if (cashAccAPIData[item].account_id === cashAccountID) {
           cashAccAPIData[item].reloading = "valReloading";
 
           setcashAccAPIData(cashAccAPIDataCopy);
-
+          // the price will have been saved by the function called elseswhere, so let's reload this record and remove the holding shimmer
           const newPriceData = await getSingleCashAccountData(
             selectedCurrency.currency_code,
             cashAccountID
@@ -68,12 +70,15 @@ const CashAccounts: React.FC<CashAccountsProps> = ({
       }
     } else {
       if (cashAccAPIData !== undefined) {
+        // we are dealing with a full refresh, triggered by a currency change for example
         const cashAccAPIDataCopy = [...cashAccAPIData];
+        // set the records to relading so the shimmer shows
         cashAccAPIDataCopy.forEach((item) => {
           item.reloading = "valReloading";
         });
         setcashAccAPIData(cashAccAPIDataCopy);
       }
+      // reload the data
       const cashAccServerDataRequest: AxiosResponse<any, any> | undefined =
         await getCashAccountData(
           selectedCurrency.currency_code,
@@ -94,7 +99,7 @@ const CashAccounts: React.FC<CashAccountsProps> = ({
         setshowNoAccountsMessage(true);
       }
     }
-
+    // update the net totals because we've updated a record / currency etc.
     const total = await getNetCashAccountTotal(selectedCurrency.currency_code);
     setcashAccountNetTotal(total);
   };
@@ -154,7 +159,7 @@ const CashAccounts: React.FC<CashAccountsProps> = ({
             </header>
             <section className="cashAccountsTableDataContainer scrollbarstyles">
               {cashAccAPIData?.map((data, index) => (
-                <>
+                <Fragment key={data.account_id}>
                   {data.reloading === "valReloading" ? (
                     <CashAccountAccRowUpdatingVals
                       key={data.account_id}
@@ -174,7 +179,7 @@ const CashAccounts: React.FC<CashAccountsProps> = ({
                       selectedCurrency={selectedCurrency}
                     />
                   )}
-                </>
+                </Fragment>
               ))}
             </section>
           </section>

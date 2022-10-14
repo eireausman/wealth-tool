@@ -27,9 +27,9 @@ const OptionsBoardTotalDebt: React.FC<OptionsBoardTotalDebtProps> = ({
       </Tippy>{" "}
       <b className="wealthFigureTitle">Total Debt </b>
       {totalDebtValue === undefined ? (
-        <p className="wealthFigureShimmer">
-          <Shimmer height={25} width={96} borderRadiusPX={5} />
-        </p>
+        <div className="wealthFigureShimmer">
+          <Shimmer height={"1em"} width={"96px"} borderRadiusPX={"5px"} />
+        </div>
       ) : (
         <p
           className={

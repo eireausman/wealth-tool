@@ -45,9 +45,6 @@ const CashAccountAccRowUpdatingVals: React.FC<CashAccountAccRowProps> = ({
   return (
     <Fragment>
       <motion.div
-        initial={{ opacity: 0, scale: 0.5 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.5 }}
         className="cashAccountsTableDataGridRow"
         tabIndex={0}
         onKeyUp={(e) => checkKeyEnter(e)}
@@ -76,7 +73,7 @@ const CashAccountAccRowUpdatingVals: React.FC<CashAccountAccRowProps> = ({
         <div>{data.account_owner_name.toUpperCase()}</div>
 
         <div>
-          <Shimmer height={20} width={70} borderRadiusPX={1} />
+          <Shimmer height={"1em"} width={"70px"} borderRadiusPX={"1px"} />
         </div>
       </motion.div>
       {showEditAccountForm === true && (

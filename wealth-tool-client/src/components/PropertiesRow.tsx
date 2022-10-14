@@ -56,9 +56,6 @@ const PropertiesRow: React.FC<PropertiesRowProps> = ({
   return (
     <Fragment>
       <motion.div
-        initial={{ opacity: 0, scale: 0.5 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.5 }}
         className="viewCardRow propertiesViewCardRow"
         key={data.property_id}
         onMouseEnter={(e) => {
@@ -92,12 +89,7 @@ const PropertiesRow: React.FC<PropertiesRowProps> = ({
           </span>
         </div>
         <div className="viewCardRowRightBox">
-          <motion.table
-            initial={{ opacity: 0, scale: 0.5 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5 }}
-            className="valuesTable"
-          >
+          <motion.table className="valuesTable">
             <tbody>
               <tr className="calculatedBalanceValueRow">
                 <td>Net {selectedCurrency.currency_code}: </td>

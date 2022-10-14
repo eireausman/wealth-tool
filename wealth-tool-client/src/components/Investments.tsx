@@ -161,7 +161,7 @@ const Investments: React.FC<InvestmentsProps> = ({
             </header>
             <section className="investmentsTableDataContainer scrollbarstyles">
               {investmentAPIData?.map((data, index) => (
-                <>
+                <Fragment key={data.holding_id}>
                   {data.investment_price_histories[0].holding_current_price ===
                   "priceReloading" ? (
                     <InvestmentRowUpdatingPrices
@@ -178,7 +178,7 @@ const Investments: React.FC<InvestmentsProps> = ({
                       triggerRecalculations={triggerRecalculations}
                     />
                   )}
-                </>
+                </Fragment>
               ))}
             </section>
           </section>

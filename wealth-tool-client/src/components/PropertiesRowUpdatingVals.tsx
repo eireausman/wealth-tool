@@ -57,9 +57,6 @@ const PropertiesRowUpdatingVals: React.FC<PropertiesRowProps> = ({
   return (
     <Fragment>
       <motion.div
-        initial={{ opacity: 0, scale: 0.5 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.5 }}
         className="viewCardRow propertiesViewCardRow"
         key={data.property_id}
         onMouseEnter={(e) => {
@@ -93,31 +90,46 @@ const PropertiesRowUpdatingVals: React.FC<PropertiesRowProps> = ({
           </span>
         </div>
         <div className="viewCardRowRightBox">
-          <motion.table
-            initial={{ opacity: 0, scale: 0.5 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5 }}
-            className="valuesTable"
-          >
+          <motion.table className="valuesTable">
             <tbody>
               <tr className="calculatedBalanceValueRow">
+                <td>Net {selectedCurrency.currency_code}: </td>
                 <td>
-                  <Shimmer height={20} width={120} borderRadiusPX={1} />
+                  <Shimmer
+                    height={"1em"}
+                    width={"46px"}
+                    borderRadiusPX={"1px"}
+                  />
                 </td>
               </tr>
               <tr>
+                <td>Valuation: </td>
                 <td>
-                  <Shimmer height={20} width={120} borderRadiusPX={1} />
+                  <Shimmer
+                    height={"1em"}
+                    width={"46px"}
+                    borderRadiusPX={"1px"}
+                  />
                 </td>
               </tr>
               <tr>
+                <td>Loan: </td>
                 <td>
-                  <Shimmer height={20} width={120} borderRadiusPX={1} />
+                  <Shimmer
+                    height={"1em"}
+                    width={"46px"}
+                    borderRadiusPX={"1px"}
+                  />
                 </td>
               </tr>
               <tr>
+                <td>Net Val: </td>
                 <td>
-                  <Shimmer height={20} width={120} borderRadiusPX={1} />
+                  <Shimmer
+                    height={"1em"}
+                    width={"46px"}
+                    borderRadiusPX={"1px"}
+                  />
                 </td>
               </tr>
             </tbody>
