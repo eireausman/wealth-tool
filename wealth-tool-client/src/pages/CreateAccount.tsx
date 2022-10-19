@@ -88,7 +88,7 @@ const CreateAccount: React.FC = () => {
               name="password"
               minLength={PASSWORDMIN}
               required
-              type="text"
+              type="password"
               value={formData.password}
               onChange={updateFormDataState}
             />
@@ -104,7 +104,9 @@ const CreateAccount: React.FC = () => {
         </motion.button>
       </motion.form>
       {showSpinner === true && (
-        <CardSpinner cardTitle={"Creating Account... please wait...."} />
+        <div className="createAccountCardSpinnerBumper">
+          <CardSpinner cardTitle={"Creating Account... please wait...."} />
+        </div>
       )}
       {showResponseMessage === true &&
         formSubmitResponse.requestOutcome === false && (

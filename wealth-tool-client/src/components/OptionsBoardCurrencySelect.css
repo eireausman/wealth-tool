@@ -49,17 +49,17 @@
 }
 
 .currencySelectDropDownListItem:hover {
-  background-color: #3fa0fa;
+  background-color: #22609a;
   cursor: pointer;
 }
 
 .currencySelectDropDownListItemActive {
-  background-color: #bfc5ca;
-  color: black;
+  background-color: rgb(5 128 244);
+  color: white;
 }
 
 .currencySelectDropDownListItemActive button {
-  color: black;
+  color: white;
 }
 
 .currencyFlagImage {

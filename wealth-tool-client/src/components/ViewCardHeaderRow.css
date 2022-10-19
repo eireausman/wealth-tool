@@ -35,3 +35,17 @@
 .viewCardTotal {
   margin: 0px 0px 0px 0px;
 }
+.buttonSortingSpinner {
+  background-color: transparent;
+  margin: 0px 0px 0px 10px;
+  border-radius: 10px;
+  vertical-align: middle;
+  min-height: 1em;
+  color: white;
+}
+
+.viewCardButtons {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+}

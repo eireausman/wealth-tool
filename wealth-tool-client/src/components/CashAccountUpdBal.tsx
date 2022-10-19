@@ -10,10 +10,11 @@ import ModalSavingData from "./ModalSavingData";
 const CashAccountUpdBal: React.FC<CashAccountUpdateBalProps> = ({
   data,
   setShowEditAccountForm,
-  updatedAllAccountBalances,
   settriggerRecalculations,
   triggerRecalculations,
   checkForEscapeKey,
+  setentryIDWasDeleted,
+  setthisItemIdBeingEdited,
 }) => {
   const [updatedBalance, setupdatedBalance] = useState<number>(0);
   const [showSoftDelConfirm, setshowSoftDelConfirm] = useState<boolean>(false);
@@ -44,13 +45,13 @@ const CashAccountUpdBal: React.FC<CashAccountUpdateBalProps> = ({
   const newAccountBalanceInputBox = useRef<HTMLInputElement | null>(null);
 
   const saveNewAccountBalance = (e: React.FormEvent<EventTarget>) => {
+    setthisItemIdBeingEdited(data.account_id);
     setshowSavingMessage(true);
     e.preventDefault();
 
     updateCashAccountBalance(data.account_id, updatedBalance)
       .then((returnData) => {
         setsaveProgressText("Saved.  One sec...");
-        updatedAllAccountBalances(data.account_id);
         settriggerRecalculations(triggerRecalculations + 1);
         setShowEditAccountForm(false);
       })
@@ -112,10 +113,10 @@ const CashAccountUpdBal: React.FC<CashAccountUpdateBalProps> = ({
           assetType="cashAccount"
           assetID={data.account_id}
           assetTitle={data.account_nickname}
-          refreshBalances={updatedAllAccountBalances}
           triggerRecalculations={triggerRecalculations}
           settriggerRecalculations={settriggerRecalculations}
           cancelForm={cancelForm}
+          setentryIDWasDeleted={setentryIDWasDeleted}
         />
       )}
     </div>

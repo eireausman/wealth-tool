@@ -1,4 +1,4 @@
-import React, { Fragment, useContext, useState } from "react";
+import React, { Fragment, useState } from "react";
 import { motion } from "framer-motion";
 import { companyNameSearchResults } from "../../../types/typeInterfaces";
 import {
@@ -12,15 +12,13 @@ import {
 } from "../modules/serverRequests";
 import InvestmentAddStockName from "./InvestmentAddStockName";
 import ModalSavingData from "./ModalSavingData";
-import { useCurrenciesFromDBContext } from "../modules/Contexts";
 
 const InvestmentAddStock: React.FC<AddANewInvestmentProps> = ({
   setShowAddNewStockForm,
-  refreshInvestmentsData,
   settriggerRecalculations,
   triggerRecalculations,
+  setitemIDWasAdded,
 }) => {
-  const currencyCodesFromDB = useContext(useCurrenciesFromDBContext);
   const [formData, setformData] = useState<AddNewInvestmentFormData>();
   const [showSavingMessage, setshowSavingMessage] = useState<boolean>(false);
   const [saveProgressText, setsaveProgressText] = useState<string>(
@@ -74,15 +72,17 @@ const InvestmentAddStock: React.FC<AddANewInvestmentProps> = ({
     e.preventDefault();
 
     if (formData) {
-      const serverAddInvestment = await addnewinvestment(formData);
+      const newlyCreatedInvestmentEntry = await addnewinvestment(formData);
       setsaveProgressText(
         "Saved.  Obtaining pricing data for new investment..."
       );
-      const serverGetPricing = await refreshSingleStockPricingData(formData);
+      await refreshSingleStockPricingData(formData);
 
       setsaveProgressText("Pricing obtained.  One sec...");
       settriggerRecalculations(triggerRecalculations + 1);
-      refreshInvestmentsData();
+      console.log(newlyCreatedInvestmentEntry);
+
+      setitemIDWasAdded(newlyCreatedInvestmentEntry.holding_id);
       setShowAddNewStockForm(false);
     }
   };

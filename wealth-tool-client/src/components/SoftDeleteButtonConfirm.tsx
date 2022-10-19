@@ -13,15 +13,14 @@ const SoftDeleteButtonConfirm: React.FC<SoftDeleteButtonConfirmProps> = ({
   assetType,
   assetID,
   assetTitle,
-  refreshBalances,
   triggerRecalculations,
   settriggerRecalculations,
   cancelForm,
+  setentryIDWasDeleted,
 }) => {
   const [showSavingMessage, setshowSavingMessage] = useState<boolean>(false);
-  const [saveProgressText, setsaveProgressText] = useState<string>(
-    "Deleting. Not long now..."
-  );
+
+  const saveProgressText = "Deleting. Not long now...";
 
   const assetTypeSwitch = async () => {
     switch (assetType) {
@@ -42,9 +41,9 @@ const SoftDeleteButtonConfirm: React.FC<SoftDeleteButtonConfirmProps> = ({
   const softDeleteThis = async () => {
     setshowSavingMessage(true);
     await assetTypeSwitch();
-    refreshBalances();
     settriggerRecalculations(triggerRecalculations + 1);
     cancelForm();
+    setentryIDWasDeleted(assetID);
   };
 
   return (
@@ -61,20 +60,20 @@ const SoftDeleteButtonConfirm: React.FC<SoftDeleteButtonConfirmProps> = ({
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5 }}
             whileTap={{ scale: 0.9 }}
-            onClick={softDeleteThis}
-            className="buttonRed buttonSoftDeleteConfirm"
+            onClick={cancelForm}
+            className="buttonWhite buttonSoftDeleteCancel"
           >
-            Click to confirm deletion.
+            Cancel - do not delete.
           </motion.button>
           <motion.button
             initial={{ opacity: 0, scale: 0.5 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5 }}
             whileTap={{ scale: 0.9 }}
-            onClick={cancelForm}
-            className="buttonWhite buttonSoftDeleteCancel"
+            onClick={softDeleteThis}
+            className="buttonTransparent buttonSoftDeleteConfirm"
           >
-            Cancel - do not delete.
+            Click to confirm deletion.
           </motion.button>
         </Fragment>
       )}

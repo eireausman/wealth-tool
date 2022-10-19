@@ -1,4 +1,10 @@
-import React, { useState, useEffect, Fragment, useContext } from "react";
+import React, {
+  useState,
+  useEffect,
+  Fragment,
+  useRef,
+  useCallback,
+} from "react";
 import { CashAccountsProps } from "../../../types/typeInterfaces";
 import "./CashAccounts.css";
 import CardSpinner from "./CardSpinner";
@@ -7,16 +13,15 @@ import { cashAccountAPIData } from "../../../types/typeInterfaces";
 import {
   getCashAccountData,
   getNetCashAccountTotal,
-  getSingleCashAccountData,
 } from "../modules/serverRequests";
 import { AxiosResponse } from "axios";
-
 import CashAccountAccRow from "./CashAccountAccRow";
 import NoAssets from "./NoAssetsMessage";
 import { FaPiggyBank } from "react-icons/fa";
 import ButtonAddAsset from "./ButtonAddAsset";
 import ViewCardHeaderRow from "./ViewCardHeaderRow";
 import CashAccountAccRowUpdatingVals from "./CashAccountAccRowUpdatingVals";
+import ViewCardHeaderRowSorting from "./ViewCardHeaderRowSorting";
 
 const CashAccounts: React.FC<CashAccountsProps> = ({
   triggerRecalculations,
@@ -34,80 +39,55 @@ const CashAccounts: React.FC<CashAccountsProps> = ({
   const [cashAccountNetTotal, setcashAccountNetTotal] = useState<
     number | undefined
   >(0);
+  const [entryIDWasDeleted, setentryIDWasDeleted] = useState<
+    number | undefined
+  >(undefined);
+  const [itemIDWasAdded, setitemIDWasAdded] = useState<number | undefined>(
+    undefined
+  );
+  const [thisItemIdBeingEdited, setthisItemIdBeingEdited] =
+    useState<number>(-1);
+
   const [orderByThisColumn, setorderByThisColumn] =
     useState<string>("account_nickname");
+  const previousOrderBy = useRef(orderByThisColumn);
 
   const [cashAccAPIData, setcashAccAPIData] =
     useState<Array<cashAccountAPIData>>();
 
-  const updatedAllAccountBalances = async (cashAccountID?: number) => {
-    setshowNoAccountsMessage(false);
-    setcashAccountNetTotal(undefined);
-    if (cashAccountID !== undefined && cashAccAPIData !== undefined) {
-      // we are dealing with a single cash account edit
-      const cashAccAPIDataCopy = [...cashAccAPIData];
-      for (let item in cashAccAPIDataCopy) {
-        // update the record so the shimmer shows while it reloads
-        if (cashAccAPIData[item].account_id === cashAccountID) {
-          cashAccAPIData[item].reloading = "valReloading";
-
-          setcashAccAPIData(cashAccAPIDataCopy);
-          // the price will have been saved by the function called elseswhere, so let's reload this record and remove the holding shimmer
-          const newPriceData = await getSingleCashAccountData(
-            selectedCurrency.currency_code,
-            cashAccountID
-          );
-
-          if (newPriceData) {
-            if (newPriceData.data[0].account_id === cashAccountID) {
-              cashAccAPIDataCopy[item] = newPriceData.data[0];
-            }
-            setcashAccAPIData(cashAccAPIDataCopy);
-          }
-
-          break;
-        }
-      }
-    } else {
-      if (cashAccAPIData !== undefined) {
-        // we are dealing with a full refresh, triggered by a currency change for example
-        const cashAccAPIDataCopy = [...cashAccAPIData];
-        // set the records to relading so the shimmer shows
-        cashAccAPIDataCopy.forEach((item) => {
-          item.reloading = "valReloading";
-        });
-        setcashAccAPIData(cashAccAPIDataCopy);
-      }
-      // reload the data
-      const cashAccServerDataRequest: AxiosResponse<any, any> | undefined =
-        await getCashAccountData(
-          selectedCurrency.currency_code,
-          orderByThisColumn
-        );
-
-      if (
-        cashAccServerDataRequest !== undefined &&
-        cashAccServerDataRequest.status === 200 &&
-        cashAccServerDataRequest.data !== undefined
-      ) {
-        setcashAccAPIData(cashAccServerDataRequest.data);
-        setshowNoAccountsMessage(false);
-      } else if (
-        cashAccServerDataRequest !== undefined &&
-        cashAccServerDataRequest.status === 204
-      ) {
-        setshowNoAccountsMessage(true);
-      }
+  const getAllAccountBalances = useCallback(async () => {
+    const cashAccServerDataRequest: AxiosResponse<any, any> | undefined =
+      await getCashAccountData(
+        selectedCurrency.currency_code,
+        orderByThisColumn
+      );
+    if (
+      cashAccServerDataRequest !== undefined &&
+      cashAccServerDataRequest.status === 200 &&
+      cashAccServerDataRequest.data !== undefined
+    ) {
+      setcashAccAPIData(cashAccServerDataRequest.data);
     }
-    // update the net totals because we've updated a record / currency etc.
+    previousOrderBy.current = orderByThisColumn;
+    setthisItemIdBeingEdited(-1);
+  }, [selectedCurrency.currency_code, orderByThisColumn]);
+
+  const updateNetCashAccountTotal = useCallback(async () => {
+    setcashAccountNetTotal(undefined);
     const total = await getNetCashAccountTotal(selectedCurrency.currency_code);
     setcashAccountNetTotal(total);
-  };
+  }, [selectedCurrency.currency_code]);
 
-  //reload API data if currency changes:
   useEffect(() => {
-    updatedAllAccountBalances();
-  }, [selectedCurrency.currency_code, orderByThisColumn]);
+    getAllAccountBalances();
+    updateNetCashAccountTotal();
+  }, [
+    getAllAccountBalances,
+    updateNetCashAccountTotal,
+    entryIDWasDeleted,
+    itemIDWasAdded,
+    thisItemIdBeingEdited,
+  ]);
 
   const showAddNewCashAccForm = () => {
     setshowAddNewForm(true);
@@ -140,16 +120,23 @@ const CashAccounts: React.FC<CashAccountsProps> = ({
       )}
       {cashAccAPIData !== undefined && showNoAccountsMessage === false && (
         <Fragment>
-          <ViewCardHeaderRow
-            rowIcon={<FaPiggyBank size={25} color={"white"} />}
-            rowTitle="CASH ACCOUNTS"
-            netTotal={cashAccountNetTotal}
-            selectedCurrency={selectedCurrency}
-            addNewFunction={showAddNewCashAccForm}
-            sortArray={sortArray}
-            orderByThisColumn={orderByThisColumn}
-            setorderByThisColumn={setorderByThisColumn}
-          />
+          {previousOrderBy.current === orderByThisColumn ? (
+            <ViewCardHeaderRow
+              rowIcon={<FaPiggyBank size={25} color={"white"} />}
+              rowTitle="CASH ACCOUNTS"
+              netTotal={cashAccountNetTotal}
+              selectedCurrency={selectedCurrency}
+              addNewFunction={showAddNewCashAccForm}
+              sortArray={sortArray}
+              orderByThisColumn={orderByThisColumn}
+              setorderByThisColumn={setorderByThisColumn}
+            />
+          ) : (
+            <ViewCardHeaderRowSorting
+              rowIcon={<FaPiggyBank size={25} color={"white"} />}
+              rowTitle="CASH ACCOUNTS"
+            />
+          )}
 
           <section className="cashAccountsTable">
             <header className="cashAccountsTableHeader">
@@ -160,23 +147,21 @@ const CashAccounts: React.FC<CashAccountsProps> = ({
             <section className="cashAccountsTableDataContainer scrollbarstyles">
               {cashAccAPIData?.map((data, index) => (
                 <Fragment key={data.account_id}>
-                  {data.reloading === "valReloading" ? (
+                  {data.account_id === thisItemIdBeingEdited &&
+                  previousOrderBy.current === orderByThisColumn ? (
                     <CashAccountAccRowUpdatingVals
                       key={data.account_id}
                       data={data}
-                      updatedAllAccountBalances={updatedAllAccountBalances}
-                      settriggerRecalculations={settriggerRecalculations}
-                      triggerRecalculations={triggerRecalculations}
-                      selectedCurrency={selectedCurrency}
                     />
                   ) : (
                     <CashAccountAccRow
                       key={data.account_id}
                       data={data}
-                      updatedAllAccountBalances={updatedAllAccountBalances}
                       settriggerRecalculations={settriggerRecalculations}
                       triggerRecalculations={triggerRecalculations}
                       selectedCurrency={selectedCurrency}
+                      setentryIDWasDeleted={setentryIDWasDeleted}
+                      setthisItemIdBeingEdited={setthisItemIdBeingEdited}
                     />
                   )}
                 </Fragment>
@@ -189,12 +174,11 @@ const CashAccounts: React.FC<CashAccountsProps> = ({
       {showAddNewForm === true && (
         <div className="newAdditionModal" onClick={(e) => closeModal(e)}>
           <div className="newAdditionModalInner">
-            {" "}
             <CashAccountAddAcc
               setshowAddNewForm={setshowAddNewForm}
-              updatedAllAccountBalances={updatedAllAccountBalances}
               settriggerRecalculations={settriggerRecalculations}
               triggerRecalculations={triggerRecalculations}
+              setitemIDWasAdded={setitemIDWasAdded}
             />
           </div>
         </div>

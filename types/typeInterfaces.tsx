@@ -1,22 +1,22 @@
 export interface AddNewCashAccountPropProps {
   setshowAddNewForm: React.Dispatch<React.SetStateAction<boolean>>;
-  updatedAllAccountBalances: () => void;
   settriggerRecalculations: React.Dispatch<React.SetStateAction<number>>;
   triggerRecalculations: number;
+  setitemIDWasAdded: React.Dispatch<React.SetStateAction<number | undefined>>;
 }
 
 export interface AddANewInvestmentProps {
   setShowAddNewStockForm: React.Dispatch<React.SetStateAction<boolean>>;
-  refreshInvestmentsData: () => void;
   settriggerRecalculations: React.Dispatch<React.SetStateAction<number>>;
   triggerRecalculations: number;
+  setitemIDWasAdded: React.Dispatch<React.SetStateAction<number | undefined>>;
 }
 
 export interface PropertiesNewPropProps {
   setshowAddNewForm: React.Dispatch<React.SetStateAction<boolean>>;
-  refreshPropertiesValues: () => void;
   settriggerRecalculations: React.Dispatch<React.SetStateAction<number>>;
   triggerRecalculations: number;
+  setitemIDWasAdded: React.Dispatch<React.SetStateAction<number | undefined>>;
 }
 
 export interface AddNewCashAccountFormData {
@@ -181,10 +181,12 @@ export interface SoftDeleteButtonConfirmProps {
   assetType: string;
   assetID: number;
   assetTitle: string;
-  refreshBalances: () => void;
   triggerRecalculations: number;
   settriggerRecalculations: React.Dispatch<React.SetStateAction<number>>;
   cancelForm: () => void;
+  setentryIDWasDeleted: React.Dispatch<
+    React.SetStateAction<number | undefined>
+  >;
 }
 export interface OptionsBoardTotalDebtProps {
   totalDebtValue: number | undefined;
@@ -235,22 +237,39 @@ export interface PropertiesProps {
   selectedCurrency: selectedCurrencyDetails;
 }
 
+export interface PropertiesRowProps {
+  data: propertiesAPIData;
+  selectedCurrency: selectedCurrencyDetails;
+  settriggerRecalculations: React.Dispatch<React.SetStateAction<number>>;
+  triggerRecalculations: number;
+  setentryIDWasDeleted: React.Dispatch<
+    React.SetStateAction<number | undefined>
+  >;
+  setthisItemIdBeingEdited: React.Dispatch<React.SetStateAction<number>>;
+}
+
 export interface propertiesUpdateValProps {
   data: propertiesAPIData;
-  refreshPropertiesValues: (propertyID?: number) => Promise<void>;
   settriggerRecalculations: React.Dispatch<React.SetStateAction<number>>;
   triggerRecalculations: number;
   setshowEditPropertyForm: React.Dispatch<React.SetStateAction<boolean>>;
   checkForEscapeKey: (e: React.KeyboardEvent) => void;
+  setthisItemIdBeingEdited: React.Dispatch<React.SetStateAction<number>>;
+  setentryIDWasDeleted: React.Dispatch<
+    React.SetStateAction<number | undefined>
+  >;
 }
 
 export interface CashAccountUpdateBalProps {
   data: cashAccountAPIData;
   setShowEditAccountForm: React.Dispatch<React.SetStateAction<boolean>>;
-  updatedAllAccountBalances: (cashAccountID?: number) => void;
   settriggerRecalculations: React.Dispatch<React.SetStateAction<number>>;
   triggerRecalculations: number;
   checkForEscapeKey: (e: React.KeyboardEvent) => void;
+  setentryIDWasDeleted: React.Dispatch<
+    React.SetStateAction<number | undefined>
+  >;
+  setthisItemIdBeingEdited: React.Dispatch<React.SetStateAction<number>>;
 }
 
 export interface AssetCountContextCountData {
@@ -260,10 +279,13 @@ export interface AssetCountContextCountData {
 export interface InvestmentsUpdateStockProps {
   data: investmentsAPIData;
   setshowEditStockForm: React.Dispatch<React.SetStateAction<boolean>>;
-  refreshInvestmentsData: (holdingID?: number) => void;
   settriggerRecalculations: React.Dispatch<React.SetStateAction<number>>;
   triggerRecalculations: number;
   checkForEscapeKey: (e: React.KeyboardEvent) => void;
+  setentryIDWasDeleted: React.Dispatch<
+    React.SetStateAction<number | undefined>
+  >;
+  setthisItemIdBeingEdited: React.Dispatch<React.SetStateAction<number>>;
 }
 
 export interface LoginAttemptFormData {
@@ -352,18 +374,28 @@ export interface OptionsBoardProps {
 
 export interface CashAccountAccRowProps {
   data: cashAccountAPIData;
-  updatedAllAccountBalances: () => void;
   settriggerRecalculations: React.Dispatch<React.SetStateAction<number>>;
   triggerRecalculations: number;
   selectedCurrency: selectedCurrencyDetails;
+  setentryIDWasDeleted: React.Dispatch<
+    React.SetStateAction<number | undefined>
+  >;
+  setthisItemIdBeingEdited: React.Dispatch<React.SetStateAction<number>>;
+}
+
+export interface CashAccountAccRowUpdatingValsProps {
+  data: cashAccountAPIData;
 }
 
 export interface InvestmentRowProps {
   data: investmentsAPIData;
   selectedCurrency: selectedCurrencyDetails;
-  refreshInvestmentsData: () => void;
   settriggerRecalculations: React.Dispatch<React.SetStateAction<number>>;
   triggerRecalculations: number;
+  setentryIDWasDeleted: React.Dispatch<
+    React.SetStateAction<number | undefined>
+  >;
+  setthisItemIdBeingEdited: React.Dispatch<React.SetStateAction<number>>;
 }
 
 export interface InvestmentRowUpdatingPricesProps {

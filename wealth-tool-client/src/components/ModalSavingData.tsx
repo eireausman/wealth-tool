@@ -15,7 +15,9 @@ const ModalSavingData: React.FC<ModalSavingDataProps> = ({ title }) => {
       transition={{ duration: 0.5 }}
       className="modalSavingDataContainer"
     >
-      <CardSpinner cardTitle={title} />
+      <div className="modalSavingDataCardSpinnerBumper">
+        <CardSpinner cardTitle={title} />
+      </div>
     </motion.div>
   );
 };

@@ -9,7 +9,13 @@
   padding: 0;
   margin: 0;
   animation: shimmer 3s infinite linear;
-  background: linear-gradient(to right, #aaacad 4%, #e4e0e0 25%, #aaacad 36%);
+  /* background: linear-gradient(to right, #aaacad 4%, #e4e0e0 25%, #aaacad 36%); */
+  background: linear-gradient(
+    to right,
+    rgba(51, 106, 157),
+    rgba(5, 128, 244, 0.24),
+    rgba(51, 106, 157)
+  );
   background-size: 1000px 100%;
 }
 

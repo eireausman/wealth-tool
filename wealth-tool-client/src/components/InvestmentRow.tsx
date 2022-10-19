@@ -9,9 +9,10 @@ import InvestmentRowPrice from "./InvestmentRowPrice";
 const InvestmentRow: React.FC<InvestmentRowProps> = ({
   data,
   selectedCurrency,
-  refreshInvestmentsData,
   settriggerRecalculations,
   triggerRecalculations,
+  setentryIDWasDeleted,
+  setthisItemIdBeingEdited,
 }) => {
   const [styleForHoverDiv, setStyleForHoverDiv] = useState<object>({
     opacity: 0,
@@ -92,10 +93,11 @@ const InvestmentRow: React.FC<InvestmentRowProps> = ({
             <InvestmentsUpdateStock
               data={data}
               setshowEditStockForm={setshowEditStockForm}
-              refreshInvestmentsData={refreshInvestmentsData}
               settriggerRecalculations={settriggerRecalculations}
               triggerRecalculations={triggerRecalculations}
               checkForEscapeKey={checkForEscapeKey}
+              setentryIDWasDeleted={setentryIDWasDeleted}
+              setthisItemIdBeingEdited={setthisItemIdBeingEdited}
             />
           </div>
         </div>

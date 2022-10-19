@@ -11,9 +11,9 @@ import ModalSavingData from "./ModalSavingData";
 import { useCurrenciesFromDBContext } from "../modules/Contexts";
 const CashAccountAddAcc: React.FC<AddNewCashAccountPropProps> = ({
   setshowAddNewForm,
-  updatedAllAccountBalances,
   settriggerRecalculations,
   triggerRecalculations,
+  setitemIDWasAdded,
 }) => {
   const currencyCodesFromDB = useContext(useCurrenciesFromDBContext);
 
@@ -47,7 +47,6 @@ const CashAccountAddAcc: React.FC<AddNewCashAccountPropProps> = ({
       fieldName === "account_number_last4_digits" &&
       target.value.length > 4
     ) {
-      console.log("greate than 4 digits");
       return;
     }
     formDataCopy[fieldName] = target.value;
@@ -77,9 +76,9 @@ const CashAccountAddAcc: React.FC<AddNewCashAccountPropProps> = ({
 
     addNewCashAccount(formDataForSubmission)
       .then((data) => {
+        setitemIDWasAdded(data.id);
         setsaveProgressText("Saved.  One sec...");
         settriggerRecalculations(triggerRecalculations + 1);
-        updatedAllAccountBalances();
         setshowAddNewForm(false);
       })
       .catch((err) => console.log(err));

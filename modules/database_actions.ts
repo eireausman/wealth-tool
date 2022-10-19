@@ -169,6 +169,7 @@ export async function addNewCashAccountToDB(
       account_balance_asatdate: today,
     });
     await newCashAccountHistoryEntry.save();
+    return newCashAccountHistoryEntry;
   } catch (err) {
     console.log(err);
     return err;
@@ -191,7 +192,7 @@ export async function addNewInvestmentToDB(
       holding_cost_total_value: requestBody.cost,
     });
     const saveResult = await newInvestmentEntry.save();
-
+    return newInvestmentEntry;
     return saveResult;
   } catch (err) {
     console.log(err);
@@ -224,6 +225,7 @@ export async function addNewPropertyToDB(
       property_value_asatdate: today,
     });
     await newPropValHistoryEntry.save();
+    return newPropValHistoryEntry;
   } catch (err) {
     console.log(err);
     return err;

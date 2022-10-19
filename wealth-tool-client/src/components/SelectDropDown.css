@@ -1,13 +1,14 @@
 .selectContainer {
   position: absolute;
-  background-color: #087fed;
-  color: white;
+
+  background-color: #e3eaf1;
+  color: rgb(0, 0, 0);
   border-radius: 5px;
   min-width: 120px;
   box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-  border: 1px solid rgba(189, 186, 186, 0.51);
+  border: 1px solid rgba(15, 15, 15, 0.51);
   padding: 12px 16px;
-  margin: 1px 0px 0px 0px;
+  margin-top: 1.6em;
   z-index: 1;
 }
 
@@ -30,4 +31,11 @@
 
 .selectDropDownListItemActive {
   background-color: #08243d;
+  color: white;
+}
+
+@media only screen and (max-width: 450px) {
+  .selectContainer {
+    right: 40px;
+  }
 }

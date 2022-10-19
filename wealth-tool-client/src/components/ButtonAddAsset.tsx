@@ -18,9 +18,8 @@ const ButtonAddAsset: React.FC<ButtonAddAssetProps> = ({
       className="buttonWhite buttonAddNewEntry"
       onClick={clickFunction}
     >
+      {buttonTextContent}
       <HiOutlinePlusCircle />
-
-      <span> {buttonTextContent}</span>
     </motion.button>
   );
 };

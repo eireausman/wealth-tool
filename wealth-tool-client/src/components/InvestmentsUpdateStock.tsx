@@ -13,10 +13,11 @@ import SoftDeleteButtonConfirm from "./SoftDeleteButtonConfirm";
 const InvestmentsUpdateStock: React.FC<InvestmentsUpdateStockProps> = ({
   data,
   setshowEditStockForm,
-  refreshInvestmentsData,
   settriggerRecalculations,
   triggerRecalculations,
   checkForEscapeKey,
+  setentryIDWasDeleted,
+  setthisItemIdBeingEdited,
 }) => {
   const [formData, setformData] = useState<investmentUpdateStockFormData>({
     holding_id: data.holding_id,
@@ -64,7 +65,7 @@ const InvestmentsUpdateStock: React.FC<InvestmentsUpdateStockProps> = ({
       );
       setsaveProgressText("Saved.  One sec...");
       settriggerRecalculations(triggerRecalculations + 1);
-      refreshInvestmentsData(formData.holding_id);
+      setthisItemIdBeingEdited(data.holding_id);
       setshowEditStockForm(false);
     } catch (error) {
       console.log(error);
@@ -153,10 +154,10 @@ const InvestmentsUpdateStock: React.FC<InvestmentsUpdateStockProps> = ({
           assetType="investment"
           assetID={data.holding_id}
           assetTitle={data.holding_stock_name}
-          refreshBalances={refreshInvestmentsData}
           triggerRecalculations={triggerRecalculations}
           settriggerRecalculations={settriggerRecalculations}
           cancelForm={cancelForm}
+          setentryIDWasDeleted={setentryIDWasDeleted}
         />
       )}
     </div>

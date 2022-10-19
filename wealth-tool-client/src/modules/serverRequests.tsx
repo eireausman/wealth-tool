@@ -32,6 +32,7 @@ const refreshSingleStockPricingData = async (
 const addNewCashAccount = async (formData: AddNewCashAccountFormData) => {
   try {
     const serverResponse = await axios.post("/api/addnewcashaccount", formData);
+
     return await serverResponse.data;
   } catch (error) {
     console.error(error);

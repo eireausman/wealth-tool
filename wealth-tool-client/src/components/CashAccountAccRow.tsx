@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import React, { Fragment, Key, useState } from "react";
+import React, { Fragment, useState } from "react";
 import { FaEdit } from "react-icons/fa";
 import getDisplayNumber from "../modules/getDisplayNumber";
 import { CashAccountAccRowProps } from "../../../types/typeInterfaces";
@@ -9,10 +9,11 @@ import "tippy.js/dist/tippy.css";
 
 const CashAccountAccRow: React.FC<CashAccountAccRowProps> = ({
   data,
-  updatedAllAccountBalances,
   settriggerRecalculations,
   triggerRecalculations,
   selectedCurrency,
+  setentryIDWasDeleted,
+  setthisItemIdBeingEdited,
 }) => {
   const [styleForHoverDiv, setStyleForHoverDiv] = useState<object>({
     opacity: 0,
@@ -94,10 +95,11 @@ const CashAccountAccRow: React.FC<CashAccountAccRowProps> = ({
             <CashAccountUpdBal
               data={data}
               setShowEditAccountForm={setShowEditAccountForm}
-              updatedAllAccountBalances={updatedAllAccountBalances}
               settriggerRecalculations={settriggerRecalculations}
               triggerRecalculations={triggerRecalculations}
               checkForEscapeKey={checkForEscapeKey}
+              setentryIDWasDeleted={setentryIDWasDeleted}
+              setthisItemIdBeingEdited={setthisItemIdBeingEdited}
             />
           </div>
         </div>

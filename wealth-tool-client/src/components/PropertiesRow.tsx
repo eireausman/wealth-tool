@@ -3,25 +3,20 @@ import React, { Fragment, useState } from "react";
 import {
   propertiesAPIData,
   selectedCurrencyDetails,
+  PropertiesRowProps,
 } from "../../../types/typeInterfaces";
 import PropertiesUpdateVal from "./PropertiesUpdateVal";
 import getDisplayNumber from "../modules/getDisplayNumber";
 import { FaEdit } from "react-icons/fa";
 
-interface PropertiesRowProps {
-  data: propertiesAPIData;
-  selectedCurrency: selectedCurrencyDetails;
-  refreshPropertiesValues: () => Promise<void>;
-  settriggerRecalculations: React.Dispatch<React.SetStateAction<number>>;
-  triggerRecalculations: number;
-}
-
 const PropertiesRow: React.FC<PropertiesRowProps> = ({
   data,
-  refreshPropertiesValues,
+
   settriggerRecalculations,
   triggerRecalculations,
   selectedCurrency,
+  setentryIDWasDeleted,
+  setthisItemIdBeingEdited,
 }) => {
   const [styleRowID, setstyleRowID] = useState<number>(-1);
   const [showEditPropertyForm, setshowEditPropertyForm] =
@@ -130,11 +125,12 @@ const PropertiesRow: React.FC<PropertiesRowProps> = ({
           <div className="newAdditionModalInner">
             <PropertiesUpdateVal
               data={data}
-              refreshPropertiesValues={refreshPropertiesValues}
               settriggerRecalculations={settriggerRecalculations}
               triggerRecalculations={triggerRecalculations}
               setshowEditPropertyForm={setshowEditPropertyForm}
               checkForEscapeKey={checkForEscapeKey}
+              setentryIDWasDeleted={setentryIDWasDeleted}
+              setthisItemIdBeingEdited={setthisItemIdBeingEdited}
             />
           </div>
         </div>

@@ -25,7 +25,7 @@ const OptionsBoardNetWealth: React.FC<OptionsBoardNetWealthProps> = ({
       <b className="wealthFigureTitle">Net Wealth</b>
       {netWealthValue === undefined ? (
         <div className="wealthFigureShimmer">
-          <Shimmer height={"1em"} width={"96px"} borderRadiusPX={"5px"} />
+          <Shimmer height={"1.5em"} width={"96px"} borderRadiusPX={"5px"} />
         </div>
       ) : (
         <p

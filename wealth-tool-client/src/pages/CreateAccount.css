@@ -69,3 +69,7 @@
 .loginLinkText {
   color: white;
 }
+
+.createAccountCardSpinnerBumper {
+  margin: 30px 0px 0px 0px;
+}

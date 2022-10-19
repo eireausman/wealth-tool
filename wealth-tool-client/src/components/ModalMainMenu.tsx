@@ -196,21 +196,11 @@ const ModalMainMenu: React.FC<ModalMainMenuProps> = ({
               setCurrency={setCurrency}
               selectedCurrency={selectedCurrency}
             />
-            {loggedInUser === undefined ? (
-              <div className="loginBox">
-                <div className="loginBoxLink">
-                  <Link to="/login">Login</Link>
-                </div>
-                <div className="loginBoxLink">
-                  <Link to="/createaccount">Create Account</Link>
-                </div>
-              </div>
-            ) : (
-              <OptionsBoardLogoutLink
-                performLogoutAction={performLogoutAction}
-                loggedInUser={loggedInUser}
-              />
-            )}
+
+            <OptionsBoardLogoutLink
+              performLogoutAction={performLogoutAction}
+              loggedInUser={loggedInUser}
+            />
           </motion.div>
         </section>
       )}

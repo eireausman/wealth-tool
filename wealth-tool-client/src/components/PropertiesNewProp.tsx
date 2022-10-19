@@ -17,9 +17,9 @@ import { useCurrenciesFromDBContext } from "../modules/Contexts";
 
 const PropertiesNewProp: React.FC<PropertiesNewPropProps> = ({
   setshowAddNewForm,
-  refreshPropertiesValues,
   settriggerRecalculations,
   triggerRecalculations,
+  setitemIDWasAdded,
 }) => {
   const currencyCodesFromDB = useContext(useCurrenciesFromDBContext);
   const [formData, setformData] = useState<AddNewPropertyFormData>();
@@ -79,7 +79,7 @@ const PropertiesNewProp: React.FC<PropertiesNewPropProps> = ({
       .then((data) => {
         setsaveProgressText("Saved.  One sec...");
         settriggerRecalculations(triggerRecalculations + 1);
-        refreshPropertiesValues();
+        setitemIDWasAdded(data.property_id);
         setshowAddNewForm(false);
       })
       .catch((err) => console.log(err));

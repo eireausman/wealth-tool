@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Wealth Tracker",
+  "name": "Tool to track wealth across multiple currencies and asset classes",
   "icons": [
     {
       "src": "favicon.ico",

@@ -1,4 +1,10 @@
-import React, { useState, useEffect, Fragment } from "react";
+import React, {
+  useState,
+  useEffect,
+  Fragment,
+  useRef,
+  useCallback,
+} from "react";
 import { PropertiesProps } from "../../../types/typeInterfaces";
 import CardSpinner from "./CardSpinner";
 import "./Properties.css";
@@ -7,7 +13,6 @@ import { propertiesAPIData } from "../../../types/typeInterfaces";
 import {
   getPropertiesData,
   getNetPropertyTotal,
-  getSinglePropertyData,
 } from "../modules/serverRequests";
 import { AxiosResponse } from "axios";
 import NoAssets from "./NoAssetsMessage";
@@ -17,6 +22,7 @@ import { BsHouseDoor } from "react-icons/bs";
 import ViewCardHeaderRow from "./ViewCardHeaderRow";
 import PropertiesRow from "./PropertiesRow";
 import PropertiesRowUpdatingVals from "./PropertiesRowUpdatingVals";
+import ViewCardHeaderRowSorting from "./ViewCardHeaderRowSorting";
 
 const Properties: React.FC<PropertiesProps> = ({
   triggerRecalculations,
@@ -39,69 +45,48 @@ const Properties: React.FC<PropertiesProps> = ({
   >(0);
   const [orderByThisColumn, setorderByThisColumn] =
     useState<string>("property_nickname");
+  const previousOrderBy = useRef(orderByThisColumn);
+  const [entryIDWasDeleted, setentryIDWasDeleted] = useState<
+    number | undefined
+  >(undefined);
+  const [itemIDWasAdded, setitemIDWasAdded] = useState<number | undefined>(
+    undefined
+  );
+  const [thisItemIdBeingEdited, setthisItemIdBeingEdited] =
+    useState<number>(-1);
 
-  const refreshPropertiesValues = async (propertyID?: number) => {
-    setnetTotalPropValue(undefined);
-    setshowNoAccountsMessage(false);
-
-    if (propertyID !== undefined && propertyAccAPIData !== undefined) {
-      // we are only updating a single record:
-      const propertyAccAPIDataCopy = [...propertyAccAPIData];
-      for (let item in propertyAccAPIDataCopy) {
-        if (propertyAccAPIData[item].property_id === propertyID) {
-          propertyAccAPIData[item].reloading = "valReloading";
-
-          setpropertyAccAPIData(propertyAccAPIDataCopy);
-
-          const newPriceData = await getSinglePropertyData(
-            selectedCurrency.currency_code,
-            propertyID
-          );
-
-          if (newPriceData) {
-            if (newPriceData.data[0].property_id === propertyID) {
-              propertyAccAPIDataCopy[item] = newPriceData.data[0];
-            }
-            setpropertyAccAPIData(propertyAccAPIDataCopy);
-          }
-
-          break;
-        }
-      }
-    } else {
-      if (propertyAccAPIData !== undefined) {
-        const propertyAccAPIDataCopy = [...propertyAccAPIData];
-        propertyAccAPIDataCopy.forEach((item) => {
-          item.reloading = "valReloading";
-        });
-        setpropertyAccAPIData(propertyAccAPIDataCopy);
-      }
-      const propData: AxiosResponse<any, any> | undefined =
-        await getPropertiesData(
-          selectedCurrency.currency_code,
-          orderByThisColumn
-        );
-      if (
-        propData !== undefined &&
-        propData.status === 200 &&
-        propData.data !== undefined
-      ) {
-        setpropertyAccAPIData(propData.data);
-
-        setshowNoAccountsMessage(false);
-      } else if (propData !== undefined && propData.status === 204) {
-        setshowNoAccountsMessage(true);
-      }
+  const refreshPropertiesVals = useCallback(async () => {
+    const propData: AxiosResponse<any, any> | undefined =
+      await getPropertiesData(
+        selectedCurrency.currency_code,
+        orderByThisColumn
+      );
+    if (
+      propData !== undefined &&
+      propData.status === 200 &&
+      propData.data !== undefined
+    ) {
+      setpropertyAccAPIData(propData.data);
     }
+    previousOrderBy.current = orderByThisColumn;
+    setthisItemIdBeingEdited(-1);
+  }, [selectedCurrency.currency_code, orderByThisColumn]);
 
+  const refreshNetTotal = useCallback(async () => {
     const total = await getNetPropertyTotal(selectedCurrency.currency_code);
     setnetTotalPropValue(total);
-  };
+  }, [selectedCurrency.currency_code]);
 
-  //reload API data if currency changes:
   useEffect(() => {
-    refreshPropertiesValues();
-  }, [selectedCurrency.currency_code, orderByThisColumn]);
+    refreshPropertiesVals();
+    refreshNetTotal();
+  }, [
+    refreshPropertiesVals,
+    refreshNetTotal,
+    entryIDWasDeleted,
+    itemIDWasAdded,
+    thisItemIdBeingEdited,
+  ]);
 
   const showAddPropForm = () => {
     setshowAddNewForm(true);
@@ -134,37 +119,43 @@ const Properties: React.FC<PropertiesProps> = ({
       )}
       {propertyAccAPIData !== undefined && showNoAccountsMessage === false && (
         <Fragment>
-          <ViewCardHeaderRow
-            rowIcon={<BsHouseDoor size={25} color={"white"} />}
-            rowTitle="PROPERTY"
-            selectedCurrency={selectedCurrency}
-            netTotal={netTotalPropValue}
-            addNewFunction={showAddPropForm}
-            sortArray={sortArray}
-            orderByThisColumn={orderByThisColumn}
-            setorderByThisColumn={setorderByThisColumn}
-          />
+          {previousOrderBy.current === orderByThisColumn ? (
+            <ViewCardHeaderRow
+              rowIcon={<BsHouseDoor size={25} color={"white"} />}
+              rowTitle="PROPERTY"
+              selectedCurrency={selectedCurrency}
+              netTotal={netTotalPropValue}
+              addNewFunction={showAddPropForm}
+              sortArray={sortArray}
+              orderByThisColumn={orderByThisColumn}
+              setorderByThisColumn={setorderByThisColumn}
+            />
+          ) : (
+            <ViewCardHeaderRowSorting
+              rowIcon={<BsHouseDoor size={25} color={"white"} />}
+              rowTitle="PROPERTY"
+            />
+          )}
 
           <div className="propertiesOflowContainer scrollbarstyles">
             {propertyAccAPIData?.map((data) => (
               <Fragment key={data.property_id}>
-                {data.reloading === "valReloading" ? (
+                {data.property_id === thisItemIdBeingEdited &&
+                previousOrderBy.current === orderByThisColumn ? (
                   <PropertiesRowUpdatingVals
                     key={data.property_id}
                     data={data}
                     selectedCurrency={selectedCurrency}
-                    refreshPropertiesValues={refreshPropertiesValues}
-                    settriggerRecalculations={settriggerRecalculations}
-                    triggerRecalculations={triggerRecalculations}
                   />
                 ) : (
                   <PropertiesRow
                     key={data.property_id}
                     data={data}
                     selectedCurrency={selectedCurrency}
-                    refreshPropertiesValues={refreshPropertiesValues}
                     settriggerRecalculations={settriggerRecalculations}
                     triggerRecalculations={triggerRecalculations}
+                    setentryIDWasDeleted={setentryIDWasDeleted}
+                    setthisItemIdBeingEdited={setthisItemIdBeingEdited}
                   />
                 )}
               </Fragment>
@@ -178,9 +169,9 @@ const Properties: React.FC<PropertiesProps> = ({
           <div className="newAdditionModalInner">
             <PropertiesNewProp
               setshowAddNewForm={setshowAddNewForm}
-              refreshPropertiesValues={refreshPropertiesValues}
               settriggerRecalculations={settriggerRecalculations}
               triggerRecalculations={triggerRecalculations}
+              setitemIDWasAdded={setitemIDWasAdded}
             />
           </div>
         </div>

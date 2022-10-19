@@ -1,17 +1,13 @@
 import { motion } from "framer-motion";
-import React, { Fragment, Key, useState } from "react";
+import React, { Fragment, useState } from "react";
 import { FaEdit } from "react-icons/fa";
-import { CashAccountAccRowProps } from "../../../types/typeInterfaces";
+import { CashAccountAccRowUpdatingValsProps } from "../../../types/typeInterfaces";
 import CashAccountUpdBal from "./CashAccountUpdBal";
 import Shimmer from "./Shimmer";
 
-const CashAccountAccRowUpdatingVals: React.FC<CashAccountAccRowProps> = ({
-  data,
-  updatedAllAccountBalances,
-  settriggerRecalculations,
-  triggerRecalculations,
-  selectedCurrency,
-}) => {
+const CashAccountAccRowUpdatingVals: React.FC<
+  CashAccountAccRowUpdatingValsProps
+> = ({ data }) => {
   const [styleForHoverDiv, setStyleForHoverDiv] = useState<object>({
     opacity: 0,
   });
@@ -76,20 +72,6 @@ const CashAccountAccRowUpdatingVals: React.FC<CashAccountAccRowProps> = ({
           <Shimmer height={"1em"} width={"70px"} borderRadiusPX={"1px"} />
         </div>
       </motion.div>
-      {showEditAccountForm === true && (
-        <div className="newAdditionModal" onClick={(e) => closeModal(e)}>
-          <div className="newAdditionModalInner">
-            <CashAccountUpdBal
-              data={data}
-              setShowEditAccountForm={setShowEditAccountForm}
-              updatedAllAccountBalances={updatedAllAccountBalances}
-              settriggerRecalculations={settriggerRecalculations}
-              triggerRecalculations={triggerRecalculations}
-              checkForEscapeKey={checkForEscapeKey}
-            />
-          </div>
-        </div>
-      )}
     </Fragment>
   );
 };

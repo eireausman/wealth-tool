@@ -1,4 +1,4 @@
-import React, { useEffect, Fragment, useState } from "react";
+import React, { useEffect, useState } from "react";
 import CashAccounts from "./components/CashAccounts";
 import Properties from "./components/Properties";
 import {
@@ -42,10 +42,7 @@ function App() {
       currency_symbol: "$",
       currency_name: "Australian Dollar",
     });
-  const [selectedCurrencyCode, setselectedCurrencyCode] =
-    useState<string>("AUD");
-  const [selectedCurrencySymbol, setselectedCurrencySymbol] =
-    useState<string>("$");
+
   const [currencyCodesFromDB, setcurrencyCodesFromDB] =
     useState<Array<currencyCodesAPIData>>();
   const [assetCountDBOutput, setassetCountDBOutput] =
@@ -118,7 +115,7 @@ function App() {
           />
           <div className="viewCardsCascade">
             <ChartNetWealthCategories
-              selectedCurrencyCode={selectedCurrencyCode}
+              selectedCurrencyCode={selectedCurrency.currency_code}
               triggerRecalculations={triggerRecalculations}
             />
           </div>

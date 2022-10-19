@@ -128,13 +128,18 @@ code {
 }
 
 .buttonAddNewEntry {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: row;
+  flex-wrap: nowrap;
   background-color: white;
   color: black;
   margin: 0px 0px 0px 10px;
   border-radius: 10px;
+  min-height: 1.5em;
 }
-.buttonAddNewEntry > svg,
-.buttonAddNewEntry > span {
+.buttonAddNewEntry * {
   vertical-align: middle;
 }
 
@@ -142,6 +147,14 @@ code {
   border: 0px;
   padding: 5px;
   background-color: rgb(250, 250, 250);
+  color: rgb(0, 0, 0);
+  cursor: pointer;
+}
+
+.buttonTransparent {
+  border: 0px;
+  padding: 5px;
+  background-color: transparent;
   color: rgb(0, 0, 0);
   cursor: pointer;
 }

@@ -87,7 +87,7 @@ const Login: React.FC = () => {
               name="password"
               minLength={PASSWORDMIN}
               required
-              type="text"
+              type="password"
               value={formData.password}
               onChange={updateFormDataState}
             />
@@ -104,7 +104,9 @@ const Login: React.FC = () => {
         </motion.button>
       </motion.form>
       {showSpinner === true && (
-        <CardSpinner cardTitle={"Logging in.... please wait...."} />
+        <div className="loginCardSpinnerBumper">
+          <CardSpinner cardTitle={"Logging in.... please wait...."} />
+        </div>
       )}
       {showResponseMessage === true &&
         formSubmitResponse.requestOutcome === false && (

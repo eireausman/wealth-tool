@@ -1,4 +1,10 @@
-import React, { useState, useEffect, Fragment } from "react";
+import React, {
+  useState,
+  useEffect,
+  Fragment,
+  useRef,
+  useCallback,
+} from "react";
 import { InvestmentsProps } from "../../../types/typeInterfaces";
 import CardSpinner from "./CardSpinner";
 import "./Investments.css";
@@ -8,7 +14,6 @@ import { investmentsAPIData } from "../../../types/typeInterfaces";
 import {
   getInvestmentData,
   getNetInvestmentTotal,
-  getSingleInvestmentData,
 } from "../modules/serverRequests";
 import NoAssets from "./NoAssetsMessage";
 import { AxiosResponse } from "axios";
@@ -16,6 +21,7 @@ import ButtonAddAsset from "./ButtonAddAsset";
 import { GoGraph } from "react-icons/go";
 import ViewCardHeaderRow from "./ViewCardHeaderRow";
 import InvestmentRowUpdatingPrices from "./InvestmentRowUpdatingPrices";
+import ViewCardHeaderRowSorting from "./ViewCardHeaderRowSorting";
 
 const Investments: React.FC<InvestmentsProps> = ({
   triggerRecalculations,
@@ -32,6 +38,7 @@ const Investments: React.FC<InvestmentsProps> = ({
   const [showNoAccountsMessage, setshowNoAccountsMessage] = useState(false);
   const [orderByThisColumn, setorderByThisColumn] =
     useState<string>("holding_stock_name");
+  const previousOrderBy = useRef(orderByThisColumn);
 
   const [showAddNewStockForm, setShowAddNewStockForm] =
     useState<boolean>(false);
@@ -40,71 +47,49 @@ const Investments: React.FC<InvestmentsProps> = ({
   const [investmentsTotalValue, setInvestmentsTotalValue] = useState<
     number | undefined
   >(0);
+  const [entryIDWasDeleted, setentryIDWasDeleted] = useState<
+    number | undefined
+  >(undefined);
+  const [itemIDWasAdded, setitemIDWasAdded] = useState<number | undefined>(
+    undefined
+  );
+  const [thisItemIdBeingEdited, setthisItemIdBeingEdited] =
+    useState<number>(-1);
 
-  const refreshInvestmentsData = async (holdingID?: number) => {
-    setshowNoAccountsMessage(false);
-    setInvestmentsTotalValue(undefined);
+  const refreshInvestmentsDataFromDB = useCallback(async () => {
+    const investData: AxiosResponse<any, any> | undefined =
+      await getInvestmentData(
+        selectedCurrency.currency_code,
+        orderByThisColumn
+      );
 
-    if (holdingID !== undefined && investmentAPIData !== undefined) {
-      const investmentAPIDataCopy = [...investmentAPIData];
-      // if we are only updating a single record:
-      for (let item in investmentAPIDataCopy) {
-        if (investmentAPIDataCopy[item].holding_id === holdingID) {
-          investmentAPIDataCopy[
-            item
-          ].investment_price_histories[0].holding_current_price =
-            "priceReloading";
-
-          setinvestmentAPIData(investmentAPIDataCopy);
-
-          const newPriceData = await getSingleInvestmentData(
-            selectedCurrency.currency_code,
-            holdingID
-          );
-          if (newPriceData) {
-            if (newPriceData.data[0].holding_id === holdingID) {
-              investmentAPIDataCopy[item] = newPriceData.data[0];
-            }
-            setinvestmentAPIData(investmentAPIDataCopy);
-          }
-          break;
-        }
-      }
-    } else {
-      if (investmentAPIData !== undefined) {
-        const investmentAPIDataCopy = [...investmentAPIData];
-        investmentAPIDataCopy.forEach((item) => {
-          item.investment_price_histories[0].holding_current_price =
-            "priceReloading";
-        });
-        setinvestmentAPIData(investmentAPIDataCopy);
-      }
-      const investData: AxiosResponse<any, any> | undefined =
-        await getInvestmentData(
-          selectedCurrency.currency_code,
-          orderByThisColumn
-        );
-
-      if (
-        investData !== undefined &&
-        investData.status === 200 &&
-        investData.data !== undefined
-      ) {
-        setinvestmentAPIData(investData.data);
-        setshowNoAccountsMessage(false);
-      } else if (investData !== undefined && investData.status === 204) {
-        setshowNoAccountsMessage(true);
-      }
+    if (
+      investData !== undefined &&
+      investData.status === 200 &&
+      investData.data !== undefined
+    ) {
+      setinvestmentAPIData(investData.data);
     }
+    previousOrderBy.current = orderByThisColumn;
+    setthisItemIdBeingEdited(-1);
+  }, [selectedCurrency.currency_code, orderByThisColumn]);
 
+  const updateNetInvestmentTotal = useCallback(async () => {
+    setInvestmentsTotalValue(undefined);
     const total = await getNetInvestmentTotal(selectedCurrency.currency_code);
     setInvestmentsTotalValue(total);
-  };
+  }, [selectedCurrency.currency_code]);
 
-  //reload API data if currency changes:
   useEffect(() => {
-    refreshInvestmentsData();
-  }, [selectedCurrency.currency_code, orderByThisColumn]);
+    refreshInvestmentsDataFromDB();
+    updateNetInvestmentTotal();
+  }, [
+    refreshInvestmentsDataFromDB,
+    updateNetInvestmentTotal,
+    entryIDWasDeleted,
+    itemIDWasAdded,
+    thisItemIdBeingEdited,
+  ]);
 
   const addANewStock = () => {
     setShowAddNewStockForm(true);
@@ -137,16 +122,23 @@ const Investments: React.FC<InvestmentsProps> = ({
       )}
       {investmentAPIData !== undefined && showNoAccountsMessage === false && (
         <Fragment>
-          <ViewCardHeaderRow
-            rowIcon={<GoGraph size={25} color={"white"} />}
-            rowTitle="INVESTMENTS"
-            selectedCurrency={selectedCurrency}
-            netTotal={investmentsTotalValue}
-            addNewFunction={addANewStock}
-            sortArray={sortArray}
-            orderByThisColumn={orderByThisColumn}
-            setorderByThisColumn={setorderByThisColumn}
-          />
+          {previousOrderBy.current === orderByThisColumn ? (
+            <ViewCardHeaderRow
+              rowIcon={<GoGraph size={25} color={"white"} />}
+              rowTitle="INVESTMENTS"
+              selectedCurrency={selectedCurrency}
+              netTotal={investmentsTotalValue}
+              addNewFunction={addANewStock}
+              sortArray={sortArray}
+              orderByThisColumn={orderByThisColumn}
+              setorderByThisColumn={setorderByThisColumn}
+            />
+          ) : (
+            <ViewCardHeaderRowSorting
+              rowIcon={<GoGraph size={25} color={"white"} />}
+              rowTitle="INVESTMENTS"
+            />
+          )}
 
           <section className="investmentsTable">
             <header className="investmentsTableHeader">
@@ -162,8 +154,8 @@ const Investments: React.FC<InvestmentsProps> = ({
             <section className="investmentsTableDataContainer scrollbarstyles">
               {investmentAPIData?.map((data, index) => (
                 <Fragment key={data.holding_id}>
-                  {data.investment_price_histories[0].holding_current_price ===
-                  "priceReloading" ? (
+                  {data.holding_id === thisItemIdBeingEdited &&
+                  previousOrderBy.current === orderByThisColumn ? (
                     <InvestmentRowUpdatingPrices
                       key={data.holding_id}
                       data={data}
@@ -173,9 +165,10 @@ const Investments: React.FC<InvestmentsProps> = ({
                       key={data.holding_id}
                       data={data}
                       selectedCurrency={selectedCurrency}
-                      refreshInvestmentsData={refreshInvestmentsData}
                       settriggerRecalculations={settriggerRecalculations}
                       triggerRecalculations={triggerRecalculations}
+                      setentryIDWasDeleted={setentryIDWasDeleted}
+                      setthisItemIdBeingEdited={setthisItemIdBeingEdited}
                     />
                   )}
                 </Fragment>
@@ -190,9 +183,9 @@ const Investments: React.FC<InvestmentsProps> = ({
           <div className="newAdditionModalInner">
             <InvestmentAddStock
               setShowAddNewStockForm={setShowAddNewStockForm}
-              refreshInvestmentsData={refreshInvestmentsData}
               settriggerRecalculations={settriggerRecalculations}
               triggerRecalculations={triggerRecalculations}
+              setitemIDWasAdded={setitemIDWasAdded}
             />
           </div>
         </div>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, Fragment } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { propertiesUpdateValProps } from "../../../types/typeInterfaces";
 import { motion } from "framer-motion";
 import "./PropertiesUpdateVal.css";
@@ -9,11 +9,12 @@ import SoftDeleteButton from "./SoftDeleteButton";
 
 const PropertiesUpdateVal: React.FC<propertiesUpdateValProps> = ({
   data,
-  refreshPropertiesValues,
   settriggerRecalculations,
   triggerRecalculations,
   setshowEditPropertyForm,
   checkForEscapeKey,
+  setthisItemIdBeingEdited,
+  setentryIDWasDeleted,
 }) => {
   const [propValuation, setpropValuation] = useState<number>(
     data.property_valuation
@@ -39,7 +40,7 @@ const PropertiesUpdateVal: React.FC<propertiesUpdateValProps> = ({
       .then((returnData) => {
         setsaveProgressText("Saved.  One sec...");
         settriggerRecalculations(triggerRecalculations + 1);
-        refreshPropertiesValues(data.property_id);
+        setthisItemIdBeingEdited(data.property_id);
       })
       .catch((err) => console.log(err));
   };
@@ -116,20 +117,21 @@ const PropertiesUpdateVal: React.FC<propertiesUpdateValProps> = ({
               Save
             </motion.button>
           </div>
+          {showSoftDelConfirm === false && (
+            <SoftDeleteButton setshowSoftDelConfirm={setshowSoftDelConfirm} />
+          )}
         </motion.form>
       )}
-      {showSoftDelConfirm === false && (
-        <SoftDeleteButton setshowSoftDelConfirm={setshowSoftDelConfirm} />
-      )}
+
       {showSoftDelConfirm === true && (
         <SoftDeleteButtonConfirm
           assetType="property"
           assetID={data.property_id}
           assetTitle={data.property_nickname}
-          refreshBalances={refreshPropertiesValues}
           triggerRecalculations={triggerRecalculations}
           settriggerRecalculations={settriggerRecalculations}
           cancelForm={cancelForm}
+          setentryIDWasDeleted={setentryIDWasDeleted}
         />
       )}
     </div>

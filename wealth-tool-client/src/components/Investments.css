@@ -68,12 +68,12 @@
 
 @media only screen and (max-width: 900px) {
   .investmentsTable {
-    width: 365px;
+    width: 328px;
   }
   .investmentsTableHeader,
   .investmentsTableDataGridRow {
     display: grid;
-    grid-template-columns: 150px repeat(2, 100px);
+    grid-template-columns: 160px repeat(2, 80px);
   }
   .columnInWideViewOnly {
     display: none;
