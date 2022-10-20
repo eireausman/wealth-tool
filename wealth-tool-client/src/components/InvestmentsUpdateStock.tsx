@@ -17,7 +17,7 @@ const InvestmentsUpdateStock: React.FC<InvestmentsUpdateStockProps> = ({
   triggerRecalculations,
   checkForEscapeKey,
   setentryIDWasDeleted,
-  setthisItemIdBeingEdited,
+  itemDetailUpdated,
 }) => {
   const [formData, setformData] = useState<investmentUpdateStockFormData>({
     holding_id: data.holding_id,
@@ -65,7 +65,7 @@ const InvestmentsUpdateStock: React.FC<InvestmentsUpdateStockProps> = ({
       );
       setsaveProgressText("Saved.  One sec...");
       settriggerRecalculations(triggerRecalculations + 1);
-      setthisItemIdBeingEdited(data.holding_id);
+      itemDetailUpdated(data.holding_id);
       setshowEditStockForm(false);
     } catch (error) {
       console.log(error);

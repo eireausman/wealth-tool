@@ -45,15 +45,38 @@ const Properties: React.FC<PropertiesProps> = ({
   >(0);
   const [orderByThisColumn, setorderByThisColumn] =
     useState<string>("property_nickname");
-  const previousOrderBy = useRef(orderByThisColumn);
+
   const [entryIDWasDeleted, setentryIDWasDeleted] = useState<
     number | undefined
   >(undefined);
   const [itemIDWasAdded, setitemIDWasAdded] = useState<number | undefined>(
     undefined
   );
-  const [thisItemIdBeingEdited, setthisItemIdBeingEdited] =
-    useState<number>(-1);
+  const [thisItemIdBeingEdited, setthisItemIdBeingEdited] = useState<number>(0);
+  const [shimmerTheseRows, setshimmerTheseRows] = useState<string | number>("");
+
+  const previousOrderBy = useRef(orderByThisColumn);
+  const previousCurrency = useRef(selectedCurrency);
+  const previousthisItemIdBeingEdited = useRef(thisItemIdBeingEdited);
+
+  const refreshNetTotal = useCallback(async () => {
+    setnetTotalPropValue(undefined);
+    const total = await getNetPropertyTotal(selectedCurrency.currency_code);
+    setnetTotalPropValue(total);
+  }, [selectedCurrency.currency_code]);
+
+  const setShimmerState = useCallback(() => {
+    if (thisItemIdBeingEdited !== 0) {
+      setshimmerTheseRows(thisItemIdBeingEdited);
+    } else if (
+      previousCurrency.current !== selectedCurrency &&
+      previousOrderBy.current === orderByThisColumn
+    ) {
+      setshimmerTheseRows("all");
+    } else {
+      setshimmerTheseRows("");
+    }
+  }, [selectedCurrency, thisItemIdBeingEdited, orderByThisColumn]);
 
   const refreshPropertiesVals = useCallback(async () => {
     const propData: AxiosResponse<any, any> | undefined =
@@ -68,25 +91,38 @@ const Properties: React.FC<PropertiesProps> = ({
     ) {
       setpropertyAccAPIData(propData.data);
     }
-    previousOrderBy.current = orderByThisColumn;
-    setthisItemIdBeingEdited(-1);
-  }, [selectedCurrency.currency_code, orderByThisColumn]);
+  }, [selectedCurrency, orderByThisColumn]);
 
-  const refreshNetTotal = useCallback(async () => {
-    const total = await getNetPropertyTotal(selectedCurrency.currency_code);
-    setnetTotalPropValue(total);
-  }, [selectedCurrency.currency_code]);
+  const itemDetailUpdated = useCallback(
+    (propertyID: number) => {
+      setthisItemIdBeingEdited(propertyID);
+      refreshPropertiesVals().then(() => {
+        setthisItemIdBeingEdited(0);
+      });
+    },
+    [refreshPropertiesVals]
+  );
 
   useEffect(() => {
-    refreshPropertiesVals();
-    refreshNetTotal();
+    refreshPropertiesVals().then(() => {
+      previousOrderBy.current = orderByThisColumn;
+      previousCurrency.current = selectedCurrency;
+    });
   }, [
     refreshPropertiesVals,
-    refreshNetTotal,
     entryIDWasDeleted,
     itemIDWasAdded,
-    thisItemIdBeingEdited,
+    selectedCurrency,
+    orderByThisColumn,
   ]);
+
+  useEffect(() => {
+    refreshNetTotal();
+  }, [refreshNetTotal, propertyAccAPIData]);
+
+  useEffect(() => {
+    setShimmerState();
+  }, [setShimmerState, propertyAccAPIData, thisItemIdBeingEdited]);
 
   const showAddPropForm = () => {
     setshowAddNewForm(true);
@@ -140,8 +176,8 @@ const Properties: React.FC<PropertiesProps> = ({
           <div className="propertiesOflowContainer scrollbarstyles">
             {propertyAccAPIData?.map((data) => (
               <Fragment key={data.property_id}>
-                {data.property_id === thisItemIdBeingEdited &&
-                previousOrderBy.current === orderByThisColumn ? (
+                {shimmerTheseRows === data.property_id ||
+                shimmerTheseRows === "all" ? (
                   <PropertiesRowUpdatingVals
                     key={data.property_id}
                     data={data}
@@ -155,7 +191,7 @@ const Properties: React.FC<PropertiesProps> = ({
                     settriggerRecalculations={settriggerRecalculations}
                     triggerRecalculations={triggerRecalculations}
                     setentryIDWasDeleted={setentryIDWasDeleted}
-                    setthisItemIdBeingEdited={setthisItemIdBeingEdited}
+                    itemDetailUpdated={itemDetailUpdated}
                   />
                 )}
               </Fragment>

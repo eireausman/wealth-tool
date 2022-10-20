@@ -12,7 +12,7 @@ const InvestmentRow: React.FC<InvestmentRowProps> = ({
   settriggerRecalculations,
   triggerRecalculations,
   setentryIDWasDeleted,
-  setthisItemIdBeingEdited,
+  itemDetailUpdated,
 }) => {
   const [styleForHoverDiv, setStyleForHoverDiv] = useState<object>({
     opacity: 0,
@@ -97,7 +97,7 @@ const InvestmentRow: React.FC<InvestmentRowProps> = ({
               triggerRecalculations={triggerRecalculations}
               checkForEscapeKey={checkForEscapeKey}
               setentryIDWasDeleted={setentryIDWasDeleted}
-              setthisItemIdBeingEdited={setthisItemIdBeingEdited}
+              itemDetailUpdated={itemDetailUpdated}
             />
           </div>
         </div>

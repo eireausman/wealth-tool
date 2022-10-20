@@ -13,7 +13,7 @@ const CashAccountAccRow: React.FC<CashAccountAccRowProps> = ({
   triggerRecalculations,
   selectedCurrency,
   setentryIDWasDeleted,
-  setthisItemIdBeingEdited,
+  itemDetailUpdated,
 }) => {
   const [styleForHoverDiv, setStyleForHoverDiv] = useState<object>({
     opacity: 0,
@@ -99,7 +99,7 @@ const CashAccountAccRow: React.FC<CashAccountAccRowProps> = ({
               triggerRecalculations={triggerRecalculations}
               checkForEscapeKey={checkForEscapeKey}
               setentryIDWasDeleted={setentryIDWasDeleted}
-              setthisItemIdBeingEdited={setthisItemIdBeingEdited}
+              itemDetailUpdated={itemDetailUpdated}
             />
           </div>
         </div>

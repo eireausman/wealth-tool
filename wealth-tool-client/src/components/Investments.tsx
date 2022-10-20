@@ -38,7 +38,6 @@ const Investments: React.FC<InvestmentsProps> = ({
   const [showNoAccountsMessage, setshowNoAccountsMessage] = useState(false);
   const [orderByThisColumn, setorderByThisColumn] =
     useState<string>("holding_stock_name");
-  const previousOrderBy = useRef(orderByThisColumn);
 
   const [showAddNewStockForm, setShowAddNewStockForm] =
     useState<boolean>(false);
@@ -53,43 +52,82 @@ const Investments: React.FC<InvestmentsProps> = ({
   const [itemIDWasAdded, setitemIDWasAdded] = useState<number | undefined>(
     undefined
   );
-  const [thisItemIdBeingEdited, setthisItemIdBeingEdited] =
-    useState<number>(-1);
+  const [thisItemIdBeingEdited, setthisItemIdBeingEdited] = useState<number>(0);
+  const [shimmerTheseRows, setshimmerTheseRows] = useState<string | number>("");
+
+  const previousOrderBy = useRef(orderByThisColumn);
+  const previousCurrency = useRef(selectedCurrency);
+  const previousthisItemIdBeingEdited = useRef(thisItemIdBeingEdited);
 
   const refreshInvestmentsDataFromDB = useCallback(async () => {
-    const investData: AxiosResponse<any, any> | undefined =
-      await getInvestmentData(
-        selectedCurrency.currency_code,
-        orderByThisColumn
-      );
+    if (previousOrderBy.current === orderByThisColumn) {
+      const investData: AxiosResponse<any, any> | undefined =
+        await getInvestmentData(
+          selectedCurrency.currency_code,
+          orderByThisColumn
+        );
 
-    if (
-      investData !== undefined &&
-      investData.status === 200 &&
-      investData.data !== undefined
-    ) {
-      setinvestmentAPIData(investData.data);
+      if (
+        investData !== undefined &&
+        investData.status === 200 &&
+        investData.data !== undefined
+      ) {
+        setinvestmentAPIData(investData.data);
+      }
     }
-    previousOrderBy.current = orderByThisColumn;
-    setthisItemIdBeingEdited(-1);
-  }, [selectedCurrency.currency_code, orderByThisColumn]);
+  }, [selectedCurrency, orderByThisColumn]);
+
+  const itemDetailUpdated = useCallback(
+    (holdingID: number) => {
+      setthisItemIdBeingEdited(holdingID);
+      refreshInvestmentsDataFromDB().then(() => {
+        setthisItemIdBeingEdited(0);
+      });
+    },
+    [refreshInvestmentsDataFromDB]
+  );
 
   const updateNetInvestmentTotal = useCallback(async () => {
-    setInvestmentsTotalValue(undefined);
-    const total = await getNetInvestmentTotal(selectedCurrency.currency_code);
-    setInvestmentsTotalValue(total);
-  }, [selectedCurrency.currency_code]);
+    if (previousOrderBy.current === orderByThisColumn) {
+      setInvestmentsTotalValue(undefined);
+      const total = await getNetInvestmentTotal(selectedCurrency.currency_code);
+      setInvestmentsTotalValue(total);
+    }
+  }, [selectedCurrency.currency_code, orderByThisColumn]);
+
+  const setShimmerState = useCallback(() => {
+    if (thisItemIdBeingEdited !== 0) {
+      setshimmerTheseRows(thisItemIdBeingEdited);
+    } else if (
+      previousCurrency.current !== selectedCurrency &&
+      previousOrderBy.current === orderByThisColumn
+    ) {
+      setshimmerTheseRows("all");
+    } else {
+      setshimmerTheseRows("");
+    }
+  }, [selectedCurrency, thisItemIdBeingEdited, orderByThisColumn]);
 
   useEffect(() => {
-    refreshInvestmentsDataFromDB();
-    updateNetInvestmentTotal();
+    refreshInvestmentsDataFromDB().then(() => {
+      previousOrderBy.current = orderByThisColumn;
+      previousCurrency.current = selectedCurrency;
+    });
   }, [
     refreshInvestmentsDataFromDB,
-    updateNetInvestmentTotal,
     entryIDWasDeleted,
     itemIDWasAdded,
-    thisItemIdBeingEdited,
+    selectedCurrency,
+    orderByThisColumn,
   ]);
+
+  useEffect(() => {
+    updateNetInvestmentTotal();
+  }, [updateNetInvestmentTotal, investmentAPIData]);
+
+  useEffect(() => {
+    setShimmerState();
+  }, [setShimmerState, investmentAPIData, thisItemIdBeingEdited]);
 
   const addANewStock = () => {
     setShowAddNewStockForm(true);
@@ -154,8 +192,8 @@ const Investments: React.FC<InvestmentsProps> = ({
             <section className="investmentsTableDataContainer scrollbarstyles">
               {investmentAPIData?.map((data, index) => (
                 <Fragment key={data.holding_id}>
-                  {data.holding_id === thisItemIdBeingEdited &&
-                  previousOrderBy.current === orderByThisColumn ? (
+                  {shimmerTheseRows === data.holding_id ||
+                  shimmerTheseRows === "all" ? (
                     <InvestmentRowUpdatingPrices
                       key={data.holding_id}
                       data={data}
@@ -168,7 +206,7 @@ const Investments: React.FC<InvestmentsProps> = ({
                       settriggerRecalculations={settriggerRecalculations}
                       triggerRecalculations={triggerRecalculations}
                       setentryIDWasDeleted={setentryIDWasDeleted}
-                      setthisItemIdBeingEdited={setthisItemIdBeingEdited}
+                      itemDetailUpdated={itemDetailUpdated}
                     />
                   )}
                 </Fragment>

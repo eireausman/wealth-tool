@@ -13,7 +13,7 @@ const PropertiesUpdateVal: React.FC<propertiesUpdateValProps> = ({
   triggerRecalculations,
   setshowEditPropertyForm,
   checkForEscapeKey,
-  setthisItemIdBeingEdited,
+  itemDetailUpdated,
   setentryIDWasDeleted,
 }) => {
   const [propValuation, setpropValuation] = useState<number>(
@@ -40,7 +40,7 @@ const PropertiesUpdateVal: React.FC<propertiesUpdateValProps> = ({
       .then((returnData) => {
         setsaveProgressText("Saved.  One sec...");
         settriggerRecalculations(triggerRecalculations + 1);
-        setthisItemIdBeingEdited(data.property_id);
+        itemDetailUpdated(data.property_id);
       })
       .catch((err) => console.log(err));
   };

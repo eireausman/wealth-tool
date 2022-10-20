@@ -14,7 +14,7 @@ const CashAccountUpdBal: React.FC<CashAccountUpdateBalProps> = ({
   triggerRecalculations,
   checkForEscapeKey,
   setentryIDWasDeleted,
-  setthisItemIdBeingEdited,
+  itemDetailUpdated,
 }) => {
   const [updatedBalance, setupdatedBalance] = useState<number>(0);
   const [showSoftDelConfirm, setshowSoftDelConfirm] = useState<boolean>(false);
@@ -45,7 +45,6 @@ const CashAccountUpdBal: React.FC<CashAccountUpdateBalProps> = ({
   const newAccountBalanceInputBox = useRef<HTMLInputElement | null>(null);
 
   const saveNewAccountBalance = (e: React.FormEvent<EventTarget>) => {
-    setthisItemIdBeingEdited(data.account_id);
     setshowSavingMessage(true);
     e.preventDefault();
 
@@ -54,6 +53,7 @@ const CashAccountUpdBal: React.FC<CashAccountUpdateBalProps> = ({
         setsaveProgressText("Saved.  One sec...");
         settriggerRecalculations(triggerRecalculations + 1);
         setShowEditAccountForm(false);
+        itemDetailUpdated(data.account_id);
       })
       .catch((err) => console.log(err));
   };

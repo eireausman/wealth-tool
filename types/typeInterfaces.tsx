@@ -245,7 +245,7 @@ export interface PropertiesRowProps {
   setentryIDWasDeleted: React.Dispatch<
     React.SetStateAction<number | undefined>
   >;
-  setthisItemIdBeingEdited: React.Dispatch<React.SetStateAction<number>>;
+  itemDetailUpdated: (propertyID: number) => void;
 }
 
 export interface propertiesUpdateValProps {
@@ -254,7 +254,7 @@ export interface propertiesUpdateValProps {
   triggerRecalculations: number;
   setshowEditPropertyForm: React.Dispatch<React.SetStateAction<boolean>>;
   checkForEscapeKey: (e: React.KeyboardEvent) => void;
-  setthisItemIdBeingEdited: React.Dispatch<React.SetStateAction<number>>;
+  itemDetailUpdated: (propertyID: number) => void;
   setentryIDWasDeleted: React.Dispatch<
     React.SetStateAction<number | undefined>
   >;
@@ -269,7 +269,7 @@ export interface CashAccountUpdateBalProps {
   setentryIDWasDeleted: React.Dispatch<
     React.SetStateAction<number | undefined>
   >;
-  setthisItemIdBeingEdited: React.Dispatch<React.SetStateAction<number>>;
+  itemDetailUpdated: (cashACcountID: number) => void;
 }
 
 export interface AssetCountContextCountData {
@@ -285,7 +285,7 @@ export interface InvestmentsUpdateStockProps {
   setentryIDWasDeleted: React.Dispatch<
     React.SetStateAction<number | undefined>
   >;
-  setthisItemIdBeingEdited: React.Dispatch<React.SetStateAction<number>>;
+  itemDetailUpdated: (holdingID: number) => void;
 }
 
 export interface LoginAttemptFormData {
@@ -380,7 +380,7 @@ export interface CashAccountAccRowProps {
   setentryIDWasDeleted: React.Dispatch<
     React.SetStateAction<number | undefined>
   >;
-  setthisItemIdBeingEdited: React.Dispatch<React.SetStateAction<number>>;
+  itemDetailUpdated: (cashACcountID: number) => void;
 }
 
 export interface CashAccountAccRowUpdatingValsProps {
@@ -395,7 +395,7 @@ export interface InvestmentRowProps {
   setentryIDWasDeleted: React.Dispatch<
     React.SetStateAction<number | undefined>
   >;
-  setthisItemIdBeingEdited: React.Dispatch<React.SetStateAction<number>>;
+  itemDetailUpdated: (holdingID: number) => void;
 }
 
 export interface InvestmentRowUpdatingPricesProps {

@@ -13,6 +13,7 @@ import { cashAccountAPIData } from "../../../types/typeInterfaces";
 import {
   getCashAccountData,
   getNetCashAccountTotal,
+  getSingleCashAccountData,
 } from "../modules/serverRequests";
 import { AxiosResponse } from "axios";
 import CashAccountAccRow from "./CashAccountAccRow";
@@ -45,15 +46,40 @@ const CashAccounts: React.FC<CashAccountsProps> = ({
   const [itemIDWasAdded, setitemIDWasAdded] = useState<number | undefined>(
     undefined
   );
-  const [thisItemIdBeingEdited, setthisItemIdBeingEdited] =
-    useState<number>(-1);
+  const [thisItemIdBeingEdited, setthisItemIdBeingEdited] = useState<number>(0);
+  const [shimmerTheseRows, setshimmerTheseRows] = useState<string | number>("");
 
   const [orderByThisColumn, setorderByThisColumn] =
     useState<string>("account_nickname");
   const previousOrderBy = useRef(orderByThisColumn);
+  const previousCurrency = useRef(selectedCurrency);
+  const previousthisItemIdBeingEdited = useRef(thisItemIdBeingEdited);
 
   const [cashAccAPIData, setcashAccAPIData] =
     useState<Array<cashAccountAPIData>>();
+
+  const updateNetCashAccountTotal = useCallback(async () => {
+    if (previousOrderBy.current === orderByThisColumn) {
+      setcashAccountNetTotal(undefined);
+      const total = await getNetCashAccountTotal(
+        selectedCurrency.currency_code
+      );
+      setcashAccountNetTotal(total);
+    }
+  }, [selectedCurrency.currency_code, orderByThisColumn]);
+
+  const setShimmerState = useCallback(() => {
+    if (thisItemIdBeingEdited !== 0) {
+      setshimmerTheseRows(thisItemIdBeingEdited);
+    } else if (
+      previousCurrency.current !== selectedCurrency &&
+      previousOrderBy.current === orderByThisColumn
+    ) {
+      setshimmerTheseRows("all");
+    } else {
+      setshimmerTheseRows("");
+    }
+  }, [selectedCurrency, thisItemIdBeingEdited, orderByThisColumn]);
 
   const getAllAccountBalances = useCallback(async () => {
     const cashAccServerDataRequest: AxiosResponse<any, any> | undefined =
@@ -68,26 +94,38 @@ const CashAccounts: React.FC<CashAccountsProps> = ({
     ) {
       setcashAccAPIData(cashAccServerDataRequest.data);
     }
-    previousOrderBy.current = orderByThisColumn;
-    setthisItemIdBeingEdited(-1);
-  }, [selectedCurrency.currency_code, orderByThisColumn]);
+  }, [selectedCurrency, orderByThisColumn]);
 
-  const updateNetCashAccountTotal = useCallback(async () => {
-    setcashAccountNetTotal(undefined);
-    const total = await getNetCashAccountTotal(selectedCurrency.currency_code);
-    setcashAccountNetTotal(total);
-  }, [selectedCurrency.currency_code]);
+  const itemDetailUpdated = useCallback(
+    (cashAccountID: number) => {
+      setthisItemIdBeingEdited(cashAccountID);
+      getAllAccountBalances().then(() => {
+        setthisItemIdBeingEdited(0);
+      });
+    },
+    [getAllAccountBalances]
+  );
 
   useEffect(() => {
-    getAllAccountBalances();
-    updateNetCashAccountTotal();
+    getAllAccountBalances().then(() => {
+      previousOrderBy.current = orderByThisColumn;
+      previousCurrency.current = selectedCurrency;
+    });
   }, [
     getAllAccountBalances,
-    updateNetCashAccountTotal,
     entryIDWasDeleted,
     itemIDWasAdded,
-    thisItemIdBeingEdited,
+    selectedCurrency,
+    orderByThisColumn,
   ]);
+
+  useEffect(() => {
+    updateNetCashAccountTotal();
+  }, [updateNetCashAccountTotal, cashAccAPIData]);
+
+  useEffect(() => {
+    setShimmerState();
+  }, [setShimmerState, cashAccAPIData, thisItemIdBeingEdited]);
 
   const showAddNewCashAccForm = () => {
     setshowAddNewForm(true);
@@ -147,8 +185,8 @@ const CashAccounts: React.FC<CashAccountsProps> = ({
             <section className="cashAccountsTableDataContainer scrollbarstyles">
               {cashAccAPIData?.map((data, index) => (
                 <Fragment key={data.account_id}>
-                  {data.account_id === thisItemIdBeingEdited &&
-                  previousOrderBy.current === orderByThisColumn ? (
+                  {shimmerTheseRows === data.account_id ||
+                  shimmerTheseRows === "all" ? (
                     <CashAccountAccRowUpdatingVals
                       key={data.account_id}
                       data={data}
@@ -161,7 +199,7 @@ const CashAccounts: React.FC<CashAccountsProps> = ({
                       triggerRecalculations={triggerRecalculations}
                       selectedCurrency={selectedCurrency}
                       setentryIDWasDeleted={setentryIDWasDeleted}
-                      setthisItemIdBeingEdited={setthisItemIdBeingEdited}
+                      itemDetailUpdated={itemDetailUpdated}
                     />
                   )}
                 </Fragment>
