@@ -4,6 +4,7 @@ import React, {
   Fragment,
   useRef,
   useCallback,
+  useContext,
 } from "react";
 import { InvestmentsProps } from "../../../types/typeInterfaces";
 import CardSpinner from "./CardSpinner";
@@ -22,6 +23,7 @@ import { GoGraph } from "react-icons/go";
 import ViewCardHeaderRow from "./ViewCardHeaderRow";
 import InvestmentRowUpdatingPrices from "./InvestmentRowUpdatingPrices";
 import ViewCardHeaderRowSorting from "./ViewCardHeaderRowSorting";
+import { useAssetCountContext } from "../modules/Contexts";
 
 const Investments: React.FC<InvestmentsProps> = ({
   triggerRecalculations,
@@ -57,7 +59,7 @@ const Investments: React.FC<InvestmentsProps> = ({
 
   const previousOrderBy = useRef(orderByThisColumn);
   const previousCurrency = useRef(selectedCurrency);
-  const previousthisItemIdBeingEdited = useRef(thisItemIdBeingEdited);
+  const assetCount = useContext(useAssetCountContext);
 
   const refreshInvestmentsDataFromDB = useCallback(async () => {
     if (previousOrderBy.current === orderByThisColumn) {
@@ -142,10 +144,10 @@ const Investments: React.FC<InvestmentsProps> = ({
 
   return (
     <section className="viewCard">
-      {investmentAPIData === undefined && showNoAccountsMessage === false && (
+      {investmentAPIData === undefined && assetCount.investments > 0 && (
         <CardSpinner cardTitle="Investments" />
       )}
-      {showNoAccountsMessage === true && (
+      {assetCount.investments <= 0 && (
         <Fragment>
           <NoAssets
             cardTitle="Investments"
@@ -158,7 +160,7 @@ const Investments: React.FC<InvestmentsProps> = ({
           />
         </Fragment>
       )}
-      {investmentAPIData !== undefined && showNoAccountsMessage === false && (
+      {investmentAPIData !== undefined && assetCount.investments > 0 && (
         <Fragment>
           {previousOrderBy.current === orderByThisColumn ? (
             <ViewCardHeaderRow

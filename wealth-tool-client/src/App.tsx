@@ -63,6 +63,7 @@ function App() {
   useEffect(() => {
     usersAssetCount().then((data) => {
       setassetCountDBOutput(data);
+      console.log(data);
     });
   }, [triggerRecalculations]);
 

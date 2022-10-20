@@ -4,6 +4,7 @@ import React, {
   Fragment,
   useRef,
   useCallback,
+  useContext,
 } from "react";
 import { CashAccountsProps } from "../../../types/typeInterfaces";
 import "./CashAccounts.css";
@@ -13,7 +14,6 @@ import { cashAccountAPIData } from "../../../types/typeInterfaces";
 import {
   getCashAccountData,
   getNetCashAccountTotal,
-  getSingleCashAccountData,
 } from "../modules/serverRequests";
 import { AxiosResponse } from "axios";
 import CashAccountAccRow from "./CashAccountAccRow";
@@ -23,6 +23,7 @@ import ButtonAddAsset from "./ButtonAddAsset";
 import ViewCardHeaderRow from "./ViewCardHeaderRow";
 import CashAccountAccRowUpdatingVals from "./CashAccountAccRowUpdatingVals";
 import ViewCardHeaderRowSorting from "./ViewCardHeaderRowSorting";
+import { useAssetCountContext } from "../modules/Contexts";
 
 const CashAccounts: React.FC<CashAccountsProps> = ({
   triggerRecalculations,
@@ -36,7 +37,6 @@ const CashAccounts: React.FC<CashAccountsProps> = ({
   ];
 
   const [showAddNewForm, setshowAddNewForm] = useState(false);
-  const [showNoAccountsMessage, setshowNoAccountsMessage] = useState(false);
   const [cashAccountNetTotal, setcashAccountNetTotal] = useState<
     number | undefined
   >(0);
@@ -53,10 +53,10 @@ const CashAccounts: React.FC<CashAccountsProps> = ({
     useState<string>("account_nickname");
   const previousOrderBy = useRef(orderByThisColumn);
   const previousCurrency = useRef(selectedCurrency);
-  const previousthisItemIdBeingEdited = useRef(thisItemIdBeingEdited);
-
   const [cashAccAPIData, setcashAccAPIData] =
     useState<Array<cashAccountAPIData>>();
+
+  const assetCount = useContext(useAssetCountContext);
 
   const updateNetCashAccountTotal = useCallback(async () => {
     if (previousOrderBy.current === orderByThisColumn) {
@@ -140,10 +140,10 @@ const CashAccounts: React.FC<CashAccountsProps> = ({
 
   return (
     <section className="viewCard">
-      {cashAccAPIData === undefined && showNoAccountsMessage === false && (
+      {cashAccAPIData === undefined && assetCount.cashAccount > 0 && (
         <CardSpinner cardTitle="Cash Accounts" />
       )}
-      {showNoAccountsMessage === true && (
+      {assetCount.cashAccounts <= 0 && (
         <Fragment>
           <NoAssets
             cardTitle="Cash Accounts"
@@ -156,7 +156,7 @@ const CashAccounts: React.FC<CashAccountsProps> = ({
           />
         </Fragment>
       )}
-      {cashAccAPIData !== undefined && showNoAccountsMessage === false && (
+      {cashAccAPIData !== undefined && assetCount.cashAccounts > 0 && (
         <Fragment>
           {previousOrderBy.current === orderByThisColumn ? (
             <ViewCardHeaderRow

@@ -4,6 +4,7 @@ import React, {
   Fragment,
   useRef,
   useCallback,
+  useContext,
 } from "react";
 import { PropertiesProps } from "../../../types/typeInterfaces";
 import CardSpinner from "./CardSpinner";
@@ -23,6 +24,7 @@ import ViewCardHeaderRow from "./ViewCardHeaderRow";
 import PropertiesRow from "./PropertiesRow";
 import PropertiesRowUpdatingVals from "./PropertiesRowUpdatingVals";
 import ViewCardHeaderRowSorting from "./ViewCardHeaderRowSorting";
+import { useAssetCountContext } from "../modules/Contexts";
 
 const Properties: React.FC<PropertiesProps> = ({
   triggerRecalculations,
@@ -57,7 +59,8 @@ const Properties: React.FC<PropertiesProps> = ({
 
   const previousOrderBy = useRef(orderByThisColumn);
   const previousCurrency = useRef(selectedCurrency);
-  const previousthisItemIdBeingEdited = useRef(thisItemIdBeingEdited);
+
+  const assetCount = useContext(useAssetCountContext);
 
   const refreshNetTotal = useCallback(async () => {
     setnetTotalPropValue(undefined);
@@ -137,10 +140,10 @@ const Properties: React.FC<PropertiesProps> = ({
 
   return (
     <section className="viewCard">
-      {propertyAccAPIData === undefined && showNoAccountsMessage === false && (
+      {propertyAccAPIData === undefined && assetCount.properties > 0 && (
         <CardSpinner cardTitle="Properties" />
       )}
-      {showNoAccountsMessage === true && (
+      {assetCount.properties <= 0 && (
         <Fragment>
           <NoAssets
             cardTitle="Property"
@@ -153,7 +156,7 @@ const Properties: React.FC<PropertiesProps> = ({
           />
         </Fragment>
       )}
-      {propertyAccAPIData !== undefined && showNoAccountsMessage === false && (
+      {propertyAccAPIData !== undefined && assetCount.properties > 0 && (
         <Fragment>
           {previousOrderBy.current === orderByThisColumn ? (
             <ViewCardHeaderRow
