@@ -20,7 +20,9 @@ const updateStockCompaniesListsByMarket = async () => {
       const marketsList = JSON.parse(JSON.stringify(marketsQuery));
 
       for (let item in marketsList) {
-        console.log(marketsList[item].exchange_code);
+        console.log(
+          `retrieving company data for market code: ${marketsList[item].exchange_code}`
+        );
         const marketCode = marketsList[item].exchange_code;
         retrieveCompaniesDataFromAPI(marketCode);
         await APIthrottleDelay(3000);
@@ -55,7 +57,9 @@ const retrieveCompaniesDataFromAPI = async (marketCode: string) => {
         companiesByMarket[companyEntry]
       );
     }
-    console.log("Update company info API request has been run");
+    console.log(
+      `Completed: Update company info to DB from API request for ${marketCode}`
+    );
   } catch (error) {
     console.error(error);
   }

@@ -472,6 +472,19 @@ export async function insertStockCompaniesIntoDB(args: stockCompanys) {
 
       await newCompany.save();
       return "saved";
+    } else {
+      await stockCompanies.update(
+        {
+          entry_dateupdated: today,
+        },
+        {
+          where: {
+            company_name: args.companyName,
+            exchange_code: args.exchangeCode,
+          },
+        }
+      );
+      return "saved";
     }
   } catch (err) {
     console.log(err);
