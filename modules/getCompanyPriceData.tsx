@@ -76,15 +76,15 @@ const upsertPriceData = async (companyTicker: string) => {
     try {
       const serverRequest = await axios.request(options);
       const stockPricesArray = serverRequest.data.results;
-
+      console.log(stockPricesArray, companyTicker);
       for (let priceEntry in stockPricesArray) {
         const outcome = await updateStockPriceData(
           companyTicker,
           stockPricesArray[priceEntry].close.toFixed(6),
           stockPricesArray[priceEntry].date
         );
-        await updateLastAPIPriceingAttemptDate(companyTicker, today);
       }
+      await updateLastAPIPriceingAttemptDate(companyTicker, today);
     } catch (error) {
       console.error(error);
       // add a zero price for this stock as likely suspended / no prices available

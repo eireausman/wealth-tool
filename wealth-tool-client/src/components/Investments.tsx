@@ -24,6 +24,7 @@ import ViewCardHeaderRow from "./ViewCardHeaderRow";
 import InvestmentRowUpdatingPrices from "./InvestmentRowUpdatingPrices";
 import ViewCardHeaderRowSorting from "./ViewCardHeaderRowSorting";
 import { useAssetCountContext } from "../modules/Contexts";
+import useSetShimmer from "../hooks/useSetShimmerState";
 
 const Investments: React.FC<InvestmentsProps> = ({
   triggerRecalculations,
@@ -55,10 +56,9 @@ const Investments: React.FC<InvestmentsProps> = ({
     undefined
   );
   const [thisItemIdBeingEdited, setthisItemIdBeingEdited] = useState<number>(0);
-  const [shimmerTheseRows, setshimmerTheseRows] = useState<string | number>("");
 
   const previousOrderBy = useRef(orderByThisColumn);
-  const previousCurrency = useRef(selectedCurrency);
+  const previousCurrency = useRef(selectedCurrency.currency_code);
   const assetCount = useContext(useAssetCountContext);
 
   const refreshInvestmentsDataFromDB = useCallback(async () => {
@@ -97,23 +97,18 @@ const Investments: React.FC<InvestmentsProps> = ({
     }
   }, [selectedCurrency.currency_code, orderByThisColumn]);
 
-  const setShimmerState = useCallback(() => {
-    if (thisItemIdBeingEdited !== 0) {
-      setshimmerTheseRows(thisItemIdBeingEdited);
-    } else if (
-      previousCurrency.current !== selectedCurrency &&
-      previousOrderBy.current === orderByThisColumn
-    ) {
-      setshimmerTheseRows("all");
-    } else {
-      setshimmerTheseRows("");
-    }
-  }, [selectedCurrency, thisItemIdBeingEdited, orderByThisColumn]);
+  const [shimmerTheseRows, setshimmerTheseRows] = useSetShimmer({
+    thisItemIdBeingEdited,
+    previousCurrency: previousCurrency.current,
+    selectedCurrency: selectedCurrency.currency_code,
+    previousOrderBy: previousOrderBy.current,
+    orderByThisColumn,
+  });
 
   useEffect(() => {
     refreshInvestmentsDataFromDB().then(() => {
       previousOrderBy.current = orderByThisColumn;
-      previousCurrency.current = selectedCurrency;
+      previousCurrency.current = selectedCurrency.currency_code;
     });
   }, [
     refreshInvestmentsDataFromDB,
@@ -126,10 +121,6 @@ const Investments: React.FC<InvestmentsProps> = ({
   useEffect(() => {
     updateNetInvestmentTotal();
   }, [updateNetInvestmentTotal, investmentAPIData]);
-
-  useEffect(() => {
-    setShimmerState();
-  }, [setShimmerState, investmentAPIData, thisItemIdBeingEdited]);
 
   const addANewStock = () => {
     setShowAddNewStockForm(true);
@@ -144,7 +135,7 @@ const Investments: React.FC<InvestmentsProps> = ({
 
   return (
     <section className="viewCard">
-      {investmentAPIData === undefined && assetCount.investments > 0 && (
+      {assetCount.investments === undefined && (
         <CardSpinner cardTitle="Investments" />
       )}
       {assetCount.investments <= 0 && (

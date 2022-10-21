@@ -25,6 +25,7 @@ import PropertiesRow from "./PropertiesRow";
 import PropertiesRowUpdatingVals from "./PropertiesRowUpdatingVals";
 import ViewCardHeaderRowSorting from "./ViewCardHeaderRowSorting";
 import { useAssetCountContext } from "../modules/Contexts";
+import useSetShimmer from "../hooks/useSetShimmerState";
 
 const Properties: React.FC<PropertiesProps> = ({
   triggerRecalculations,
@@ -55,10 +56,9 @@ const Properties: React.FC<PropertiesProps> = ({
     undefined
   );
   const [thisItemIdBeingEdited, setthisItemIdBeingEdited] = useState<number>(0);
-  const [shimmerTheseRows, setshimmerTheseRows] = useState<string | number>("");
 
   const previousOrderBy = useRef(orderByThisColumn);
-  const previousCurrency = useRef(selectedCurrency);
+  const previousCurrency = useRef(selectedCurrency.currency_code);
 
   const assetCount = useContext(useAssetCountContext);
 
@@ -68,18 +68,13 @@ const Properties: React.FC<PropertiesProps> = ({
     setnetTotalPropValue(total);
   }, [selectedCurrency.currency_code]);
 
-  const setShimmerState = useCallback(() => {
-    if (thisItemIdBeingEdited !== 0) {
-      setshimmerTheseRows(thisItemIdBeingEdited);
-    } else if (
-      previousCurrency.current !== selectedCurrency &&
-      previousOrderBy.current === orderByThisColumn
-    ) {
-      setshimmerTheseRows("all");
-    } else {
-      setshimmerTheseRows("");
-    }
-  }, [selectedCurrency, thisItemIdBeingEdited, orderByThisColumn]);
+  const [shimmerTheseRows, setshimmerTheseRows] = useSetShimmer({
+    thisItemIdBeingEdited,
+    previousCurrency: previousCurrency.current,
+    selectedCurrency: selectedCurrency.currency_code,
+    previousOrderBy: previousOrderBy.current,
+    orderByThisColumn,
+  });
 
   const refreshPropertiesVals = useCallback(async () => {
     const propData: AxiosResponse<any, any> | undefined =
@@ -109,7 +104,7 @@ const Properties: React.FC<PropertiesProps> = ({
   useEffect(() => {
     refreshPropertiesVals().then(() => {
       previousOrderBy.current = orderByThisColumn;
-      previousCurrency.current = selectedCurrency;
+      previousCurrency.current = selectedCurrency.currency_code;
     });
   }, [
     refreshPropertiesVals,
@@ -122,10 +117,6 @@ const Properties: React.FC<PropertiesProps> = ({
   useEffect(() => {
     refreshNetTotal();
   }, [refreshNetTotal, propertyAccAPIData]);
-
-  useEffect(() => {
-    setShimmerState();
-  }, [setShimmerState, propertyAccAPIData, thisItemIdBeingEdited]);
 
   const showAddPropForm = () => {
     setshowAddNewForm(true);
@@ -140,7 +131,7 @@ const Properties: React.FC<PropertiesProps> = ({
 
   return (
     <section className="viewCard">
-      {propertyAccAPIData === undefined && assetCount.properties > 0 && (
+      {assetCount.properties === undefined && (
         <CardSpinner cardTitle="Properties" />
       )}
       {assetCount.properties <= 0 && (

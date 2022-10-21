@@ -24,6 +24,7 @@ import ViewCardHeaderRow from "./ViewCardHeaderRow";
 import CashAccountAccRowUpdatingVals from "./CashAccountAccRowUpdatingVals";
 import ViewCardHeaderRowSorting from "./ViewCardHeaderRowSorting";
 import { useAssetCountContext } from "../modules/Contexts";
+import useSetShimmer from "../hooks/useSetShimmerState";
 
 const CashAccounts: React.FC<CashAccountsProps> = ({
   triggerRecalculations,
@@ -47,12 +48,12 @@ const CashAccounts: React.FC<CashAccountsProps> = ({
     undefined
   );
   const [thisItemIdBeingEdited, setthisItemIdBeingEdited] = useState<number>(0);
-  const [shimmerTheseRows, setshimmerTheseRows] = useState<string | number>("");
+  // const [shimmerTheseRows, setshimmerTheseRows] = useState<string | number>("");
 
   const [orderByThisColumn, setorderByThisColumn] =
     useState<string>("account_nickname");
   const previousOrderBy = useRef(orderByThisColumn);
-  const previousCurrency = useRef(selectedCurrency);
+  const previousCurrency = useRef(selectedCurrency.currency_code);
   const [cashAccAPIData, setcashAccAPIData] =
     useState<Array<cashAccountAPIData>>();
 
@@ -68,18 +69,13 @@ const CashAccounts: React.FC<CashAccountsProps> = ({
     }
   }, [selectedCurrency.currency_code, orderByThisColumn]);
 
-  const setShimmerState = useCallback(() => {
-    if (thisItemIdBeingEdited !== 0) {
-      setshimmerTheseRows(thisItemIdBeingEdited);
-    } else if (
-      previousCurrency.current !== selectedCurrency &&
-      previousOrderBy.current === orderByThisColumn
-    ) {
-      setshimmerTheseRows("all");
-    } else {
-      setshimmerTheseRows("");
-    }
-  }, [selectedCurrency, thisItemIdBeingEdited, orderByThisColumn]);
+  const [shimmerTheseRows, setshimmerTheseRows] = useSetShimmer({
+    thisItemIdBeingEdited,
+    previousCurrency: previousCurrency.current,
+    selectedCurrency: selectedCurrency.currency_code,
+    previousOrderBy: previousOrderBy.current,
+    orderByThisColumn,
+  });
 
   const getAllAccountBalances = useCallback(async () => {
     const cashAccServerDataRequest: AxiosResponse<any, any> | undefined =
@@ -109,7 +105,7 @@ const CashAccounts: React.FC<CashAccountsProps> = ({
   useEffect(() => {
     getAllAccountBalances().then(() => {
       previousOrderBy.current = orderByThisColumn;
-      previousCurrency.current = selectedCurrency;
+      previousCurrency.current = selectedCurrency.currency_code;
     });
   }, [
     getAllAccountBalances,
@@ -123,9 +119,9 @@ const CashAccounts: React.FC<CashAccountsProps> = ({
     updateNetCashAccountTotal();
   }, [updateNetCashAccountTotal, cashAccAPIData]);
 
-  useEffect(() => {
-    setShimmerState();
-  }, [setShimmerState, cashAccAPIData, thisItemIdBeingEdited]);
+  // useEffect(() => {
+  //   setShimmerState();
+  // }, [setShimmerState, cashAccAPIData, thisItemIdBeingEdited]);
 
   const showAddNewCashAccForm = () => {
     setshowAddNewForm(true);
@@ -140,7 +136,7 @@ const CashAccounts: React.FC<CashAccountsProps> = ({
 
   return (
     <section className="viewCard">
-      {cashAccAPIData === undefined && assetCount.cashAccount > 0 && (
+      {assetCount.cashAccounts === undefined && (
         <CardSpinner cardTitle="Cash Accounts" />
       )}
       {assetCount.cashAccounts <= 0 && (
