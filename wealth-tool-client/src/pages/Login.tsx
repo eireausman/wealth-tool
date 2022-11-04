@@ -8,7 +8,7 @@ import {
 import { loginAttempt } from "../modules/serverRequests";
 import { motion } from "framer-motion";
 import "./Login.css";
-import CardSpinner from "../components/CardSpinner";
+import CardSpinner from "../components/loaders/CardSpinner";
 import { RiDoorLockLine } from "react-icons/ri";
 
 const Login: React.FC = () => {

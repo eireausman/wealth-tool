@@ -84,6 +84,7 @@ code {
   padding: 10px;
   border: 1px solid #949494;
   min-width: 346px;
+  background-image: linear-gradient(120deg, #7e05f6 0%, #92159e 100%);
 }
 
 .editValueIcon {

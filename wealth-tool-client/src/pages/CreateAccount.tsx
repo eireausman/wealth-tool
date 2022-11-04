@@ -8,7 +8,7 @@ import {
 import { createAccountAttempt } from "../modules/serverRequests";
 import { motion } from "framer-motion";
 import "./CreateAccount.css";
-import CardSpinner from "../components/CardSpinner";
+import CardSpinner from "../components/loaders/CardSpinner";
 import { VscAccount } from "react-icons/vsc";
 
 const CreateAccount: React.FC = () => {

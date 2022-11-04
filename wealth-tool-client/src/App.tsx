@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import CashAccounts from "./components/CashAccounts";
-import Properties from "./components/Properties";
+import CashAccounts from "./components/cashAccounts/CashAccounts";
+import Properties from "./components/properties/Properties";
 import {
   AssetCountContextCountData,
   currencyCodesAPIData,
@@ -12,17 +12,17 @@ import {
   getCurrencyCodeData,
   usersAssetCount,
 } from "./modules/serverRequests";
-import ChartNetWealthCategories from "./components/ChartNetWealthCategories";
-import Investments from "./components/Investments";
-import FXRates from "./components/FXRates";
+import ChartNetWealthCategories from "./components/charts/ChartNetWealthCategories";
+import Investments from "./components/investments/Investments";
+import FXRates from "./components/dataCards/FXRates";
 import { useNavigate } from "react-router-dom";
-import ViewCardCascadeTitleRow from "./components/ViewCardCascadeTitleRow";
+import ViewCardCascadeTitleRow from "./components/viewCard/ViewCardCascadeTitleRow";
 import {
   useLoggedInContext,
   useAssetCountContext,
   useCurrenciesFromDBContext,
 } from "./modules/Contexts";
-import ModalMainMenu from "./components/ModalMainMenu";
+import ModalMainMenu from "./components/modals/ModalMainMenu";
 
 function importCurrencyImages(imagesFolder: __WebpackModuleApi.RequireContext) {
   let images: currencyImagesList = {};
