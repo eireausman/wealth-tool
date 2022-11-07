@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { AxiosResponse } from "axios";
-import { cashAccountAPIData } from "../../../../types/typeInterfaces";
-import { getCashAccountData } from "../../modules/serverRequests";
+import { cashAccountAPIData } from "../../../../../types/typeInterfaces";
+import { getCashAccountData } from "../../../modules/serverRequests";
 
 interface useGetCashAccountBalancesProps {
   thisItemIdBeingEdited: number;

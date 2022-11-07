@@ -122,10 +122,6 @@ const Investments: React.FC<InvestmentsProps> = ({
     updateNetInvestmentTotal();
   }, [updateNetInvestmentTotal, investmentAPIData]);
 
-  const addANewStock = () => {
-    setShowAddNewStockForm(true);
-  };
-
   const closeModal = (e: React.FormEvent<EventTarget>) => {
     const target = e.target as HTMLElement;
     if (target.className === "newAdditionModal") {
@@ -146,7 +142,7 @@ const Investments: React.FC<InvestmentsProps> = ({
             assetType="investment"
           />
           <ButtonAddAsset
-            clickFunction={addANewStock}
+            clickFunction={() => setShowAddNewStockForm(true)}
             buttonTextContent="Add Stock"
           />
         </Fragment>
@@ -159,7 +155,7 @@ const Investments: React.FC<InvestmentsProps> = ({
               rowTitle="INVESTMENTS"
               selectedCurrency={selectedCurrency}
               netTotal={investmentsTotalValue}
-              addNewFunction={addANewStock}
+              addNewFunction={setShowAddNewStockForm}
               sortArray={sortArray}
               orderByThisColumn={orderByThisColumn}
               setorderByThisColumn={setorderByThisColumn}

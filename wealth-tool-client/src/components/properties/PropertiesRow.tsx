@@ -13,7 +13,7 @@ const PropertiesRow: React.FC<PropertiesRowProps> = ({
   triggerRecalculations,
   selectedCurrency,
   setentryIDWasDeleted,
-  itemDetailUpdated,
+  setthisItemIdBeingEdited,
 }) => {
   const [styleRowID, setstyleRowID] = useState<number>(-1);
   const [showEditPropertyForm, setshowEditPropertyForm] =
@@ -128,8 +128,8 @@ const PropertiesRow: React.FC<PropertiesRowProps> = ({
               triggerRecalculations={triggerRecalculations}
               setshowEditPropertyForm={setshowEditPropertyForm}
               checkForEscapeKey={checkForEscapeKey}
+              setthisItemIdBeingEdited={setthisItemIdBeingEdited}
               setentryIDWasDeleted={setentryIDWasDeleted}
-              itemDetailUpdated={itemDetailUpdated}
             />
           </div>
         </div>

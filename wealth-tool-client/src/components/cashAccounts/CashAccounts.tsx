@@ -19,8 +19,8 @@ import CashAccountAccRowUpdatingVals from "./CashAccountAccRowUpdatingVals";
 import ViewCardHeaderRowSorting from "../viewCard/ViewCardHeaderRowSorting";
 import { useAssetCountContext } from "../../modules/Contexts";
 import useSetShimmer from "../../hooks/useSetShimmerState";
-import useGetCashAccountBalances from "./useGetCashAccountBalances";
-import useUpdateNetCashAccTotal from "./useUpdateNetCashAccTotal";
+import useGetCashAccountBalances from "./hooks/useGetCashAccountBalances";
+import useUpdateNetCashAccTotal from "./hooks/useUpdateNetCashAccTotal";
 
 const CashAccounts: React.FC<CashAccountsProps> = ({
   triggerRecalculations,
@@ -33,6 +33,7 @@ const CashAccounts: React.FC<CashAccountsProps> = ({
     { readableString: "Balance", dbField: "account_balance" },
   ];
 
+  // useState
   const [showAddNewForm, setshowAddNewForm] = useState(false);
   const [entryIDWasDeleted, setentryIDWasDeleted] = useState<
     number | undefined
@@ -44,11 +45,14 @@ const CashAccounts: React.FC<CashAccountsProps> = ({
   const [orderByThisColumn, setorderByThisColumn] =
     useState<string>("account_nickname");
 
+  // useRef
   const previousOrderBy = useRef(orderByThisColumn);
   const previousCurrency = useRef(selectedCurrency.currency_code);
 
+  // useContext
   const assetCount = useContext(useAssetCountContext);
 
+  // Hooks
   const shimmerTheseRows = useSetShimmer({
     thisItemIdBeingEdited,
     previousCurrency: previousCurrency.current,
@@ -75,13 +79,15 @@ const CashAccounts: React.FC<CashAccountsProps> = ({
     cashAccAPIData,
   });
 
+  // useEffect
   useEffect(() => {
     // set edit account to 0 to avoid shimmer being left 'on' for single record.
     setthisItemIdBeingEdited(0);
     previousOrderBy.current = orderByThisColumn;
     previousCurrency.current = selectedCurrency.currency_code;
-  }, [cashAccAPIData]);
+  }, [cashAccAPIData, orderByThisColumn]);
 
+  // Functions
   const closeModal = (e: React.FormEvent<EventTarget>) => {
     const target = e.target as HTMLElement;
     if (target.className.includes("newAdditionModal")) {

@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { cashAccountAPIData } from "../../../../types/typeInterfaces";
-import { getNetCashAccountTotal } from "../../modules/serverRequests";
+import { cashAccountAPIData } from "../../../../../types/typeInterfaces";
+import { getNetCashAccountTotal } from "../../../modules/serverRequests";
 
 interface useUpdateNetCashAccTotalProps {
   previousOrderBy: string;

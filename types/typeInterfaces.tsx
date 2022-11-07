@@ -245,7 +245,7 @@ export interface PropertiesRowProps {
   setentryIDWasDeleted: React.Dispatch<
     React.SetStateAction<number | undefined>
   >;
-  itemDetailUpdated: (propertyID: number) => void;
+  setthisItemIdBeingEdited: React.Dispatch<React.SetStateAction<number>>;
 }
 
 export interface propertiesUpdateValProps {
@@ -254,10 +254,10 @@ export interface propertiesUpdateValProps {
   triggerRecalculations: number;
   setshowEditPropertyForm: React.Dispatch<React.SetStateAction<boolean>>;
   checkForEscapeKey: (e: React.KeyboardEvent) => void;
-  itemDetailUpdated: (propertyID: number) => void;
   setentryIDWasDeleted: React.Dispatch<
     React.SetStateAction<number | undefined>
   >;
+  setthisItemIdBeingEdited: React.Dispatch<React.SetStateAction<number>>;
 }
 
 export interface CashAccountUpdateBalProps {

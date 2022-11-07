@@ -3,29 +3,23 @@ import React, {
   useEffect,
   Fragment,
   useRef,
-  useCallback,
   useContext,
 } from "react";
 import { PropertiesProps } from "../../../../types/typeInterfaces";
 import CardSpinner from "../loaders/CardSpinner";
 import styles from "./Properties.module.css";
 import PropertiesNewProp from "./PropertiesNewProp";
-import { propertiesAPIData } from "../../../../types/typeInterfaces";
-import {
-  getPropertiesData,
-  getNetPropertyTotal,
-} from "../../modules/serverRequests";
-import { AxiosResponse } from "axios";
 import NoAssets from "../viewCard/NoAssetsMessage";
 import ButtonAddAsset from "../buttons/ButtonAddAsset";
 import { BsHouseDoor } from "react-icons/bs";
-
 import ViewCardHeaderRow from "../viewCard/ViewCardHeaderRow";
 import PropertiesRow from "./PropertiesRow";
 import PropertiesRowUpdatingVals from "./PropertiesRowUpdatingVals";
 import ViewCardHeaderRowSorting from "../viewCard/ViewCardHeaderRowSorting";
 import { useAssetCountContext } from "../../modules/Contexts";
 import useSetShimmer from "../../hooks/useSetShimmerState";
+import useRefreshPropertiesVals from "./hooks/useRefreshPropertiesVals";
+import useUpdateNetPropTotal from "./hooks/useUpdateNetPropTotal";
 
 const Properties: React.FC<PropertiesProps> = ({
   triggerRecalculations,
@@ -38,17 +32,10 @@ const Properties: React.FC<PropertiesProps> = ({
     { readableString: "Valuation", dbField: "property_valuation" },
     { readableString: "Loan", dbField: "property_loan_value" },
   ];
-
-  const [showNoAccountsMessage, setshowNoAccountsMessage] = useState(false);
+  // useState
   const [showAddNewForm, setshowAddNewForm] = useState(false);
-  const [propertyAccAPIData, setpropertyAccAPIData] =
-    useState<Array<propertiesAPIData>>();
-  const [netTotalPropValue, setnetTotalPropValue] = useState<
-    number | undefined
-  >(0);
   const [orderByThisColumn, setorderByThisColumn] =
     useState<string>("property_nickname");
-
   const [entryIDWasDeleted, setentryIDWasDeleted] = useState<
     number | undefined
   >(undefined);
@@ -57,17 +44,14 @@ const Properties: React.FC<PropertiesProps> = ({
   );
   const [thisItemIdBeingEdited, setthisItemIdBeingEdited] = useState<number>(0);
 
+  // useRef
   const previousOrderBy = useRef(orderByThisColumn);
   const previousCurrency = useRef(selectedCurrency.currency_code);
 
+  //useContext
   const assetCount = useContext(useAssetCountContext);
 
-  const refreshNetTotal = useCallback(async () => {
-    setnetTotalPropValue(undefined);
-    const total = await getNetPropertyTotal(selectedCurrency.currency_code);
-    setnetTotalPropValue(total);
-  }, [selectedCurrency.currency_code]);
-
+  // Hooks
   const shimmerTheseRows = useSetShimmer({
     thisItemIdBeingEdited,
     previousCurrency: previousCurrency.current,
@@ -76,52 +60,33 @@ const Properties: React.FC<PropertiesProps> = ({
     orderByThisColumn,
   });
 
-  const refreshPropertiesVals = useCallback(async () => {
-    const propData: AxiosResponse<any, any> | undefined =
-      await getPropertiesData(
-        selectedCurrency.currency_code,
-        orderByThisColumn
-      );
-    if (
-      propData !== undefined &&
-      propData.status === 200 &&
-      propData.data !== undefined
-    ) {
-      setpropertyAccAPIData(propData.data);
-    }
-  }, [selectedCurrency, orderByThisColumn]);
-
-  const itemDetailUpdated = useCallback(
-    (propertyID: number) => {
-      setthisItemIdBeingEdited(propertyID);
-      refreshPropertiesVals().then(() => {
-        setthisItemIdBeingEdited(0);
-      });
-    },
-    [refreshPropertiesVals]
-  );
-
-  useEffect(() => {
-    refreshPropertiesVals().then(() => {
-      previousOrderBy.current = orderByThisColumn;
-      previousCurrency.current = selectedCurrency.currency_code;
-    });
-  }, [
-    refreshPropertiesVals,
+  const propertyAccAPIData = useRefreshPropertiesVals({
+    thisItemIdBeingEdited,
+    selectedCurrencyCode: selectedCurrency.currency_code,
+    orderByThisColumn,
     entryIDWasDeleted,
     itemIDWasAdded,
-    selectedCurrency,
+  });
+
+  const netTotalPropValue = useUpdateNetPropTotal({
+    selectedCurrencyCode: selectedCurrency.currency_code,
+    previousOrderBy: previousOrderBy.current,
     orderByThisColumn,
-  ]);
+    entryIDWasDeleted,
+    itemIDWasAdded,
+    thisItemIdBeingEdited,
+    propertyAccAPIData,
+  });
 
+  // useEffect
   useEffect(() => {
-    refreshNetTotal();
-  }, [refreshNetTotal, propertyAccAPIData]);
+    // set edit account to 0 to avoid shimmer being left 'on' for single record.
+    setthisItemIdBeingEdited(0);
+    previousOrderBy.current = orderByThisColumn;
+    previousCurrency.current = selectedCurrency.currency_code;
+  }, [propertyAccAPIData, orderByThisColumn]);
 
-  const showAddPropForm = () => {
-    setshowAddNewForm(true);
-  };
-
+  // functions
   const closeModal = (e: React.FormEvent<EventTarget>) => {
     const target = e.target as HTMLElement;
     if (target.className === "newAdditionModal") {
@@ -142,7 +107,7 @@ const Properties: React.FC<PropertiesProps> = ({
             assetType="property"
           />
           <ButtonAddAsset
-            clickFunction={showAddPropForm}
+            clickFunction={() => setshowAddNewForm(true)}
             buttonTextContent="Add Property"
           />
         </Fragment>
@@ -155,7 +120,7 @@ const Properties: React.FC<PropertiesProps> = ({
               rowTitle="PROPERTY"
               selectedCurrency={selectedCurrency}
               netTotal={netTotalPropValue}
-              addNewFunction={showAddPropForm}
+              addNewFunction={setshowAddNewForm}
               sortArray={sortArray}
               orderByThisColumn={orderByThisColumn}
               setorderByThisColumn={setorderByThisColumn}
@@ -185,7 +150,7 @@ const Properties: React.FC<PropertiesProps> = ({
                     settriggerRecalculations={settriggerRecalculations}
                     triggerRecalculations={triggerRecalculations}
                     setentryIDWasDeleted={setentryIDWasDeleted}
-                    itemDetailUpdated={itemDetailUpdated}
+                    setthisItemIdBeingEdited={setthisItemIdBeingEdited}
                   />
                 )}
               </Fragment>
