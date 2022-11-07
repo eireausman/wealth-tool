@@ -269,7 +269,7 @@ export interface CashAccountUpdateBalProps {
   setentryIDWasDeleted: React.Dispatch<
     React.SetStateAction<number | undefined>
   >;
-  itemDetailUpdated: (cashACcountID: number) => void;
+  setthisItemIdBeingEdited: React.Dispatch<React.SetStateAction<number>>;
 }
 
 export interface AssetCountContextCountData {
@@ -380,7 +380,7 @@ export interface CashAccountAccRowProps {
   setentryIDWasDeleted: React.Dispatch<
     React.SetStateAction<number | undefined>
   >;
-  itemDetailUpdated: (cashACcountID: number) => void;
+  setthisItemIdBeingEdited: React.Dispatch<React.SetStateAction<number>>;
 }
 
 export interface CashAccountAccRowUpdatingValsProps {

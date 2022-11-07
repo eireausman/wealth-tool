@@ -1,3 +1,11 @@
+.viewCardHeading {
+  display: flex;
+  align-items: center;
+  font-weight: 300;
+  margin: 0px 0px 5px 0px;
+  color: white;
+}
+
 .FXRatesTable {
   display: flex;
   flex-direction: column;

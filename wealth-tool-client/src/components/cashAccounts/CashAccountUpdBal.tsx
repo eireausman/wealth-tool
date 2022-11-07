@@ -14,7 +14,7 @@ const CashAccountUpdBal: React.FC<CashAccountUpdateBalProps> = ({
   triggerRecalculations,
   checkForEscapeKey,
   setentryIDWasDeleted,
-  itemDetailUpdated,
+  setthisItemIdBeingEdited,
 }) => {
   const [updatedBalance, setupdatedBalance] = useState<number>(0);
   const [showSoftDelConfirm, setshowSoftDelConfirm] = useState<boolean>(false);
@@ -53,7 +53,7 @@ const CashAccountUpdBal: React.FC<CashAccountUpdateBalProps> = ({
         setsaveProgressText("Saved.  One sec...");
         settriggerRecalculations(triggerRecalculations + 1);
         setShowEditAccountForm(false);
-        itemDetailUpdated(data.account_id);
+        setthisItemIdBeingEdited(data.account_id);
       })
       .catch((err) => console.log(err));
   };

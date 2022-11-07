@@ -68,7 +68,7 @@ const Properties: React.FC<PropertiesProps> = ({
     setnetTotalPropValue(total);
   }, [selectedCurrency.currency_code]);
 
-  const [shimmerTheseRows, setshimmerTheseRows] = useSetShimmer({
+  const shimmerTheseRows = useSetShimmer({
     thisItemIdBeingEdited,
     previousCurrency: previousCurrency.current,
     selectedCurrency: selectedCurrency.currency_code,

@@ -10,12 +10,6 @@ import { CashAccountsProps } from "../../../../types/typeInterfaces";
 import styles from "./CashAccounts.module.css";
 import CardSpinner from "../loaders/CardSpinner";
 import CashAccountAddAcc from "./CashAccountAddAcc";
-import { cashAccountAPIData } from "../../../../types/typeInterfaces";
-import {
-  getCashAccountData,
-  getNetCashAccountTotal,
-} from "../../modules/serverRequests";
-import { AxiosResponse } from "axios";
 import CashAccountAccRow from "./CashAccountAccRow";
 import NoAssets from "../viewCard/NoAssetsMessage";
 import { FaPiggyBank } from "react-icons/fa";
@@ -25,6 +19,8 @@ import CashAccountAccRowUpdatingVals from "./CashAccountAccRowUpdatingVals";
 import ViewCardHeaderRowSorting from "../viewCard/ViewCardHeaderRowSorting";
 import { useAssetCountContext } from "../../modules/Contexts";
 import useSetShimmer from "../../hooks/useSetShimmerState";
+import useGetCashAccountBalances from "./useGetCashAccountBalances";
+import useUpdateNetCashAccTotal from "./useUpdateNetCashAccTotal";
 
 const CashAccounts: React.FC<CashAccountsProps> = ({
   triggerRecalculations,
@@ -38,9 +34,6 @@ const CashAccounts: React.FC<CashAccountsProps> = ({
   ];
 
   const [showAddNewForm, setshowAddNewForm] = useState(false);
-  const [cashAccountNetTotal, setcashAccountNetTotal] = useState<
-    number | undefined
-  >(0);
   const [entryIDWasDeleted, setentryIDWasDeleted] = useState<
     number | undefined
   >(undefined);
@@ -48,27 +41,15 @@ const CashAccounts: React.FC<CashAccountsProps> = ({
     undefined
   );
   const [thisItemIdBeingEdited, setthisItemIdBeingEdited] = useState<number>(0);
-
   const [orderByThisColumn, setorderByThisColumn] =
     useState<string>("account_nickname");
+
   const previousOrderBy = useRef(orderByThisColumn);
   const previousCurrency = useRef(selectedCurrency.currency_code);
-  const [cashAccAPIData, setcashAccAPIData] =
-    useState<Array<cashAccountAPIData>>();
 
   const assetCount = useContext(useAssetCountContext);
 
-  const updateNetCashAccountTotal = useCallback(async () => {
-    if (previousOrderBy.current === orderByThisColumn) {
-      setcashAccountNetTotal(undefined);
-      const total = await getNetCashAccountTotal(
-        selectedCurrency.currency_code
-      );
-      setcashAccountNetTotal(total);
-    }
-  }, [selectedCurrency.currency_code, orderByThisColumn]);
-
-  const [shimmerTheseRows, setshimmerTheseRows] = useSetShimmer({
+  const shimmerTheseRows = useSetShimmer({
     thisItemIdBeingEdited,
     previousCurrency: previousCurrency.current,
     selectedCurrency: selectedCurrency.currency_code,
@@ -76,59 +57,34 @@ const CashAccounts: React.FC<CashAccountsProps> = ({
     orderByThisColumn,
   });
 
-  const getAllAccountBalances = useCallback(async () => {
-    const cashAccServerDataRequest: AxiosResponse<any, any> | undefined =
-      await getCashAccountData(
-        selectedCurrency.currency_code,
-        orderByThisColumn
-      );
-    if (
-      cashAccServerDataRequest !== undefined &&
-      cashAccServerDataRequest.status === 200 &&
-      cashAccServerDataRequest.data !== undefined
-    ) {
-      setcashAccAPIData(cashAccServerDataRequest.data);
-    }
-  }, [selectedCurrency, orderByThisColumn]);
-
-  const itemDetailUpdated = useCallback(
-    (cashAccountID: number) => {
-      setthisItemIdBeingEdited(cashAccountID);
-      getAllAccountBalances().then(() => {
-        setthisItemIdBeingEdited(0);
-      });
-    },
-    [getAllAccountBalances]
-  );
-
-  useEffect(() => {
-    getAllAccountBalances().then(() => {
-      previousOrderBy.current = orderByThisColumn;
-      previousCurrency.current = selectedCurrency.currency_code;
-    });
-  }, [
-    getAllAccountBalances,
+  const cashAccAPIData = useGetCashAccountBalances({
+    thisItemIdBeingEdited,
+    selectedCurrencyCode: selectedCurrency.currency_code,
+    orderByThisColumn,
     entryIDWasDeleted,
     itemIDWasAdded,
-    selectedCurrency,
+  });
+
+  const cashAccountNetTotal = useUpdateNetCashAccTotal({
+    selectedCurrencyCode: selectedCurrency.currency_code,
+    previousOrderBy: previousOrderBy.current,
     orderByThisColumn,
-  ]);
+    entryIDWasDeleted,
+    itemIDWasAdded,
+    thisItemIdBeingEdited,
+    cashAccAPIData,
+  });
 
   useEffect(() => {
-    updateNetCashAccountTotal();
-  }, [updateNetCashAccountTotal, cashAccAPIData]);
-
-  // useEffect(() => {
-  //   setShimmerState();
-  // }, [setShimmerState, cashAccAPIData, thisItemIdBeingEdited]);
-
-  const showAddNewCashAccForm = () => {
-    setshowAddNewForm(true);
-  };
+    // set edit account to 0 to avoid shimmer being left 'on' for single record.
+    setthisItemIdBeingEdited(0);
+    previousOrderBy.current = orderByThisColumn;
+    previousCurrency.current = selectedCurrency.currency_code;
+  }, [cashAccAPIData]);
 
   const closeModal = (e: React.FormEvent<EventTarget>) => {
     const target = e.target as HTMLElement;
-    if (target.className === "newAdditionModal") {
+    if (target.className.includes("newAdditionModal")) {
       setshowAddNewForm(false);
     }
   };
@@ -146,7 +102,7 @@ const CashAccounts: React.FC<CashAccountsProps> = ({
             assetType="cashAccount"
           />
           <ButtonAddAsset
-            clickFunction={showAddNewCashAccForm}
+            clickFunction={() => setshowAddNewForm(true)}
             buttonTextContent="Add Account"
           />
         </Fragment>
@@ -159,7 +115,7 @@ const CashAccounts: React.FC<CashAccountsProps> = ({
               rowTitle="CASH ACCOUNTS"
               netTotal={cashAccountNetTotal}
               selectedCurrency={selectedCurrency}
-              addNewFunction={showAddNewCashAccForm}
+              addNewFunction={setshowAddNewForm}
               sortArray={sortArray}
               orderByThisColumn={orderByThisColumn}
               setorderByThisColumn={setorderByThisColumn}
@@ -196,7 +152,7 @@ const CashAccounts: React.FC<CashAccountsProps> = ({
                       triggerRecalculations={triggerRecalculations}
                       selectedCurrency={selectedCurrency}
                       setentryIDWasDeleted={setentryIDWasDeleted}
-                      itemDetailUpdated={itemDetailUpdated}
+                      setthisItemIdBeingEdited={setthisItemIdBeingEdited}
                     />
                   )}
                 </Fragment>

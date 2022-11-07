@@ -97,7 +97,7 @@ const Investments: React.FC<InvestmentsProps> = ({
     }
   }, [selectedCurrency.currency_code, orderByThisColumn]);
 
-  const [shimmerTheseRows, setshimmerTheseRows] = useSetShimmer({
+  const shimmerTheseRows = useSetShimmer({
     thisItemIdBeingEdited,
     previousCurrency: previousCurrency.current,
     selectedCurrency: selectedCurrency.currency_code,

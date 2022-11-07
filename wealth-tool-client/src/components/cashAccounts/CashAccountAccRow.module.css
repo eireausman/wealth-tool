@@ -1,4 +1,12 @@
 .cashAccountsTableDataGridRow {
   display: grid;
   grid-template-columns: 40% repeat(2, 30%);
+  padding-bottom: 3px;
+  padding-top: 3px;
+  border-bottom: 1px solid rgb(8 127 237);
+}
+
+.cashAccountsTableDataGridRow:hover {
+  background-color: #cbcdd3;
+  cursor: pointer;
 }

@@ -25,7 +25,7 @@ const FXRates: React.FC = () => {
         transition={{ duration: 0.5 }}
         className="viewCardHeaderRow"
       >
-        <h3 className="viewCardHeading">FX RATES</h3>
+        <h3 className={styles.viewCardHeading}>FX RATES</h3>
       </motion.div>
       <section className={styles.FXRatesTable}>
         <header className={styles.FXRatesTableHeader}>

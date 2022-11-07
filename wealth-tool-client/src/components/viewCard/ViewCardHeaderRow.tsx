@@ -16,7 +16,7 @@ interface ViewCardHeaderRowProps {
   rowIcon: JSX.Element;
   rowTitle: string;
   netTotal: number | undefined;
-  addNewFunction: () => void;
+  addNewFunction: React.Dispatch<React.SetStateAction<boolean>>;
   selectedCurrency: selectedCurrencyDetails;
   sortArray: Array<selectDropDownSortArray>;
   orderByThisColumn: string;
@@ -60,7 +60,7 @@ const ViewCardHeaderRow: React.FC<ViewCardHeaderRowProps> = ({
           />
 
           <ButtonAddAsset
-            clickFunction={addNewFunction}
+            clickFunction={() => addNewFunction(true)}
             buttonTextContent="Add"
           />
         </div>

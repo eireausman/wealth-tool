@@ -28,5 +28,5 @@ export default function useSetShimmer(props: useSetShimmerProps) {
     setshimmerState(() => shimmerSetFunction(props));
   }, [props]);
 
-  return [shimmerState, setshimmerState];
+  return shimmerState;
 }

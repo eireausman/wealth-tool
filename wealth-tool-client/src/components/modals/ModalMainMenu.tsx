@@ -129,7 +129,7 @@ const ModalMainMenu: React.FC<ModalMainMenuProps> = ({
 
   const hideSlideOutMenu = (e: React.FormEvent<EventTarget>) => {
     const target = e.target as HTMLElement;
-    if (target.className === "modalMainMenuContainer") {
+    if (target.className.includes("modalMainMenuContainer")) {
       setshowSlideOutMenu(false);
     }
   };

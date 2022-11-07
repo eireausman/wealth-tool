@@ -9,7 +9,7 @@ const InvestmentRowUpdatingPrices: React.FC<
 > = ({ data }) => {
   return (
     <Fragment>
-      <motion.div className="investmentsTableDataGridRow" tabIndex={0}>
+      <motion.div className={styles.investmentsTableDataGridRow} tabIndex={0}>
         <div>{data.holding_stock_name}</div>
         <div className={styles.columnInWideViewOnly}>
           {data.holding_owner_name}
