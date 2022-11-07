@@ -1,0 +1,28 @@
+.investmentsTableDataGridRow {
+  display: grid;
+  grid-template-columns: 30% repeat(7, 10%);
+}
+
+.investmentsTableDataGridRow {
+  padding-bottom: 3px;
+  padding-top: 3px;
+  border-bottom: 1px solid rgb(8 127 237);
+}
+.investmentsTableDataGridRow:hover {
+  background-color: #cbcdd3;
+  cursor: pointer;
+}
+
+.columnInWideViewOnly {
+  display: inline;
+}
+
+@media only screen and (max-width: 900px) {
+  .investmentsTableDataGridRow {
+    display: grid;
+    grid-template-columns: 160px repeat(2, 80px);
+  }
+  .columnInWideViewOnly {
+    display: none;
+  }
+}

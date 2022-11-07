@@ -1,0 +1,9 @@
+.columnInWideViewOnly {
+  display: inline;
+}
+
+@media only screen and (max-width: 900px) {
+  .columnInWideViewOnly {
+    display: none;
+  }
+}

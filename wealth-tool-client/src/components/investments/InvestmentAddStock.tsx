@@ -5,7 +5,7 @@ import {
   AddANewInvestmentProps,
   AddNewInvestmentFormData,
 } from "../../../../types/typeInterfaces";
-import "./InvestmentAddStock.css";
+import styles from "./InvestmentAddStock.module.css";
 import {
   addnewinvestment,
   refreshSingleStockPricingData,
@@ -97,10 +97,10 @@ const InvestmentAddStock: React.FC<AddANewInvestmentProps> = ({
           initial={{ opacity: 0, scale: 0.5 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.5 }}
-          className="addNewStockForm"
+          className={styles.addNewStockForm}
           onSubmit={(e) => saveNewInvestment(e)}
         >
-          <span className="addNewStockFormHeading">Stock detail</span>
+          <span className={styles.addNewStockFormHeading}>Stock detail</span>
           <InvestmentAddStockName
             updateFormDataState={updateFormDataState}
             newStockNameSelectedFromSearch={newStockNameSelectedFromSearch}
@@ -109,31 +109,31 @@ const InvestmentAddStock: React.FC<AddANewInvestmentProps> = ({
           />
           {showAdditionStockInfoFields === true && (
             <Fragment>
-              <label className="newStockInputRow">
+              <label className={styles.newStockInputRow}>
                 Quantity Held
                 <input
                   name="quantity"
-                  className="newStockInputField"
+                  className={styles.newStockInputField}
                   type="number"
                   required
                   onChange={updateFormDataState}
                 />
               </label>
-              <label className="newStockInputRow">
+              <label className={styles.newStockInputRow}>
                 Total cost {formData?.currencyCode}
                 <input
                   name="cost"
-                  className="newStockInputField"
+                  className={styles.newStockInputField}
                   type="number"
                   required
                   onChange={updateFormDataState}
                 />
               </label>
-              <label className="newStockInputRow">
+              <label className={styles.newStockInputRow}>
                 Owner Name
                 <input
                   name="ownerName"
-                  className="newStockInputField"
+                  className={styles.newStockInputField}
                   type="text"
                   required
                   minLength={3}
@@ -141,11 +141,11 @@ const InvestmentAddStock: React.FC<AddANewInvestmentProps> = ({
                   onChange={updateFormDataState}
                 />
               </label>
-              <label className="newStockInputRow">
+              <label className={styles.newStockInputRow}>
                 Broker / Bank Name
                 <input
                   name="institution"
-                  className="newStockInputField"
+                  className={styles.newStockInputField}
                   type="text"
                   required
                   minLength={3}
@@ -153,11 +153,11 @@ const InvestmentAddStock: React.FC<AddANewInvestmentProps> = ({
                   onChange={updateFormDataState}
                 />
               </label>
-              <div className="newStockInputRow">
+              <div className={styles.newStockInputRow}>
                 <motion.button
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.8 }}
-                  className="buttonPrimary buttonCashBalSave"
+                  className={`${styles.buttonCashBalSave} buttonPrimary`}
                   onClick={cancelForm}
                 >
                   Cancel
@@ -165,7 +165,7 @@ const InvestmentAddStock: React.FC<AddANewInvestmentProps> = ({
                 <motion.button
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.8 }}
-                  className="buttonPrimary buttonCashBalSave"
+                  className={`${styles.buttonCashBalSave} buttonPrimary`}
                   type="submit"
                 >
                   Save

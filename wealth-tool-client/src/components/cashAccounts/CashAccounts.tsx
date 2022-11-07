@@ -7,7 +7,7 @@ import React, {
   useContext,
 } from "react";
 import { CashAccountsProps } from "../../../../types/typeInterfaces";
-import "./CashAccounts.css";
+import styles from "./CashAccounts.module.css";
 import CardSpinner from "../loaders/CardSpinner";
 import CashAccountAddAcc from "./CashAccountAddAcc";
 import { cashAccountAPIData } from "../../../../types/typeInterfaces";
@@ -48,7 +48,6 @@ const CashAccounts: React.FC<CashAccountsProps> = ({
     undefined
   );
   const [thisItemIdBeingEdited, setthisItemIdBeingEdited] = useState<number>(0);
-  // const [shimmerTheseRows, setshimmerTheseRows] = useState<string | number>("");
 
   const [orderByThisColumn, setorderByThisColumn] =
     useState<string>("account_nickname");
@@ -172,13 +171,15 @@ const CashAccounts: React.FC<CashAccountsProps> = ({
             />
           )}
 
-          <section className="cashAccountsTable">
-            <header className="cashAccountsTableHeader">
-              <div className="table-header">A/c Name</div>
-              <div className="table-header">Owner</div>
-              <div className="table-header">Balance</div>
+          <section className={styles.cashAccountsTable}>
+            <header className={styles.cashAccountsTableHeader}>
+              <div className={styles.tableHeader}>A/c Name</div>
+              <div className={styles.tableHeader}>Owner</div>
+              <div className={styles.tableHeader}>Balance</div>
             </header>
-            <section className="cashAccountsTableDataContainer scrollbarstyles">
+            <section
+              className={`${styles.cashAccountsTableDataContainer} scrollbarstyles`}
+            >
               {cashAccAPIData?.map((data, index) => (
                 <Fragment key={data.account_id}>
                   {shimmerTheseRows === data.account_id ||

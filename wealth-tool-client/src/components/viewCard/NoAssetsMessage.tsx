@@ -1,5 +1,5 @@
 import React from "react";
-import "./NoAssetsMessage.css";
+import styles from "./NoAssetsMessage.module.css";
 import { motion } from "framer-motion";
 import { FaPiggyBank } from "react-icons/fa";
 import { BsHouseDoor } from "react-icons/bs";
@@ -21,15 +21,15 @@ const NoAssets: React.FC<NoAssetsInterface> = ({
       initial={{ opacity: 0.5, scale: 0.5 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.2 }}
-      className="messageContainer"
+      className={styles.messageContainer}
     >
-      <p className="messageText">{cardTitle}</p>
+      <p className={styles.messageText}>{cardTitle}</p>
       {assetType === "cashAccount" && (
         <FaPiggyBank size={56} className="Icon" />
       )}
       {assetType === "property" && <BsHouseDoor size={56} className="Icon" />}
       {assetType === "investment" && <GoGraph size={56} className="Icon" />}
-      <p className="messageText">{cardText}</p>
+      <p className={styles.messageText}>{cardText}</p>
     </motion.div>
   );
 };

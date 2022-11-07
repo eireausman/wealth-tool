@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import React, { Fragment, useContext, useState } from "react";
 import { OptionsBoardCurrencySelectProps } from "../../../../types/typeInterfaces";
-import "./OptionsBoardCurrencySelect.css";
+import styles from "./OptionsBoardCurrencySelect.module.css";
 import { useCurrenciesFromDBContext } from "../../modules/Contexts";
 
 const OptionsBoardCurrencySelect: React.FC<OptionsBoardCurrencySelectProps> = ({
@@ -26,17 +26,17 @@ const OptionsBoardCurrencySelect: React.FC<OptionsBoardCurrencySelectProps> = ({
   }
   return (
     <Fragment>
-      <div className="currencySelectDropDownContainer">
+      <div className={styles.currencySelectDropDownContainer}>
         <b>Show values in</b>
-        <ul className="currencySelectDropDownList">
+        <ul className={styles.currencySelectDropDownList}>
           {currencyCodesFromDB?.map((data) => (
             <li
               key={data.id}
               id={data.currency_code}
               className={
                 selectedCurrency.currency_code === data.currency_code
-                  ? "currencySelectDropDownListItemActive"
-                  : "currencySelectDropDownListItem"
+                  ? styles.currencySelectDropDownListItemActive
+                  : styles.currencySelectDropDownListItem
               }
               onMouseEnter={() => setspinIsActive(data.currency_code)}
               onMouseLeave={() => setspinIsActive("")}
@@ -51,7 +51,7 @@ const OptionsBoardCurrencySelect: React.FC<OptionsBoardCurrencySelectProps> = ({
               <motion.img
                 src={currencyImages[`${data.currency_code}.svg`]}
                 alt={data.currency_name}
-                className="currencyFlagImage"
+                className={styles.currencyFlagImage}
                 animate={{
                   rotate: spinIsActive === data.currency_code ? 360 : 0,
                 }}

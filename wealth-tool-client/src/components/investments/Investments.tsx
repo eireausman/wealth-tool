@@ -8,7 +8,7 @@ import React, {
 } from "react";
 import { InvestmentsProps } from "../../../../types/typeInterfaces";
 import CardSpinner from "../loaders/CardSpinner";
-import "./Investments.css";
+import styles from "./Investments.module.css";
 import InvestmentAddStock from "./InvestmentAddStock";
 import InvestmentRow from "./InvestmentRow";
 import { investmentsAPIData } from "../../../../types/typeInterfaces";
@@ -171,18 +171,40 @@ const Investments: React.FC<InvestmentsProps> = ({
             />
           )}
 
-          <section className="investmentsTable">
-            <header className="investmentsTableHeader">
-              <div className="table-header">Holding</div>
-              <div className="table-header columnInWideViewOnly">Owner</div>
-              <div className="table-header columnInWideViewOnly">Held at</div>
-              <div className="table-header columnInWideViewOnly">Currency</div>
+          <section className={styles.investmentsTable}>
+            <header className={styles.investmentsTableHeader}>
+              <div className={styles.tableHeader}>Holding</div>
+              <div
+                className={`${styles.tableHeader} ${styles.columnInWideViewOnly}`}
+              >
+                Owner
+              </div>
+              <div
+                className={`${styles.tableHeader} ${styles.columnInWideViewOnly}`}
+              >
+                Held at
+              </div>
+              <div
+                className={`${styles.tableHeader} ${styles.columnInWideViewOnly}`}
+              >
+                Currency
+              </div>
               <div className="table-header">Quantity</div>
-              <div className="table-header columnInWideViewOnly">Price</div>
-              <div className="table-header columnInWideViewOnly">Cost</div>
-              <div className="table-header">Value</div>
+              <div
+                className={`${styles.tableHeader} ${styles.columnInWideViewOnly}`}
+              >
+                Price
+              </div>
+              <div
+                className={`${styles.tableHeader} ${styles.columnInWideViewOnly}`}
+              >
+                Cost
+              </div>
+              <div className={styles.tableHeader}>Value</div>
             </header>
-            <section className="investmentsTableDataContainer scrollbarstyles">
+            <section
+              className={`${styles.investmentsTableDataContainer} scrollbarstyles`}
+            >
               {investmentAPIData?.map((data, index) => (
                 <Fragment key={data.holding_id}>
                   {shimmerTheseRows === data.holding_id ||

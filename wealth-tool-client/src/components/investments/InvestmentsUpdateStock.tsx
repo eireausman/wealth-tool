@@ -5,7 +5,7 @@ import {
   investmentUpdateStockFormData,
 } from "../../../../types/typeInterfaces";
 import { updateInvestmentData } from "../../modules/serverRequests";
-import "./InvestmentsUpdateStock.css";
+import styles from "./InvestmentsUpdateStock.module.css";
 import ModalSavingData from "../modals/ModalSavingData";
 import SoftDeleteButton from "../buttons/SoftDeleteButton";
 import SoftDeleteButtonConfirm from "../buttons/SoftDeleteButtonConfirm";
@@ -78,7 +78,7 @@ const InvestmentsUpdateStock: React.FC<InvestmentsUpdateStockProps> = ({
       )}
       {showSavingMessage === false && showSoftDelConfirm === false && (
         <Fragment>
-          <p className="stockName">
+          <p className={styles.stockName}>
             {data?.holding_stock_name} ({data.holding_market_identifier})
           </p>
 
@@ -86,14 +86,14 @@ const InvestmentsUpdateStock: React.FC<InvestmentsUpdateStockProps> = ({
             initial={{ opacity: 0, scale: 0.5 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5 }}
-            className="addNewStockForm"
+            className={styles.addNewStockForm}
             onSubmit={(e) => saveInvestmentEdits(e)}
           >
-            <label className="newStockInputRow">
+            <label className={styles.newStockInputRow}>
               Quantity Held
               <input
                 name="quantity"
-                className="newStockInputField"
+                className={styles.newStockInputField}
                 type="number"
                 ref={investQtyInputBox}
                 required
@@ -101,22 +101,22 @@ const InvestmentsUpdateStock: React.FC<InvestmentsUpdateStockProps> = ({
                 value={formData.quantity}
               />
             </label>
-            <label className="newStockInputRow">
+            <label className={styles.newStockInputRow}>
               Total cost {data.holding_currency_code}{" "}
               <input
                 name="cost"
-                className="newStockInputField"
+                className={styles.newStockInputField}
                 type="number"
                 required
                 value={formData.cost}
                 onChange={updateFormDataState}
               />
             </label>
-            <label className="newStockInputRow">
+            <label className={styles.newStockInputRow}>
               Broker / Bank Name
               <input
                 name="institution"
-                className="newStockInputField"
+                className={styles.newStockInputField}
                 type="text"
                 required
                 minLength={3}
@@ -125,11 +125,11 @@ const InvestmentsUpdateStock: React.FC<InvestmentsUpdateStockProps> = ({
                 onChange={updateFormDataState}
               />
             </label>
-            <div className="newStockInputRow">
+            <div className={styles.newStockInputRow}>
               <motion.button
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.8 }}
-                className="buttonPrimary buttonCashBalSave"
+                className="buttonPrimary"
                 onClick={cancelForm}
               >
                 Cancel
@@ -137,7 +137,7 @@ const InvestmentsUpdateStock: React.FC<InvestmentsUpdateStockProps> = ({
               <motion.button
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.8 }}
-                className="buttonPrimary buttonCashBalSave"
+                className="buttonPrimary"
                 type="submit"
               >
                 Save

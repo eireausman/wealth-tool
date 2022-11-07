@@ -9,7 +9,7 @@ import { ChartNetWealthCategoriesProps } from "../../../../types/typeInterfaces"
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Pie } from "react-chartjs-2";
 import { useLoggedInContext } from "../../modules/Contexts";
-import "./ChartNetWealthCategories.css";
+import styles from "./ChartNetWealthCategories.module.css";
 import Tippy from "@tippyjs/react";
 import "tippy.js/dist/tippy.css";
 import { useAssetCountContext } from "../../modules/Contexts";
@@ -92,10 +92,10 @@ const ChartNetWealthCategories: React.FC<ChartNetWealthCategoriesProps> = ({
           </span>
         }
       >
-        <span className="chartTitle">NET WEALTH BREAKDOWN</span>
+        <span className={styles.chartTitle}>NET WEALTH BREAKDOWN</span>
       </Tippy>
 
-      <div className="viewCardRow viewCardChartInner">
+      <div className={`${styles.viewCardChartInner} viewCardRow`}>
         <Pie data={data} options={options} />
       </div>
     </section>

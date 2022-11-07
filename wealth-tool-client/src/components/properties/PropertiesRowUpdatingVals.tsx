@@ -4,8 +4,7 @@ import {
   propertiesAPIData,
   selectedCurrencyDetails,
 } from "../../../../types/typeInterfaces";
-import PropertiesUpdateVal from "./PropertiesUpdateVal";
-import getDisplayNumber from "../../modules/getDisplayNumber";
+import styles from "./PropertiesRow.module.css";
 import { FaEdit } from "react-icons/fa";
 import Shimmer from "../loaders/Shimmer";
 
@@ -21,24 +20,26 @@ const PropertiesRowUpdatingVals: React.FC<PropertiesRowUpdatingValsProps> = ({
   return (
     <Fragment>
       <motion.div
-        className="viewCardRow propertiesViewCardRow"
+        className={`${styles.propertiesViewCardRow} viewCardRow`}
         key={data.property_id}
         tabIndex={0}
       >
-        <div className="viewCardRowLeftBox PropertyLeftBox">
-          <span className="propertyName">
+        <div className={`${styles.PropertyLeftBox} viewCardRowLeftBox`}>
+          <span className={styles.propertyName}>
             {data.property_nickname.toUpperCase()}
             <FaEdit className="editValueIcon" color={"#087fed"} />
           </span>
-          <span className="ownerText">Owner: {data.property_owner_name}</span>
-          <span className="valueBaseCurrency">
+          <span className={styles.ownerText}>
+            Owner: {data.property_owner_name}
+          </span>
+          <span className={styles.valueBaseCurrency}>
             Currency: {data.property_valuation_currency}
           </span>
         </div>
         <div className="viewCardRowRightBox">
-          <motion.table className="valuesTable">
+          <motion.table className={styles.valuesTable}>
             <tbody>
-              <tr className="calculatedBalanceValueRow">
+              <tr className={styles.calculatedBalanceValueRow}>
                 <td>Net {selectedCurrency.currency_code}: </td>
                 <td>
                   <Shimmer

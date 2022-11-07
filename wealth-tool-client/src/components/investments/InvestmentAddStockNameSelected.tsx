@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import React from "react";
 import { AddNewInvestmentFormData } from "../../../../types/typeInterfaces";
-import "./InvestmentAddStockNameSelected.css";
+import styles from "./InvestmentAddStockNameSelected.module.css";
 
 interface InvestmentAddStockNameSelectedProps {
   formData: AddNewInvestmentFormData | undefined;
@@ -21,24 +21,26 @@ const InvestmentAddStockNameSelected: React.FC<
       initial={{ opacity: 0, scale: 0.5 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.5 }}
-      className="selectedStockContainer"
+      className={styles.selectedStockContainer}
     >
-      <span className="selectedStockTextTitle"> Stock Name: </span>
-      <p className="selectedStockText">{formData?.stockName}</p>
+      <span className={styles.selectedStockTextTitle}> Stock Name: </span>
+      <p className={styles.selectedStockText}>{formData?.stockName}</p>
 
-      <p className="selectedStockText">
+      <p className={styles.selectedStockText}>
         {" "}
-        <span className="selectedStockTextTitle"> Listed on: </span>
+        <span className={styles.selectedStockTextTitle}> Listed on: </span>
         {formData?.stockMarket} ({formData?.identifier})
       </p>
 
-      <p className="selectedStockText">
+      <p className={styles.selectedStockText}>
         {" "}
-        <span className="selectedStockTextTitle">Valued in currency: </span>
+        <span className={styles.selectedStockTextTitle}>
+          Valued in currency:{" "}
+        </span>
         {formData?.currencyCode}
       </p>
-      <div className="selectedStockContainerSeachAgain">
-        <span className="spyGlass" onClick={restartSearch}>
+      <div className={styles.selectedStockContainerSeachAgain}>
+        <span className={styles.spyGlass} onClick={restartSearch}>
           {" "}
           search again
         </span>

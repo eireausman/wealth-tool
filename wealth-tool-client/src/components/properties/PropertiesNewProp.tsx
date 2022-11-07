@@ -10,7 +10,7 @@ import {
   PropertiesNewPropProps,
   AddNewPropertyFormData,
 } from "../../../../types/typeInterfaces";
-import "./PropertiesNewProp.css";
+import styles from "./PropertiesNewProp.module.css";
 import { addNewProperty } from "../../modules/serverRequests";
 import ModalSavingData from "../modals/ModalSavingData";
 import { useCurrenciesFromDBContext } from "../../modules/Contexts";
@@ -96,35 +96,37 @@ const PropertiesNewProp: React.FC<PropertiesNewPropProps> = ({
             initial={{ opacity: 0, scale: 0.5 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5 }}
-            className="addNewPropForm"
+            className={styles.addNewPropForm}
             onSubmit={(e) => saveNewProperty(e)}
           >
-            <span className="addNewPropFormHeading">Property detail</span>
-            <label className="newPropInputRow">
+            <span className={styles.addNewPropFormHeading}>
+              Property detail
+            </span>
+            <label className={styles.newPropInputRow}>
               Property Name
               <input
                 name="propName"
-                className="newPropInputField"
+                className={styles.newPropInputField}
                 type="text"
                 required
                 ref={propertyNameInputBox}
                 onChange={updateFormDataState}
               />
             </label>
-            <label className="newPropInputRow">
+            <label className={styles.newPropInputRow}>
               Owner's Name
               <input
                 name="propOwner"
-                className="newPropInputField"
+                className={styles.newPropInputField}
                 type="text"
                 required
                 onChange={updateFormDataState}
               />
             </label>
-            <label className="newPropInputRow">
+            <label className={styles.newPropInputRow}>
               Valued in this currency:
               <select
-                className="newPropInputField"
+                className={styles.newPropInputField}
                 name="currencyCode"
                 id="currencyCode"
                 ref={currencyCodeSelection}
@@ -137,34 +139,34 @@ const PropertiesNewProp: React.FC<PropertiesNewPropProps> = ({
                 ))}
               </select>
             </label>
-            <label className="newPropInputRow">
+            <label className={styles.newPropInputRow}>
               Valuation
               <input
                 name="propValue"
                 placeholder="e.g. 1000"
-                className="newPropInputField"
+                className={styles.newPropInputField}
                 type="number"
                 required
                 onChange={updateFormDataState}
               />
             </label>
-            <label className="newPropInputRow">
+            <label className={styles.newPropInputRow}>
               Outstanding Loan
               <input
                 name="propLoan"
                 placeholder="e.g. 1000"
-                className="newPropInputField"
+                className={styles.newPropInputField}
                 type="number"
                 required
                 onChange={updateFormDataState}
               />
             </label>
 
-            <div className="newPropInputRow">
+            <div className={styles.newPropInputRow}>
               <motion.button
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.8 }}
-                className="buttonPrimary buttonCashBalSave"
+                className="buttonPrimary"
                 onClick={cancelForm}
               >
                 Cancel
@@ -172,7 +174,7 @@ const PropertiesNewProp: React.FC<PropertiesNewPropProps> = ({
               <motion.button
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.8 }}
-                className="buttonPrimary buttonCashBalSave"
+                className="buttonPrimary"
                 type="submit"
               >
                 Save

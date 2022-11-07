@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { updateCashAccountBalance } from "../../modules/serverRequests";
 import { CashAccountUpdateBalProps } from "../../../../types/typeInterfaces";
-import "./CashAccountUpdBal.css";
+import styles from "./CashAccountUpdBal.module.css";
 import { motion } from "framer-motion";
 import SoftDeleteButton from "../buttons/SoftDeleteButton";
 import SoftDeleteButtonConfirm from "../buttons/SoftDeleteButtonConfirm";
@@ -68,16 +68,18 @@ const CashAccountUpdBal: React.FC<CashAccountUpdateBalProps> = ({
           initial={{ opacity: 0, scale: 0.5 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.5 }}
-          className="editAccountBalForm"
+          className={styles.editAccountBalForm}
           onSubmit={saveNewAccountBalance}
         >
-          <span className="accountNickname">{data.account_nickname}</span>
+          <span className={styles.accountNickname}>
+            {data.account_nickname}
+          </span>
 
-          <div className="currencySymbolWrapper">
+          <div className={styles.currencySymbolWrapper}>
             {data.currencySymbol}
             <input
               name="newAccountBalanceInputBox"
-              className="newAccountBalanceInputBox"
+              className={styles.newAccountBalanceInputBox}
               type="number"
               ref={newAccountBalanceInputBox}
               value={updatedBalance}
@@ -87,7 +89,7 @@ const CashAccountUpdBal: React.FC<CashAccountUpdateBalProps> = ({
             <motion.button
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.8 }}
-              className="buttonPrimary buttonCashBalSave"
+              className={`${styles.buttonCashBalSave} buttonPrimary `}
               onClick={cancelForm}
               type="button"
             >
@@ -96,7 +98,7 @@ const CashAccountUpdBal: React.FC<CashAccountUpdateBalProps> = ({
             <motion.button
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.8 }}
-              className="buttonPrimary buttonCashBalSave"
+              className={`${styles.buttonCashBalSave} buttonPrimary `}
               type="submit"
             >
               Save

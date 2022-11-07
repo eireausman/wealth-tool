@@ -54,8 +54,7 @@
   font-weight: bolder;
   width: calc(100% - 1rem);
 }
-.cashAccountsTableHeader,
-.cashAccountsTableDataGridRow {
+.cashAccountsTableHeader {
   display: grid;
   grid-template-columns: 40% repeat(2, 30%);
 }
@@ -75,7 +74,7 @@
   cursor: pointer;
 }
 
-.cashAccountsTable > div.table-header {
+.cashAccountsTable > div.tableHeader {
   font-weight: 700;
 }
 

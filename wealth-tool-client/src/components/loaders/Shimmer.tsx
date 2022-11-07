@@ -1,5 +1,5 @@
 import React from "react";
-import "./Shimmer.css";
+import styles from "./Shimmer.module.css";
 
 interface ShimmerProps {
   height: string;
@@ -15,8 +15,11 @@ const Shimmer: React.FC<ShimmerProps> = ({ height, width, borderRadiusPX }) => {
   };
 
   return (
-    <div className="shimmerWrapper">
-      <div className="shimmerInternal animate" style={style}></div>
+    <div className={styles.shimmerWrapper}>
+      <div
+        className={`${styles.shimmerInternal} ${styles.animate}`}
+        style={style}
+      ></div>
     </div>
   );
 };

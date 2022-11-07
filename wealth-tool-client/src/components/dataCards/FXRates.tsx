@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { allFXRatesAPIData } from "../../../../types/typeInterfaces";
 import { getAllFXRateData } from "../../modules/serverRequests";
-import "./FXRates.css";
+import styles from "./FXRates.module.css";
 import { motion } from "framer-motion";
 import { useAssetCountContext } from "../../modules/Contexts";
 
@@ -27,15 +27,17 @@ const FXRates: React.FC = () => {
       >
         <h3 className="viewCardHeading">FX RATES</h3>
       </motion.div>
-      <section className="FXRatesTable">
-        <header className="FXRatesTableHeader">
-          <div className="table-header">FX Pair</div>
-          <div className="table-header">As At</div>
-          <div className="table-header">Rate</div>
+      <section className={styles.FXRatesTable}>
+        <header className={styles.FXRatesTableHeader}>
+          <div className={styles.tableHeader}>FX Pair</div>
+          <div className={styles.tableHeader}>As At</div>
+          <div className={styles.tableHeader}>Rate</div>
         </header>
-        <section className="FXRatesTableDataContainer scrollbarstyles">
+        <section
+          className={`${styles.FXRatesTableDataContainer} scrollbarstyles`}
+        >
           {allFXRatesAPIData?.map((data) => (
-            <div className="FXRatesTableDataGridRow" key={data.id}>
+            <div className={styles.FXRatesTableDataGridRow} key={data.id}>
               <div>
                 {data.currency_code_from} / {data.currency_code_to}
               </div>

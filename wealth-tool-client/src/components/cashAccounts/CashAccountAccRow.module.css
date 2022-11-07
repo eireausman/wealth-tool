@@ -1,0 +1,4 @@
+.cashAccountsTableDataGridRow {
+  display: grid;
+  grid-template-columns: 40% repeat(2, 30%);
+}

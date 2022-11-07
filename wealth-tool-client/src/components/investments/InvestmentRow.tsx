@@ -5,6 +5,7 @@ import getDisplayNumber from "../../modules/getDisplayNumber";
 import InvestmentsUpdateStock from "./InvestmentsUpdateStock";
 import { motion } from "framer-motion";
 import InvestmentRowPrice from "./InvestmentRowPrice";
+import styles from "./InvestmentRow.module.css";
 
 const InvestmentRow: React.FC<InvestmentRowProps> = ({
   data,
@@ -42,7 +43,7 @@ const InvestmentRow: React.FC<InvestmentRowProps> = ({
   return (
     <Fragment>
       <motion.div
-        className="investmentsTableDataGridRow"
+        className={styles.investmentsTableDataGridRow}
         onClick={() => setshowEditStockForm(true)}
         onKeyUp={(e) => checkKeyEnter(e)}
         tabIndex={0}
@@ -67,23 +68,25 @@ const InvestmentRow: React.FC<InvestmentRowProps> = ({
             }
           />
         </div>
-        <div className="columnInWideViewOnly">{data.holding_owner_name}</div>
-        <div className="columnInWideViewOnly"> {data.holding_institution}</div>
-        <div className="columnInWideViewOnly">
-          {" "}
+        <div className={styles.columnInWideViewOnly}>
+          {data.holding_owner_name}
+        </div>
+        <div className={styles.columnInWideViewOnly}>
+          {data.holding_institution}
+        </div>
+        <div className={styles.columnInWideViewOnly}>
           {data.holding_currency_code}
         </div>
         <div>{getDisplayNumber(data.holding_quantity_held)}</div>
-        <div className="columnInWideViewOnly">
+        <div className={styles.columnInWideViewOnly}>
           <InvestmentRowPrice data={data} />
         </div>
 
-        <div className="columnInWideViewOnly">
-          {" "}
+        <div className={styles.columnInWideViewOnly}>
           {data.holding_cost_total_value}
         </div>
         <div>
-          {selectedCurrency.currency_symbol}{" "}
+          {selectedCurrency.currency_symbol}
           {getDisplayNumber(data.investmentConvertedValue)}
         </div>
       </motion.div>

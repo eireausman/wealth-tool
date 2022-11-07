@@ -13,7 +13,7 @@ import {
 
 import { getCompanyStockByName } from "../../modules/serverRequests";
 import CardSpinner from "../loaders/CardSpinner";
-import "./InvestmentAddStockName.css";
+import styles from "./InvestmentAddStockName.module.css";
 import InvestmentAddStockNameSelected from "./InvestmentAddStockNameSelected";
 import { BsSearch } from "react-icons/bs";
 import useDebounce from "../../hooks/useDebounce";
@@ -109,11 +109,11 @@ const InvestmentAddStockName: React.FC<InvestmentAddStockNameProps> = ({
   return (
     <Fragment>
       {state.showSelectedStockInfo === false && (
-        <label className="newStockInputRow newStockInputRowStockName">
+        <label className={`${styles.newStockInputRow}`}>
           <BsSearch /> Stock Name
           <input
             name="stockName"
-            className="newStockInputField"
+            className={styles.newStockInputField}
             ref={stockNameNameInputBox}
             value={stockNameInput}
             type="text"
@@ -125,14 +125,14 @@ const InvestmentAddStockName: React.FC<InvestmentAddStockNameProps> = ({
         </label>
       )}
       {state.showSearchResultsContainer === true && (
-        <div className="stockNameSearchResultContainer">
+        <div className={styles.stockNameSearchResultContainer}>
           {companyNameSearchResults === undefined && (
             <CardSpinner cardTitle="" />
           )}
           {state.showNoResultsFoundMessage === false &&
             companyNameSearchResults?.map((item) => (
               <div
-                className="companyNameLink"
+                className={styles.companyNameLink}
                 onClick={() => selectThisCompany(item)}
                 key={item.id}
               >
@@ -142,7 +142,7 @@ const InvestmentAddStockName: React.FC<InvestmentAddStockNameProps> = ({
         </div>
       )}
       {state.showSelectedStockInfo === true && (
-        <div className="selectedStockData">
+        <div className={styles.selectedStockData}>
           <InvestmentAddStockNameSelected
             formData={formData}
             dispatch={dispatch}
@@ -151,7 +151,9 @@ const InvestmentAddStockName: React.FC<InvestmentAddStockNameProps> = ({
         </div>
       )}
       {state.showNoResultsFoundMessage === true && (
-        <div className="stockNameSearchResultContainer">No results found</div>
+        <div className={styles.stockNameSearchResultContainer}>
+          No results found
+        </div>
       )}
     </Fragment>
   );

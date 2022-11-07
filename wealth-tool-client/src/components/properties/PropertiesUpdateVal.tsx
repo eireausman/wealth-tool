@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { propertiesUpdateValProps } from "../../../../types/typeInterfaces";
 import { motion } from "framer-motion";
-import "./PropertiesUpdateVal.css";
+import styles from "./PropertiesUpdateVal.module.css";
 import { updatePropertyValue } from "../../modules/serverRequests";
 import ModalSavingData from "../modals/ModalSavingData";
 import SoftDeleteButtonConfirm from "../buttons/SoftDeleteButtonConfirm";
@@ -69,18 +69,18 @@ const PropertiesUpdateVal: React.FC<propertiesUpdateValProps> = ({
           initial={{ opacity: 0, scale: 0.5 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.5 }}
-          className="editPropertyForm"
+          className={styles.editPropertyForm}
           onSubmit={(e) => saveNewPropValue(e)}
         >
-          <span className="propertyValUpdateName">
+          <span className={styles.propertyValUpdateName}>
             {data.property_nickname.toUpperCase()}
           </span>
-          <label className="newPropertyValueInputRow">
+          <label className={styles.newPropertyValueInputRow}>
             Valuation {data.property_valuation_curr_symbol}
             {}
             <input
-              name="newPropertyValueInputBox"
-              className="newPropertyValueInputBox"
+              name={styles.newPropertyValueInputBox}
+              className={styles.newPropertyValueInputBox}
               type="number"
               ref={newPropValueInputBox}
               value={propValuation}
@@ -88,18 +88,18 @@ const PropertiesUpdateVal: React.FC<propertiesUpdateValProps> = ({
               required
             />
           </label>
-          <label className="newPropertyValueInputRow">
+          <label className={styles.newPropertyValueInputRow}>
             Loan Amount {data.property_valuation_curr_symbol}
             <input
-              name="newPropertyLoanAmountInputBox"
-              className="newPropertyLoanAmountInputBox"
+              name={styles.newPropertyLoanAmountInputBox}
+              className={styles.newPropertyLoanAmountInputBox}
               type="number"
               value={loanValue}
               onChange={newPropLoanAmount}
               required
             />
           </label>
-          <div className="newPropertyValueInputRow">
+          <div className={styles.newPropertyValueInputRow}>
             <motion.button
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.8 }}
@@ -111,7 +111,7 @@ const PropertiesUpdateVal: React.FC<propertiesUpdateValProps> = ({
             <motion.button
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.8 }}
-              className="buttonPrimary buttonCashBalSave"
+              className="buttonPrimary"
               type="submit"
             >
               Save

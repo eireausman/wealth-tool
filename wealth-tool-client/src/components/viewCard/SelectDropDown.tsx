@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import React from "react";
-import "./SelectDropDown.css";
+import styles from "./SelectDropDown.module.css";
 
 interface selectDropDownSortArray {
   readableString: string;
@@ -31,19 +31,19 @@ const SelectDropDown: React.FC<SelectDropDownProps> = ({
       initial={{ scale: 0.5 }}
       animate={{ scale: 1 }}
       transition={{ type: "spring", stiffness: 400, damping: 25 }}
-      className="selectContainer"
+      className={styles.selectContainer}
       onMouseEnter={() => setshowDropdown(true)}
       onMouseLeave={() => setshowDropdown(false)}
     >
-      <ul className="selectDropDownList">
+      <ul className={styles.selectDropDownList}>
         {sortArray.map((item, index) => (
           <li
             key={index}
             tabIndex={0}
             className={
               orderByThisColumn === item.dbField
-                ? "selectDropDownListItemActive"
-                : "selectDropDownListItem"
+                ? styles.selectDropDownListItemActive
+                : styles.selectDropDownListItem
             }
             onKeyUp={(e) => checkKeyEnter(e, item.dbField)}
             onClick={() => setorderByThisColumn(() => item.dbField)}

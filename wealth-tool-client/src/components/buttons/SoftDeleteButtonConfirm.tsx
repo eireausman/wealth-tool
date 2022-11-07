@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import React, { Fragment, useState } from "react";
-import "./SoftDeleteButtonConfirm.css";
+import styles from "./SoftDeleteButtonConfirm.module.css";
 import { SoftDeleteButtonConfirmProps } from "../../../../types/typeInterfaces";
 import {
   deleteCashAccount,
@@ -47,7 +47,7 @@ const SoftDeleteButtonConfirm: React.FC<SoftDeleteButtonConfirmProps> = ({
   };
 
   return (
-    <div className="confirmContainer">
+    <div className={styles.confirmContainer}>
       <h4>{assetTitle}</h4>
       <p>Are you sure you want to delete this asset?</p>
       {showSavingMessage === true && (
@@ -61,7 +61,7 @@ const SoftDeleteButtonConfirm: React.FC<SoftDeleteButtonConfirmProps> = ({
             transition={{ duration: 0.5 }}
             whileTap={{ scale: 0.9 }}
             onClick={cancelForm}
-            className="buttonWhite buttonSoftDeleteCancel"
+            className={`buttonWhite ${styles.buttonSoftDeleteCancel}`}
           >
             Cancel - do not delete.
           </motion.button>
@@ -71,7 +71,7 @@ const SoftDeleteButtonConfirm: React.FC<SoftDeleteButtonConfirmProps> = ({
             transition={{ duration: 0.5 }}
             whileTap={{ scale: 0.9 }}
             onClick={softDeleteThis}
-            className="buttonTransparent buttonSoftDeleteConfirm"
+            className={`buttonTransparent ${styles.buttonSoftDeleteConfirm}`}
           >
             Click to confirm deletion.
           </motion.button>

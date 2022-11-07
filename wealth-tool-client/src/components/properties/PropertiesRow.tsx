@@ -1,10 +1,7 @@
 import { motion } from "framer-motion";
 import React, { Fragment, useState } from "react";
-import {
-  propertiesAPIData,
-  selectedCurrencyDetails,
-  PropertiesRowProps,
-} from "../../../../types/typeInterfaces";
+import { PropertiesRowProps } from "../../../../types/typeInterfaces";
+import styles from "./PropertiesRow.module.css";
 import PropertiesUpdateVal from "./PropertiesUpdateVal";
 import getDisplayNumber from "../../modules/getDisplayNumber";
 import { FaEdit } from "react-icons/fa";
@@ -51,7 +48,7 @@ const PropertiesRow: React.FC<PropertiesRowProps> = ({
   return (
     <Fragment>
       <motion.div
-        className="viewCardRow propertiesViewCardRow"
+        className={`${styles.propertiesViewCardRow} viewCardRow`}
         key={data.property_id}
         onMouseEnter={(e) => {
           setstyleRowID(data.property_id);
@@ -65,8 +62,8 @@ const PropertiesRow: React.FC<PropertiesRowProps> = ({
         tabIndex={0}
         onKeyUp={(e) => checkKeyEnter(e)}
       >
-        <div className="viewCardRowLeftBox PropertyLeftBox">
-          <span className="propertyName">
+        <div className={`${styles.PropertyLeftBox} viewCardRowLeftBox`}>
+          <span className={styles.propertyName}>
             {data.property_nickname.toUpperCase()}
             <FaEdit
               className="editValueIcon"
@@ -78,15 +75,17 @@ const PropertiesRow: React.FC<PropertiesRowProps> = ({
               }
             />
           </span>
-          <span className="ownerText">Owner: {data.property_owner_name}</span>
-          <span className="valueBaseCurrency">
+          <span className={styles.ownerText}>
+            Owner: {data.property_owner_name}
+          </span>
+          <span className={styles.valueBaseCurrency}>
             Currency: {data.property_valuation_currency}
           </span>
         </div>
         <div className="viewCardRowRightBox">
-          <motion.table className="valuesTable">
+          <motion.table className={styles.valuesTable}>
             <tbody>
-              <tr className="calculatedBalanceValueRow">
+              <tr className={styles.calculatedBalanceValueRow}>
                 <td>Net {selectedCurrency.currency_code}: </td>
                 <td>
                   {selectedCurrency.currency_symbol}{" "}

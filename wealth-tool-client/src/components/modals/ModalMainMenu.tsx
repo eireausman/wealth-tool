@@ -10,7 +10,7 @@ import {
   getTotalPosAssets,
   logUserOut,
 } from "../../modules/serverRequests";
-import "./ModalMainMenu.css";
+import styles from "./ModalMainMenu.module.css";
 import OptionsBoardNetWealth from "../wealthTotals/OptionsBoardNetWealth";
 import OptionsBoardTotalAssets from "../wealthTotals/OptionsBoardTotalAssets";
 import OptionsBoardTotalDebt from "../wealthTotals/OptionsBoardTotalDebt";
@@ -136,10 +136,10 @@ const ModalMainMenu: React.FC<ModalMainMenuProps> = ({
 
   return (
     <>
-      <div className="modalMainMenuTeaser">
+      <div className={styles.modalMainMenuTeaser}>
         <div
           onClick={() => setshowSlideOutMenu(true)}
-          className="modalMainMenuTeaserBtnContainer"
+          className={styles.modalMainMenuTeaserBtnContainer}
         >
           <OptionsBoardNetWealth
             netWealthValue={netWealthValue}
@@ -159,15 +159,18 @@ const ModalMainMenu: React.FC<ModalMainMenuProps> = ({
         </div>
       </div>
       {showSlideOutMenu === true && (
-        <section className="modalMainMenuContainer" onClick={hideSlideOutMenu}>
+        <section
+          className={styles.modalMainMenuContainer}
+          onClick={hideSlideOutMenu}
+        >
           <motion.div
             initial={{ x: 300, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: 300, opacity: 0 }}
-            className="modalMainMenuSlideOut"
+            className={styles.modalMainMenuSlideOut}
           >
             <motion.button
-              className="ModalMainMenuCloseButton"
+              className={styles.ModalMainMenuCloseButton}
               animate={{
                 rotate: closeButtonSpinIsActive === true ? 360 : 0,
               }}

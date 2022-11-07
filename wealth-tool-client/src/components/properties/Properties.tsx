@@ -8,7 +8,7 @@ import React, {
 } from "react";
 import { PropertiesProps } from "../../../../types/typeInterfaces";
 import CardSpinner from "../loaders/CardSpinner";
-import "./Properties.css";
+import styles from "./Properties.module.css";
 import PropertiesNewProp from "./PropertiesNewProp";
 import { propertiesAPIData } from "../../../../types/typeInterfaces";
 import {
@@ -167,7 +167,7 @@ const Properties: React.FC<PropertiesProps> = ({
             />
           )}
 
-          <div className="propertiesOflowContainer scrollbarstyles">
+          <div className={`${styles.propertiesOflowContainer} scrollbarstyles`}>
             {propertyAccAPIData?.map((data) => (
               <Fragment key={data.property_id}>
                 {shimmerTheseRows === data.property_id ||

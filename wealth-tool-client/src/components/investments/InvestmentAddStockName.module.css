@@ -17,10 +17,30 @@
   border: 1px solid #949494;
   font-size: 0.8rem;
 }
-.newStockInputRowStockName {
-  margin-bottom: 35px;
-}
+
 .companyNameLink:hover {
   cursor: pointer;
   text-decoration: underline;
+}
+
+.newStockInputRow {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  margin: 0px 20px 35px 0px;
+  font-weight: unset;
+  font-size: 0.8rem;
+}
+
+.newStockInputField {
+  display: flex;
+  background: transparent;
+  padding: 4px;
+  border-radius: 7px;
+  border-width: thin;
+  border-color: rgb(75, 166, 246);
+  margin: 0px 0px 0px 0px;
+  width: 120px;
 }

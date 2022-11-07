@@ -5,13 +5,14 @@ import Tippy from "@tippyjs/react";
 import "tippy.js/dist/tippy.css";
 import { FiInfo } from "react-icons/fi";
 import Shimmer from "../loaders/Shimmer";
+import styles from "./OptionsBoardWealthFigure.module.css";
 
 const OptionsBoardTotalAssets: React.FC<OptionsBoardTotalAssetsProps> = ({
   selectedCurrencySymbol,
   totalPosAssets,
 }) => {
   return (
-    <button className="wealthContainerButton">
+    <button className={styles.wealthContainerButton}>
       <Tippy
         content={
           <span>
@@ -24,17 +25,17 @@ const OptionsBoardTotalAssets: React.FC<OptionsBoardTotalAssetsProps> = ({
           <FiInfo color="white" />
         </span>
       </Tippy>
-      <b className="wealthFigureTitle">Total Assets</b>{" "}
+      <b className={styles.wealthFigureTitle}>Total Assets</b>{" "}
       {totalPosAssets === undefined ? (
-        <div className="wealthFigureShimmer">
+        <div className={styles.wealthFigureShimmer}>
           <Shimmer height={"1.5em"} width={"96px"} borderRadiusPX={"5px"} />
         </div>
       ) : (
         <p
           className={
             totalPosAssets !== undefined && totalPosAssets < 0
-              ? "wealthFigureNegative"
-              : "wealthFigurePositive"
+              ? styles.wealthFigureNegative
+              : styles.wealthFigurePositive
           }
         >
           {selectedCurrencySymbol}

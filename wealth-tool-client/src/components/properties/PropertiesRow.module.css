@@ -1,3 +1,12 @@
+.ownerText {
+  font-weight: unset;
+  margin-top: 2px;
+  font-size: 0.8rem;
+}
+.PropertyLeftBox {
+  cursor: pointer;
+}
+
 .propertiesViewCardRow {
   min-width: 318px;
   cursor: pointer;
@@ -11,14 +20,15 @@
   padding-bottom: 5px;
 }
 
-.propertiesOflowContainer {
-  overflow: auto;
-  max-height: 300px;
-}
-
 .underNetTexts {
   font-weight: unset;
   margin-top: 0px;
+  font-size: 0.8rem;
+}
+
+.valuesTable {
+  font-weight: unset;
+  margin-top: 2px;
   font-size: 0.8rem;
 }
 
@@ -42,16 +52,6 @@
 .valueBaseCurrency {
   font-weight: unset;
   margin-top: 5px;
-  font-size: 0.8rem;
-}
-
-.PropertyLeftBox {
-  cursor: pointer;
-}
-
-.valuesTable {
-  font-weight: unset;
-  margin-top: 2px;
   font-size: 0.8rem;
 }
 

@@ -8,7 +8,6 @@ import {
 import { ChartNetWealthCategoriesProps } from "../../../../types/typeInterfaces";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Pie } from "react-chartjs-2";
-import "./ChartNetWealthCategories.css";
 
 const ChartNetWealthCategories: React.FC<ChartNetWealthCategoriesProps> = ({
   selectedCurrencyCode,

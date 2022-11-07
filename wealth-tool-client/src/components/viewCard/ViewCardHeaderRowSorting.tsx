@@ -1,8 +1,7 @@
 import { motion } from "framer-motion";
 import React from "react";
-import { selectedCurrencyDetails } from "../../../../types/typeInterfaces";
 import CardSpinner from "../loaders/CardSpinner";
-import "./ViewCardHeaderRow.css";
+import styles from "./ViewCardHeaderRow.module.css";
 
 interface ViewCardHeaderRowSortingProps {
   rowIcon: JSX.Element;
@@ -15,17 +14,17 @@ const ViewCardHeaderRowSorting: React.FC<ViewCardHeaderRowSortingProps> = ({
 }) => {
   return (
     <>
-      <motion.div className="viewCardHeaderRow">
-        <h3 className="viewCardHeading">
+      <motion.div className={styles.viewCardHeaderRow}>
+        <h3 className={styles.viewCardHeading}>
           {rowIcon}
           {rowTitle}
         </h3>
       </motion.div>
-      <div className="viewCardSubHeading">
+      <div className={styles.viewCardSubHeading}>
         <span></span>
 
-        <div className="viewCardButtons">
-          <button className="buttonWhite buttonSortingSpinner">
+        <div className={styles.viewCardButtons}>
+          <button className={`${styles.buttonSortingSpinner} buttonWhite `}>
             <CardSpinner cardTitle="" />
           </button>
         </div>

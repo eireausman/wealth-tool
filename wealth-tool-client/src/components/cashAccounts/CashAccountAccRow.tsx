@@ -6,6 +6,7 @@ import { CashAccountAccRowProps } from "../../../../types/typeInterfaces";
 import CashAccountUpdBal from "./CashAccountUpdBal";
 import Tippy from "@tippyjs/react";
 import "tippy.js/dist/tippy.css";
+import styles from "./CashAccountAccRow.module.css";
 
 const CashAccountAccRow: React.FC<CashAccountAccRowProps> = ({
   data,
@@ -48,7 +49,7 @@ const CashAccountAccRow: React.FC<CashAccountAccRowProps> = ({
   return (
     <Fragment>
       <motion.div
-        className="cashAccountsTableDataGridRow"
+        className={styles.cashAccountsTableDataGridRow}
         tabIndex={0}
         onKeyUp={(e) => checkKeyEnter(e)}
         onClick={(e) => editThisAccount()}

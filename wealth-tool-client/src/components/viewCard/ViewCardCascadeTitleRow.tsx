@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import "./ViewCardCascadeTitleRow.css";
+import styles from "./ViewCardCascadeTitleRow.module.css";
 import { useAssetCountContext } from "../../modules/Contexts";
 
 interface ViewCardCascadeTitleRowProps {
@@ -15,7 +15,7 @@ const ViewCardCascadeTitleRow: React.FC<ViewCardCascadeTitleRowProps> = ({
 
   if (assetCount.totalAssetCount === 0 && showIfNoAssets === false) return null;
 
-  return <h2 className="ViewCardCascadeTitle">{sectionTitle}</h2>;
+  return <h2 className={styles.ViewCardCascadeTitle}>{sectionTitle}</h2>;
 };
 
 export default ViewCardCascadeTitleRow;

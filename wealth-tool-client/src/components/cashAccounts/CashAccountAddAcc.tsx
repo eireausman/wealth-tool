@@ -5,7 +5,7 @@ import {
   AddNewCashAccountPropProps,
   AddNewCashAccountFormData,
 } from "../../../../types/typeInterfaces";
-import "./CashAccountAddAcc.css";
+import styles from "./CashAccountAddAcc.module.css";
 import { addNewCashAccount } from "../../modules/serverRequests";
 import ModalSavingData from "../modals/ModalSavingData";
 import { useCurrenciesFromDBContext } from "../../modules/Contexts";
@@ -94,15 +94,17 @@ const CashAccountAddAcc: React.FC<AddNewCashAccountPropProps> = ({
           initial={{ opacity: 0, scale: 0.5 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.5 }}
-          className="addNewCashAccForm"
+          className={styles.addNewCashAccForm}
           onSubmit={(e) => saveNewCashAccount(e)}
         >
-          <span className="addNewCashAccFormHeading">New Cash Account</span>
-          <label className="newCashAccInputRow">
+          <span className={styles.addNewCashAccFormHeading}>
+            New Cash Account
+          </span>
+          <label className={styles.newCashAccInputRow}>
             Account Nickname
             <input
               name="account_nickname"
-              className="newCashAccInputField"
+              className={styles.newCashAccInputField}
               type="text"
               required
               ref={accountNicknameInputBox}
@@ -111,11 +113,11 @@ const CashAccountAddAcc: React.FC<AddNewCashAccountPropProps> = ({
             />
           </label>
 
-          <label className="newCashAccInputRow">
+          <label className={styles.newCashAccInputRow}>
             Account No. last 4 digits
             <input
               name="account_number_last4_digits"
-              className="newCashAccInputField"
+              className={styles.newCashAccInputField}
               type="number"
               required
               max={9999}
@@ -124,33 +126,33 @@ const CashAccountAddAcc: React.FC<AddNewCashAccountPropProps> = ({
             />
           </label>
 
-          <label className="newCashAccInputRow">
+          <label className={styles.newCashAccInputRow}>
             Owner's Name
             <input
               name="account_owner_name"
-              className="newCashAccInputField"
+              className={styles.newCashAccInputField}
               type="text"
               required
               value={formData?.account_owner_name}
               onChange={updateFormDataState}
             />
           </label>
-          <label className="newCashAccInputRow">
+          <label className={styles.newCashAccInputRow}>
             Account Balance
             <input
               name="account_balance"
               placeholder="e.g. 1000"
-              className="newCashAccInputField"
+              className={styles.newCashAccInputField}
               type="number"
               required
               value={formData?.account_balance}
               onChange={updateFormDataState}
             />
           </label>
-          <label className="newCashAccInputRow">
+          <label className={styles.newCashAccInputRow}>
             Balance currency:
             <select
-              className="newCashAccInputField"
+              className={styles.newCashAccInputField}
               name="currencyCode"
               id="currencyCode"
               ref={currencyCodeSelection}
@@ -164,7 +166,7 @@ const CashAccountAddAcc: React.FC<AddNewCashAccountPropProps> = ({
             </select>
           </label>
 
-          <div className="newCashAccInputRow">
+          <div className={styles.newCashAccInputRow}>
             <motion.button
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.8 }}
