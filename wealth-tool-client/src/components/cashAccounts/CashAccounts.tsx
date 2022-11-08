@@ -18,7 +18,6 @@ import ViewCardHeaderRow from "../viewCard/ViewCardHeaderRow";
 import CashAccountAccRowUpdatingVals from "./CashAccountAccRowUpdatingVals";
 import ViewCardHeaderRowSorting from "../viewCard/ViewCardHeaderRowSorting";
 import { useAssetCountContext } from "../../modules/Contexts";
-import useSetShimmer from "../../hooks/useSetShimmerState";
 import useGetCashAccountBalances from "./hooks/useGetCashAccountBalances";
 import useUpdateNetCashAccTotal from "./hooks/useUpdateNetCashAccTotal";
 
@@ -44,6 +43,7 @@ const CashAccounts: React.FC<CashAccountsProps> = ({
   const [thisItemIdBeingEdited, setthisItemIdBeingEdited] = useState<number>(0);
   const [orderByThisColumn, setorderByThisColumn] =
     useState<string>("account_nickname");
+  const [shimmerAllRows, setshimmerAllRows] = useState(false);
 
   // useRef
   const previousOrderBy = useRef(orderByThisColumn);
@@ -53,14 +53,6 @@ const CashAccounts: React.FC<CashAccountsProps> = ({
   const assetCount = useContext(useAssetCountContext);
 
   // Hooks
-  const shimmerTheseRows = useSetShimmer({
-    thisItemIdBeingEdited,
-    previousCurrency: previousCurrency.current,
-    selectedCurrency: selectedCurrency.currency_code,
-    previousOrderBy: previousOrderBy.current,
-    orderByThisColumn,
-  });
-
   const cashAccAPIData = useGetCashAccountBalances({
     thisItemIdBeingEdited,
     selectedCurrencyCode: selectedCurrency.currency_code,
@@ -81,11 +73,21 @@ const CashAccounts: React.FC<CashAccountsProps> = ({
 
   // useEffect
   useEffect(() => {
+    if (
+      previousCurrency.current !== selectedCurrency.currency_code &&
+      previousOrderBy.current === orderByThisColumn
+    ) {
+      setshimmerAllRows(true);
+    }
+    previousCurrency.current = selectedCurrency.currency_code;
+    previousOrderBy.current = orderByThisColumn;
+  }, [orderByThisColumn, selectedCurrency.currency_code]);
+
+  useEffect(() => {
     // set edit account to 0 to avoid shimmer being left 'on' for single record.
     setthisItemIdBeingEdited(0);
-    previousOrderBy.current = orderByThisColumn;
-    previousCurrency.current = selectedCurrency.currency_code;
-  }, [cashAccAPIData, orderByThisColumn]);
+    setshimmerAllRows(false);
+  }, [cashAccAPIData]);
 
   // Functions
   const closeModal = (e: React.FormEvent<EventTarget>) => {
@@ -144,8 +146,8 @@ const CashAccounts: React.FC<CashAccountsProps> = ({
             >
               {cashAccAPIData?.map((data, index) => (
                 <Fragment key={data.account_id}>
-                  {shimmerTheseRows === data.account_id ||
-                  shimmerTheseRows === "all" ? (
+                  {thisItemIdBeingEdited === data.account_id ||
+                  shimmerAllRows === true ? (
                     <CashAccountAccRowUpdatingVals
                       key={data.account_id}
                       data={data}

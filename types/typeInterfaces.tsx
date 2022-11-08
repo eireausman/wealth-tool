@@ -285,7 +285,7 @@ export interface InvestmentsUpdateStockProps {
   setentryIDWasDeleted: React.Dispatch<
     React.SetStateAction<number | undefined>
   >;
-  itemDetailUpdated: (holdingID: number) => void;
+  setthisItemIdBeingEdited: React.Dispatch<React.SetStateAction<number>>;
 }
 
 export interface LoginAttemptFormData {
@@ -395,7 +395,7 @@ export interface InvestmentRowProps {
   setentryIDWasDeleted: React.Dispatch<
     React.SetStateAction<number | undefined>
   >;
-  itemDetailUpdated: (holdingID: number) => void;
+  setthisItemIdBeingEdited: React.Dispatch<React.SetStateAction<number>>;
 }
 
 export interface InvestmentRowUpdatingPricesProps {

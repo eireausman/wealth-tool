@@ -1,30 +1,24 @@
 import React, {
   useState,
-  useEffect,
   Fragment,
   useRef,
-  useCallback,
   useContext,
+  useEffect,
 } from "react";
 import { InvestmentsProps } from "../../../../types/typeInterfaces";
 import CardSpinner from "../loaders/CardSpinner";
 import styles from "./Investments.module.css";
 import InvestmentAddStock from "./InvestmentAddStock";
 import InvestmentRow from "./InvestmentRow";
-import { investmentsAPIData } from "../../../../types/typeInterfaces";
-import {
-  getInvestmentData,
-  getNetInvestmentTotal,
-} from "../../modules/serverRequests";
 import NoAssets from "../viewCard/NoAssetsMessage";
-import { AxiosResponse } from "axios";
 import ButtonAddAsset from "../buttons/ButtonAddAsset";
 import { GoGraph } from "react-icons/go";
 import ViewCardHeaderRow from "../viewCard/ViewCardHeaderRow";
 import InvestmentRowUpdatingPrices from "./InvestmentRowUpdatingPrices";
 import ViewCardHeaderRowSorting from "../viewCard/ViewCardHeaderRowSorting";
 import { useAssetCountContext } from "../../modules/Contexts";
-import useSetShimmer from "../../hooks/useSetShimmerState";
+import useRefreshInvestData from "./hooks/useRefreshInvestData";
+import useUpdateNetInvestTotal from "./hooks/useUpdateNetInvestTotal";
 
 const Investments: React.FC<InvestmentsProps> = ({
   triggerRecalculations,
@@ -38,17 +32,11 @@ const Investments: React.FC<InvestmentsProps> = ({
     { readableString: "Currency", dbField: "holding_currency_code" },
   ];
 
-  const [showNoAccountsMessage, setshowNoAccountsMessage] = useState(false);
+  // useState
   const [orderByThisColumn, setorderByThisColumn] =
     useState<string>("holding_stock_name");
-
   const [showAddNewStockForm, setShowAddNewStockForm] =
     useState<boolean>(false);
-  const [investmentAPIData, setinvestmentAPIData] =
-    useState<Array<investmentsAPIData>>();
-  const [investmentsTotalValue, setInvestmentsTotalValue] = useState<
-    number | undefined
-  >(0);
   const [entryIDWasDeleted, setentryIDWasDeleted] = useState<
     number | undefined
   >(undefined);
@@ -56,72 +44,54 @@ const Investments: React.FC<InvestmentsProps> = ({
     undefined
   );
   const [thisItemIdBeingEdited, setthisItemIdBeingEdited] = useState<number>(0);
+  const [shimmerAllRows, setshimmerAllRows] = useState(false);
 
+  // useRef
   const previousOrderBy = useRef(orderByThisColumn);
   const previousCurrency = useRef(selectedCurrency.currency_code);
+
+  // useContext
   const assetCount = useContext(useAssetCountContext);
 
-  const refreshInvestmentsDataFromDB = useCallback(async () => {
-    if (previousOrderBy.current === orderByThisColumn) {
-      const investData: AxiosResponse<any, any> | undefined =
-        await getInvestmentData(
-          selectedCurrency.currency_code,
-          orderByThisColumn
-        );
+  // Hooks
 
-      if (
-        investData !== undefined &&
-        investData.status === 200 &&
-        investData.data !== undefined
-      ) {
-        setinvestmentAPIData(investData.data);
-      }
-    }
-  }, [selectedCurrency, orderByThisColumn]);
-
-  const itemDetailUpdated = useCallback(
-    (holdingID: number) => {
-      setthisItemIdBeingEdited(holdingID);
-      refreshInvestmentsDataFromDB().then(() => {
-        setthisItemIdBeingEdited(0);
-      });
-    },
-    [refreshInvestmentsDataFromDB]
-  );
-
-  const updateNetInvestmentTotal = useCallback(async () => {
-    if (previousOrderBy.current === orderByThisColumn) {
-      setInvestmentsTotalValue(undefined);
-      const total = await getNetInvestmentTotal(selectedCurrency.currency_code);
-      setInvestmentsTotalValue(total);
-    }
-  }, [selectedCurrency.currency_code, orderByThisColumn]);
-
-  const shimmerTheseRows = useSetShimmer({
+  const investmentAPIData = useRefreshInvestData({
     thisItemIdBeingEdited,
-    previousCurrency: previousCurrency.current,
-    selectedCurrency: selectedCurrency.currency_code,
-    previousOrderBy: previousOrderBy.current,
+    selectedCurrencyCode: selectedCurrency.currency_code,
     orderByThisColumn,
-  });
-
-  useEffect(() => {
-    refreshInvestmentsDataFromDB().then(() => {
-      previousOrderBy.current = orderByThisColumn;
-      previousCurrency.current = selectedCurrency.currency_code;
-    });
-  }, [
-    refreshInvestmentsDataFromDB,
     entryIDWasDeleted,
     itemIDWasAdded,
-    selectedCurrency,
+  });
+
+  const investmentsTotalValue = useUpdateNetInvestTotal({
+    selectedCurrencyCode: selectedCurrency.currency_code,
+    previousOrderBy: previousOrderBy.current,
     orderByThisColumn,
-  ]);
+    entryIDWasDeleted,
+    itemIDWasAdded,
+    thisItemIdBeingEdited,
+    investmentAPIData,
+  });
+
+  // useEffect
+  useEffect(() => {
+    if (
+      previousCurrency.current !== selectedCurrency.currency_code &&
+      previousOrderBy.current === orderByThisColumn
+    ) {
+      setshimmerAllRows(true);
+    }
+    previousCurrency.current = selectedCurrency.currency_code;
+    previousOrderBy.current = orderByThisColumn;
+  }, [orderByThisColumn, selectedCurrency.currency_code]);
 
   useEffect(() => {
-    updateNetInvestmentTotal();
-  }, [updateNetInvestmentTotal, investmentAPIData]);
+    // set edit account to 0 to avoid shimmer being left 'on' for single record.
+    setthisItemIdBeingEdited(0);
+    setshimmerAllRows(false);
+  }, [investmentAPIData]);
 
+  // functions
   const closeModal = (e: React.FormEvent<EventTarget>) => {
     const target = e.target as HTMLElement;
     if (target.className === "newAdditionModal") {
@@ -203,8 +173,8 @@ const Investments: React.FC<InvestmentsProps> = ({
             >
               {investmentAPIData?.map((data, index) => (
                 <Fragment key={data.holding_id}>
-                  {shimmerTheseRows === data.holding_id ||
-                  shimmerTheseRows === "all" ? (
+                  {thisItemIdBeingEdited === data.holding_id ||
+                  shimmerAllRows === true ? (
                     <InvestmentRowUpdatingPrices
                       key={data.holding_id}
                       data={data}
@@ -217,7 +187,7 @@ const Investments: React.FC<InvestmentsProps> = ({
                       settriggerRecalculations={settriggerRecalculations}
                       triggerRecalculations={triggerRecalculations}
                       setentryIDWasDeleted={setentryIDWasDeleted}
-                      itemDetailUpdated={itemDetailUpdated}
+                      setthisItemIdBeingEdited={setthisItemIdBeingEdited}
                     />
                   )}
                 </Fragment>

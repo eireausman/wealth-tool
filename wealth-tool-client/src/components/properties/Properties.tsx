@@ -17,7 +17,6 @@ import PropertiesRow from "./PropertiesRow";
 import PropertiesRowUpdatingVals from "./PropertiesRowUpdatingVals";
 import ViewCardHeaderRowSorting from "../viewCard/ViewCardHeaderRowSorting";
 import { useAssetCountContext } from "../../modules/Contexts";
-import useSetShimmer from "../../hooks/useSetShimmerState";
 import useRefreshPropertiesVals from "./hooks/useRefreshPropertiesVals";
 import useUpdateNetPropTotal from "./hooks/useUpdateNetPropTotal";
 
@@ -43,6 +42,7 @@ const Properties: React.FC<PropertiesProps> = ({
     undefined
   );
   const [thisItemIdBeingEdited, setthisItemIdBeingEdited] = useState<number>(0);
+  const [shimmerAllRows, setshimmerAllRows] = useState(false);
 
   // useRef
   const previousOrderBy = useRef(orderByThisColumn);
@@ -52,14 +52,6 @@ const Properties: React.FC<PropertiesProps> = ({
   const assetCount = useContext(useAssetCountContext);
 
   // Hooks
-  const shimmerTheseRows = useSetShimmer({
-    thisItemIdBeingEdited,
-    previousCurrency: previousCurrency.current,
-    selectedCurrency: selectedCurrency.currency_code,
-    previousOrderBy: previousOrderBy.current,
-    orderByThisColumn,
-  });
-
   const propertyAccAPIData = useRefreshPropertiesVals({
     thisItemIdBeingEdited,
     selectedCurrencyCode: selectedCurrency.currency_code,
@@ -80,11 +72,21 @@ const Properties: React.FC<PropertiesProps> = ({
 
   // useEffect
   useEffect(() => {
+    if (
+      previousCurrency.current !== selectedCurrency.currency_code &&
+      previousOrderBy.current === orderByThisColumn
+    ) {
+      setshimmerAllRows(true);
+    }
+    previousCurrency.current = selectedCurrency.currency_code;
+    previousOrderBy.current = orderByThisColumn;
+  }, [orderByThisColumn, selectedCurrency.currency_code]);
+
+  useEffect(() => {
     // set edit account to 0 to avoid shimmer being left 'on' for single record.
     setthisItemIdBeingEdited(0);
-    previousOrderBy.current = orderByThisColumn;
-    previousCurrency.current = selectedCurrency.currency_code;
-  }, [propertyAccAPIData, orderByThisColumn]);
+    setshimmerAllRows(false);
+  }, [propertyAccAPIData]);
 
   // functions
   const closeModal = (e: React.FormEvent<EventTarget>) => {
@@ -135,8 +137,8 @@ const Properties: React.FC<PropertiesProps> = ({
           <div className={`${styles.propertiesOflowContainer} scrollbarstyles`}>
             {propertyAccAPIData?.map((data) => (
               <Fragment key={data.property_id}>
-                {shimmerTheseRows === data.property_id ||
-                shimmerTheseRows === "all" ? (
+                {thisItemIdBeingEdited === data.property_id ||
+                shimmerAllRows === true ? (
                   <PropertiesRowUpdatingVals
                     key={data.property_id}
                     data={data}
