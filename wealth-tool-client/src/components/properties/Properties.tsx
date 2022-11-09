@@ -98,10 +98,8 @@ const Properties: React.FC<PropertiesProps> = ({
 
   return (
     <section className="viewCard">
-      {assetCount.properties === undefined && (
-        <CardSpinner cardTitle="Properties" />
-      )}
-      {assetCount.properties <= 0 && (
+      {assetCount.properties < 0 && <CardSpinner cardTitle="Properties" />}
+      {assetCount.properties === 0 && (
         <Fragment>
           <NoAssets
             cardTitle="Property"

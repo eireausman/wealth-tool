@@ -51,6 +51,7 @@ const CashAccountAccRow: React.FC<CashAccountAccRowProps> = ({
       <motion.div
         className={styles.cashAccountsTableDataGridRow}
         tabIndex={0}
+        data-testid="editThisAccountDiv"
         onKeyUp={(e) => checkKeyEnter(e)}
         onClick={(e) => editThisAccount()}
         onMouseEnter={(e) => {
@@ -91,7 +92,12 @@ const CashAccountAccRow: React.FC<CashAccountAccRowProps> = ({
         </Tippy>
       </motion.div>
       {showEditAccountForm === true && (
-        <div className="newAdditionModal" onClick={(e) => closeModal(e)}>
+        <div
+          className="newAdditionModal"
+          data-testid="newAdditionModal"
+          onClick={(e) => closeModal(e)}
+          onKeyUp={(e) => checkForEscapeKey(e)}
+        >
           <div className="newAdditionModalInner">
             <CashAccountUpdBal
               data={data}

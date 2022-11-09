@@ -59,6 +59,7 @@ const Login: React.FC = () => {
         initial={{ opacity: 0, scale: 0.5 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.5 }}
+        data-testid="loginForm"
         method="POST"
         className="column-form loginForm"
         onSubmit={submitFormData}
@@ -71,6 +72,7 @@ const Login: React.FC = () => {
             <input
               className="loginFormInputField"
               name="username"
+              data-testid="usernameField"
               minLength={USERNAMEMIN}
               required
               type="text"
@@ -85,6 +87,7 @@ const Login: React.FC = () => {
             <input
               className="loginFormInputField"
               name="password"
+              data-testid="passwordField"
               minLength={PASSWORDMIN}
               required
               type="password"
@@ -98,6 +101,7 @@ const Login: React.FC = () => {
           whileTap={{ scale: 0.8 }}
           transition={{ type: "spring", stiffness: 400, damping: 10 }}
           type="submit"
+          data-testid="loginButton"
           className="buttonPrimary buttonLogin"
         >
           Login
@@ -114,6 +118,7 @@ const Login: React.FC = () => {
             initial={{ opacity: 0, scale: 0.5 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5 }}
+            data-testid="loginAlertFailureMessage"
             className="alertFailure loginAlertFailure"
           >
             {formSubmitResponse.message}

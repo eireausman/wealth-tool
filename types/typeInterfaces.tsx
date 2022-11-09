@@ -88,15 +88,16 @@ export interface passportUser {
 }
 
 export interface cashAccountAPIData {
-  [key: string]: string | number | undefined;
-  account_currency_code: string;
-  account_currency_symbol: string;
+  [key: string]: string | number | undefined | boolean;
   account_id: number;
+  userUsersId: number;
   account_nickname: string;
   account_number_last4_digits: number;
   account_owner_name: string;
-  userUsersId: number;
   account_balance: number;
+  account_currency_code: string;
+  account_currency_symbol: string;
+  soft_deleted: boolean;
   accountBalConvertedValue: number;
 }
 

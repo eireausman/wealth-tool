@@ -1,0 +1,61 @@
+import React from "react";
+import { getByTestId, render, screen } from "@testing-library/react";
+import { act } from "react-dom/test-utils";
+import userEvent from "@testing-library/user-event";
+import Login from "../Login";
+import { BrowserRouter } from "react-router-dom";
+
+afterEach(() => {
+  // cleanup on exiting
+  jest.clearAllMocks();
+});
+
+describe("Login page tests", () => {
+  it("Login content renders correctly", async () => {
+    await act(() => {
+      render(
+        <BrowserRouter>
+          <Login />
+        </BrowserRouter>
+      );
+    });
+    expect(screen.getByTestId("usernameField")).toBeInTheDocument();
+    expect(screen.getByTestId("passwordField")).toBeInTheDocument();
+    expect(screen.getByTestId("loginButton")).toBeInTheDocument();
+  });
+  it("Login function fires after login button click", async () => {
+    await act(async () => {
+      render(
+        <BrowserRouter>
+          <Login />
+        </BrowserRouter>
+      );
+    });
+
+    expect(screen.getByTestId("loginButton")).toBeInTheDocument();
+
+    expect(screen.getByTestId("usernameField")).toBeInTheDocument();
+    expect(screen.getByTestId("passwordField")).toBeInTheDocument();
+    userEvent.type(screen.getByTestId("usernameField"), "12345678");
+    userEvent.type(screen.getByTestId("passwordField"), "12345678");
+    jest.mock("./Login.tsx", () => ({
+      loginAttempt: jest.fn(),
+    }));
+    const loginAttempt = jest.fn();
+
+    expect(
+      (screen.getByTestId("usernameField") as HTMLInputElement).value
+    ).toBe("12345678");
+    expect(
+      (screen.getByTestId("passwordField") as HTMLInputElement).value
+    ).toBe("12345678");
+
+    await act(async () => {
+      userEvent.click(screen.getByTestId("loginButton"));
+    });
+    // expect(loginAttempt).toHaveBeenCalledTimes(1);
+    expect(screen.getByTestId("loginAlertFailureMessage").textContent).toBe(
+      "fail"
+    );
+  });
+});

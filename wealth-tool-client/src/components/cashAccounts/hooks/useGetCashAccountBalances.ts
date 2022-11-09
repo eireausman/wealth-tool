@@ -27,6 +27,7 @@ const useGetCashAccountBalances = (props: useGetCashAccountBalancesProps) => {
       cashAccServerDataRequest.data !== undefined
     ) {
       setcashAccAPIData(cashAccServerDataRequest.data);
+      console.log(cashAccServerDataRequest.data);
     }
   }, [props.selectedCurrencyCode, props.orderByThisColumn]);
 

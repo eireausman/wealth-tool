@@ -15,7 +15,7 @@ const CardSpinner: React.FC<CardSpinnerInterface> = ({ cardTitle }) => {
       transition={{ duration: 0.2 }}
       className={styles.spinnerContainer}
     >
-      <ImSpinner7 className={styles.spinIcon} />
+      <ImSpinner7 className={styles.spinIcon} name="cardSpinner" />
       {cardTitle !== "" && <p className="spinnerText">{cardTitle}</p>}
     </motion.div>
   );

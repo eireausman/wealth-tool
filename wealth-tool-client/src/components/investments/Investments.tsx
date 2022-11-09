@@ -101,10 +101,8 @@ const Investments: React.FC<InvestmentsProps> = ({
 
   return (
     <section className="viewCard">
-      {assetCount.investments === undefined && (
-        <CardSpinner cardTitle="Investments" />
-      )}
-      {assetCount.investments <= 0 && (
+      {assetCount.investments < 0 && <CardSpinner cardTitle="Investments" />}
+      {assetCount.investments === 0 && (
         <Fragment>
           <NoAssets
             cardTitle="Investments"

@@ -99,10 +99,8 @@ const CashAccounts: React.FC<CashAccountsProps> = ({
 
   return (
     <section className="viewCard">
-      {assetCount.cashAccounts === undefined && (
-        <CardSpinner cardTitle="Cash Accounts" />
-      )}
-      {assetCount.cashAccounts <= 0 && (
+      {assetCount.cashAccounts < 0 && <CardSpinner cardTitle="Cash Accounts" />}
+      {assetCount.cashAccounts === 0 && (
         <Fragment>
           <NoAssets
             cardTitle="Cash Accounts"
@@ -171,7 +169,11 @@ const CashAccounts: React.FC<CashAccountsProps> = ({
       )}
 
       {showAddNewForm === true && (
-        <div className="newAdditionModal" onClick={(e) => closeModal(e)}>
+        <div
+          className="newAdditionModal"
+          data-testid="newAdditionModal"
+          onClick={(e) => closeModal(e)}
+        >
           <div className="newAdditionModalInner">
             <CashAccountAddAcc
               setshowAddNewForm={setshowAddNewForm}

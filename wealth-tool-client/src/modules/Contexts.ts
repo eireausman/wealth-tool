@@ -7,7 +7,9 @@ import {
 export const useLoggedInContext = createContext<string | false>(false);
 
 export const useAssetCountContext = createContext<AssetCountContextCountData>({
-  "": 0,
+  cashAccounts: -1,
+  properties: -1,
+  investments: -1,
 });
 
 export const useCurrenciesFromDBContext = createContext<
