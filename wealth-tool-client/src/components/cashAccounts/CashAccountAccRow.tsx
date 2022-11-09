@@ -51,7 +51,7 @@ const CashAccountAccRow: React.FC<CashAccountAccRowProps> = ({
       <motion.div
         className={styles.cashAccountsTableDataGridRow}
         tabIndex={0}
-        data-testid="editThisAccountDiv"
+        data-testid="displayRowDiv"
         onKeyUp={(e) => checkKeyEnter(e)}
         onClick={(e) => editThisAccount()}
         onMouseEnter={(e) => {

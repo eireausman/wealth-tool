@@ -7,7 +7,6 @@ import { dummyAccountData, selectedCurrency } from "../../../assets/testData";
 
 import * as useGetCashAccountBalances from "../hooks/useGetCashAccountBalances";
 import * as useUpdateNetCashAccTotal from "../hooks/useUpdateNetCashAccTotal";
-import { useAssetCountContext } from "../../../modules/Contexts";
 
 afterEach(() => {
   // cleanup on exiting
@@ -33,6 +32,7 @@ describe("Cash Account Row tests", () => {
       );
     });
     expect(screen.getByText("OWNERNAME")).toBeInTheDocument();
+    expect(screen.getByTestId("displayRowDiv")).toBeInTheDocument();
   });
   it("Edit Account Modal appears - mouse click", async () => {
     await act(async () => {
@@ -47,10 +47,10 @@ describe("Cash Account Row tests", () => {
         />
       );
     });
-    expect(screen.getByTestId("editThisAccountDiv")).toBeInTheDocument();
+    expect(screen.getByTestId("displayRowDiv")).toBeInTheDocument();
     expect(screen.queryByTestId("newAdditionModal")).not.toBeInTheDocument();
     await act(async () => {
-      userEvent.click(screen.getByTestId("editThisAccountDiv"));
+      userEvent.click(screen.getByTestId("displayRowDiv"));
     });
     expect(screen.getByTestId("newAdditionModal")).toBeInTheDocument();
   });
@@ -67,9 +67,9 @@ describe("Cash Account Row tests", () => {
         />
       );
     });
-    expect(screen.getByTestId("editThisAccountDiv")).toBeInTheDocument();
+    expect(screen.getByTestId("displayRowDiv")).toBeInTheDocument();
     expect(screen.queryByTestId("newAdditionModal")).not.toBeInTheDocument();
-    const screenLocation = screen.getByTestId("editThisAccountDiv");
+    const screenLocation = screen.getByTestId("displayRowDiv");
     await act(async () => {
       fireEvent.keyUp(screenLocation, { key: "Enter" });
     });
@@ -88,11 +88,11 @@ describe("Cash Account Row tests", () => {
         />
       );
     });
-    expect(screen.getByTestId("editThisAccountDiv")).toBeInTheDocument();
+    expect(screen.getByTestId("displayRowDiv")).toBeInTheDocument();
     expect(screen.queryByTestId("newAdditionModal")).not.toBeInTheDocument();
 
     await act(async () => {
-      fireEvent.keyUp(screen.getByTestId("editThisAccountDiv"), {
+      fireEvent.keyUp(screen.getByTestId("displayRowDiv"), {
         key: "Enter",
       });
     });
@@ -117,7 +117,7 @@ describe("Cash Account Row tests", () => {
   //       />
   //     );
   //   });
-  //   expect(screen.getByTestId("editThisAccountDiv")).toBeInTheDocument();
+  //   expect(screen.getByTestId("displayRowDiv")).toBeInTheDocument();
   //   expect(screen.queryByTestId("newAdditionModal")).not.toBeInTheDocument();
 
   //   await act(async () => {
