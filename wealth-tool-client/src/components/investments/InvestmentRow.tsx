@@ -47,6 +47,7 @@ const InvestmentRow: React.FC<InvestmentRowProps> = ({
         onClick={() => setshowEditStockForm(true)}
         onKeyUp={(e) => checkKeyEnter(e)}
         tabIndex={0}
+        role="button"
         onMouseEnter={(e) => {
           setstyleRowID(data.holding_id);
           setStyleForHoverDiv({ opacity: "1" });
@@ -61,6 +62,7 @@ const InvestmentRow: React.FC<InvestmentRowProps> = ({
           <FaEdit
             className="editValueIcon"
             color={"#087fed"}
+            data-testid="editValueIcon"
             style={
               styleRowID === data.holding_id
                 ? styleForHoverDiv
@@ -91,7 +93,12 @@ const InvestmentRow: React.FC<InvestmentRowProps> = ({
         </div>
       </motion.div>
       {showEditStockForm === true && (
-        <div className="newAdditionModal" onClick={(e) => closeModal(e)}>
+        <div
+          className="newAdditionModal"
+          data-testid="newAdditionModal"
+          onClick={(e) => closeModal(e)}
+          onKeyUp={(e) => checkForEscapeKey(e)}
+        >
           <div className="newAdditionModalInner">
             <InvestmentsUpdateStock
               data={data}

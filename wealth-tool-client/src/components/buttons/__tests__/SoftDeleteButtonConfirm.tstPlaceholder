@@ -1,0 +1,37 @@
+import React from "react";
+import { fireEvent, render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { act } from "react-dom/test-utils";
+import SoftDeleteButtonConfirm from "../SoftDeleteButtonConfirm";
+
+afterEach(() => {
+  // cleanup on exiting
+  jest.clearAllMocks();
+});
+// TEST INCOMPLETE AS COMPONENT REQUIRES REFACTORING TO SIMPLIFY PRIOR TO TEST COMPLETION
+// TEST INCOMPLETE AS COMPONENT REQUIRES REFACTORING TO SIMPLIFY PRIOR TO TEST COMPLETION
+// TEST INCOMPLETE AS COMPONENT REQUIRES REFACTORING TO SIMPLIFY PRIOR TO TEST COMPLETION
+
+describe("Soft Delete Button", () => {
+  it("Sort button functionality", async () => {
+    const props = {
+      assetType: "assetTypeString",
+      assetID: 1,
+      assetTitle: "assetTitleString",
+      triggerRecalculations: 1,
+      settriggerRecalculations: jest.fn(),
+      cancelForm: jest.fn(),
+      setentryIDWasDeleted: jest.fn(),
+    };
+    await act(async () => {
+      render(<SoftDeleteButtonConfirm {...props} />);
+    });
+
+    const softDeletebutton = screen.getByRole("button", { name: /delete/i });
+
+    await act(async () => {
+      fireEvent.click(softDeletebutton);
+    });
+    expect(props.setshowSoftDelConfirm).toHaveBeenCalledTimes(1);
+  });
+});

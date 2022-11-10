@@ -196,7 +196,11 @@ const Investments: React.FC<InvestmentsProps> = ({
       )}
 
       {showAddNewStockForm === true && (
-        <div className="newAdditionModal" onClick={(e) => closeModal(e)}>
+        <div
+          className="newAdditionModal"
+          data-testid="newAdditionModal"
+          onClick={(e) => closeModal(e)}
+        >
           <div className="newAdditionModalInner">
             <InvestmentAddStock
               setShowAddNewStockForm={setShowAddNewStockForm}

@@ -213,7 +213,7 @@ export interface totalsByCurr {
 }
 
 export interface investmentsAPIData {
-  [key: string]: string | number | object | undefined;
+  [key: string]: string | number | object | undefined | boolean;
   holding_cost_total_value: number;
   holding_currency_code: string;
   holding_id: number;
@@ -223,6 +223,7 @@ export interface investmentsAPIData {
   holding_stock_name: string;
   holding_quantity_held: number;
   userUsersId: number;
+  soft_deleted: boolean;
   investmentConvertedValue: number;
   investment_price_histories: Array<{
     id: number;
